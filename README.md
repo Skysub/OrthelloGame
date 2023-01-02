@@ -1,0 +1,2 @@
+# OrthelloGame
+DTU softwareprojekt
