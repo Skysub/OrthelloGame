@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<Scene xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+   <root>
+      <VBox fx:id="vbox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="625.0" prefWidth="600.0">
+         <children>
+            <Label fx:id="turnLabel" alignment="CENTER" graphicTextGap="0.0" prefHeight="75.0" prefWidth="600.0" text="Turn: WHITE" VBox.vgrow="NEVER">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Label>
+            <HBox VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox fx:id="verticalLabels" minWidth="50.0" />
+                  <GridPane fx:id="gridPane" hgap="0" vgap="0" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets right="50.0" />
+                     </HBox.margin>
+                  </GridPane>
+               </children>
+            </HBox>
+            <HBox fx:id="horizontalLabels" minHeight="50.0" VBox.vgrow="NEVER">
+               <VBox.margin>
+                  <Insets left="50.0" right="50.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </root>
+</Scene>
