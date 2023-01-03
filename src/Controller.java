@@ -13,6 +13,7 @@ public class Controller {
 
     @FXML private Label turnLabel;
     @FXML private GridPane gridPane;
+    @FXML private GridPane piecePane;
     @FXML private VBox verticalLabels;
     @FXML private HBox horizontalLabels;
 
@@ -23,6 +24,7 @@ public class Controller {
 
     public Label getTurnLabel() {return turnLabel;}
     public GridPane getGridPane() {return gridPane;}
+    public GridPane getPiecePane() {return piecePane;}
     public VBox getVerticalLabels() {return verticalLabels;}
     public HBox getHorizontalLabels() {return horizontalLabels;}
 
@@ -34,7 +36,7 @@ public class Controller {
         int column = Integer.parseInt(split[0]);
         int row = Integer.parseInt(split[1]);
 
-        System.out.println(row + "-" + column);
+        System.out.println(row + "-" + column); //TODO Remove when done with debuggin
 
         //TODO Send indexes to model to handle move
     }
