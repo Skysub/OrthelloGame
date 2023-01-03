@@ -73,9 +73,12 @@ public class SettingsView extends ViewState {
         checkers.getChildren().add(set8);
         checkers.getChildren().add(set16);
         checkers.getChildren().add(setCustom);
-        Menu.buttonPos(set8, width/15, height/6);
-        Menu.buttonPos(set16, width/15,height/6+gap);
-        Menu.buttonPos(setCustom, width/15,height/6+gap*2);
+        
+        //TODO: Omskriv følgende del. Man skal ikke accesse andre views på den her måde.
+        //Lav f.eks. en klasse der nedarver fra button og tilføj metoden buttonPos
+        MenuView.buttonPos(set8, width/15, height/6);
+        MenuView.buttonPos(set16, width/15,height/6+gap);
+        MenuView.buttonPos(setCustom, width/15,height/6+gap*2);
         
         //adds text to boxes and sets actions
         ToggleGroup group = new ToggleGroup();
