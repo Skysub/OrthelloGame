@@ -1,10 +1,10 @@
 public class Model {
     
-    private View view;
+    private App view;
 
     private int boardSize = 8;
 
-    public Model(View view) {
+    public Model(App view) {
         this.view = view;
     }
 

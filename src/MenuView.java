@@ -9,16 +9,16 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class MenuScreen extends GameState {
+public class MenuView extends ViewState {
 	String name = "Othello";
 
 	Button startButton = new Button();
 	Button settingsButton = new Button();
 	Text text = new Text();
 
-	public MenuScreen(Stage stage) {
-		this.stage = stage;
-		
+	public MenuView(Model model, App view, Stage stage) {
+		super(model, view, stage);
+
 		// Basis for Scene
 		Pane root = new Pane();
 		VBox forText = new VBox();
@@ -41,13 +41,14 @@ public class MenuScreen extends GameState {
 		// places buttons - Made to functions
 		placeButtons(scene, 200, 70, 100);
 	}
-	
+
 	@Override
 	public void OnEnter() {
-		stage.setScene(scene);		
+		stage.setScene(scene);
 	}
 
-	private void placeButtons(Scene scene, int buttonWidth, int buttonHeight, int buttonSpacing) { // ButtonSpacing is a bit wack
+	private void placeButtons(Scene scene, int buttonWidth, int buttonHeight, int buttonSpacing) { // ButtonSpacing is a
+																									// bit wack
 // Start-Game button
 		startButton.setText("Start Game");
 		Font font = new Font(30);
@@ -77,15 +78,15 @@ public class MenuScreen extends GameState {
 	}
 
 	private void toGame(ActionEvent event) {
-		System.out.println("GAME TIME!!");
+		ChangeViewState("GameView");
 	}
 
 	private void toSettings(ActionEvent event) {
-		System.out.println("Settings");
+		ChangeViewState("SettingsView");
 	}
 
 	@Override
 	public void Reset() {
-				
+
 	}
 }
