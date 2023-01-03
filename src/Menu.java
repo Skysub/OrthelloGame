@@ -3,6 +3,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -10,11 +11,11 @@ import javafx.scene.text.*;
 import javafx.stage.Stage;
 public class Menu extends Application {
 
-    String name = "Othello";
+    private String name = "Othello";
 
-    Button startButton = new Button();
-    Button settingsButton = new Button();
-    Text text = new Text();
+    private Button startButton = new Button();
+    private Button settingsButton = new Button();
+    private Text text = new Text();
 
     public void start(Stage stage) {
         //Basis for Scene
@@ -55,7 +56,7 @@ public class Menu extends Application {
         startButton.setFont(font);
         buttonSize(startButton, buttonWidth, buttonHeight);
         buttonPos(startButton, (scene.getWidth()-buttonWidth)/2, (scene.getHeight()-buttonHeight)/2);
-        this.startButton.setOnAction(this::toGame);
+        startButton.setOnAction(this::toGame);
 
         //settings button
         settingsButton.setText("Settings");
@@ -63,12 +64,12 @@ public class Menu extends Application {
         settingsButton.setFont(font);
         buttonSize(settingsButton, buttonWidth, buttonHeight/2); //Er lavere end start game, fjern /2.
         buttonPos(settingsButton, (scene.getWidth()-buttonWidth)/2, ((scene.getHeight()-buttonHeight)/2)+buttonSpacing);
-        this.settingsButton.setOnAction(this::toSettings);
+        settingsButton.setOnAction(this::toSettings);
     }
 
-    private void buttonPos(Button button, Double x, Double y){
-        button.setLayoutX(x);
-        button.setLayoutY(y);
+    public static void buttonPos(ButtonBase button, double d, double j){
+        button.setLayoutX(d);
+        button.setLayoutY(j);
     }
 
     private void buttonSize(Button button, double width, double Height){
