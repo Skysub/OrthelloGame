@@ -9,7 +9,7 @@ import javafx.scene.shape.Rectangle;
 public class Controller {
     
     private Model model;
-    private View view;
+    private ViewState view;
 
     @FXML private Label turnLabel;
     @FXML private GridPane gridPane;
@@ -17,7 +17,7 @@ public class Controller {
     @FXML private VBox verticalLabels;
     @FXML private HBox horizontalLabels;
 
-    public void setModelAndView(Model model, View view) {
+    public void setModelAndView(Model model, ViewState view) {
         this.model = model;
         this.view = view;
     }

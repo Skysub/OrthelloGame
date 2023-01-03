@@ -13,7 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class SettingPage extends Application {
+public class SettingsView extends ViewState {
 
     public static int boardSize = 8;
 
@@ -22,14 +22,16 @@ public class SettingPage extends Application {
     private RadioButton setCustom = new RadioButton();
     private TextField customSize = new TextField(); //Interactable text box for custom sizes
     private Text title = new Text();
+    
+    public SettingsView(Model model, App view, Stage stage) {
+		super(model, view, stage);
 
-    public void start(Stage stage) throws Exception {
         //sets up the root
         Pane root = new Pane();
         VBox forTitle = new VBox();
         forTitle.getChildren().add(title);
         root.getChildren().add(forTitle);
-        Scene scene = new Scene(root,800,800,Color.LIGHTGREY);
+        scene = new Scene(root,800,800,Color.LIGHTGREY);
         root.setBackground(null);
         //sets up chechmarkers
         Pane sizeBox = gameSizeBox(scene.getWidth()/17*3,175,35,Color.GREY);
@@ -37,21 +39,17 @@ public class SettingPage extends Application {
         sizeBox.setLayoutX(scene.getWidth()/17*2);
         sizeBox.setLayoutY(scene.getHeight()/10*3);
         
-
         //sets up text
         title.setText("Settings");
         title.setFont(new Font(150));
         forTitle.setMinWidth(800);
         forTitle.setAlignment(Pos.CENTER);
-
-        stage.setTitle("Settings Screen");
-        stage.setScene(scene);
-        stage.show();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+	@Override
+	public void OnEnter() {
+		stage.setScene(scene);		
+	}
     
     private Pane gameSizeBox(double width,  double height, double gap, Color color){
         Rectangle background = new Rectangle(width,height,color); //The bacground is a rectangle
@@ -110,4 +108,9 @@ public class SettingPage extends Application {
         boardSize = Integer.valueOf(customSize.getText());
         System.out.println(boardSize);
     }
+
+    @Override
+	public void Reset() {
+				
+	}    
 }
