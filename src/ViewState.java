@@ -17,8 +17,8 @@ public abstract class ViewState {
 	public abstract void Reset();
 	public abstract void OnEnter();
 	
-	void ChangeViewState(String name)
+	void ChangeViewState(ViewType type)
 	  {
-		app.viewStateManager.ChangeViewState(name);
+		app.viewStateManager.ChangeViewState(type);
 	  }
 }

@@ -10,11 +10,11 @@ public class App extends Application {
         model = new Model(this);
 		viewStateManager = new ViewStateManager();
 		
-		viewStateManager.AddViewState("MenuView", new MenuView(model, this, stage));
-		viewStateManager.AddViewState("GameView", new GameView(model, this, stage));
-		viewStateManager.AddViewState("SettingsView", new SettingsView(model, this, stage));
+		viewStateManager.AddViewState(ViewType.Menu, new MenuView(model, this, stage));
+		viewStateManager.AddViewState(ViewType.Game, new GameView(model, this, stage));
+		viewStateManager.AddViewState(ViewType.Settings, new SettingsView(model, this, stage));
 		
-		viewStateManager.ChangeViewState("MenuView"); //<--- Du skal ændre den her, for at programmet starter med en specifik skærm
+		viewStateManager.ChangeViewState(ViewType.Menu); //<--- Du skal ændre den her, for at programmet starter med en specifik skærm
 
 		stage.setTitle("Othello Game");
 		stage.setResizable(false); //TODO Determine whether we should make the window responsive (Bind tiles size to percentage of window size)

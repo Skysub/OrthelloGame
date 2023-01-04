@@ -79,11 +79,11 @@ public class MenuView extends ViewState {
 	}
 
 	private void toGame(ActionEvent event) {
-		ChangeViewState("GameView");
+		ChangeViewState(ViewType.Game);
 	}
 
 	private void toSettings(ActionEvent event) {
-		ChangeViewState("SettingsView");
+		ChangeViewState(ViewType.Settings);
 	}
 
 	@Override
