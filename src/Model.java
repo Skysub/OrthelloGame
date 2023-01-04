@@ -11,4 +11,9 @@ public class Model {
     public int getBoardSize() {
         return boardSize;
     }
+
+    public void setBoardSize(int boardSize) {
+        //TODO Validate?
+        this.boardSize = boardSize;
+    }
 }
