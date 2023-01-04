@@ -15,8 +15,6 @@ import javafx.stage.Stage;
 
 public class SettingsView extends ViewState {
 
-    public static int boardSize = 8;
-
     private RadioButton set8 = new RadioButton();
     private RadioButton set16 = new RadioButton();
     private RadioButton setCustom = new RadioButton();
@@ -95,20 +93,22 @@ public class SettingsView extends ViewState {
     }
 
     private void action8(ActionEvent event){ //Action for checkmark 8
-        boardSize = 8;
+        model.setBoardSize(8);
     }
 
     private void action16(ActionEvent event){ //Action for checkmark 16
-        boardSize = 16;
+        model.setBoardSize(16);
     }
 
     private void actionCust(ActionEvent event){ //Action for checkmark Custom
         for(char c : customSize.getText().toCharArray()){
+            //TODO Cleaner way to determinate if the string is and integer. Use Integer.Parse in try/catch
             if(!(48 <= c && c <=57)){
                 customSize.setText("Must be integer");
             }
         }
-        boardSize = Integer.valueOf(customSize.getText());
+        int boardSize = Integer.valueOf(customSize.getText());
+        model.setBoardSize(boardSize);
         System.out.println(boardSize);
     }
 
