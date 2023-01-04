@@ -1,11 +1,11 @@
 public class Model {
     
-    private App view;
+    private App app;
 
     private int boardSize = 8;
 
-    public Model(App view) {
-        this.view = view;
+    public Model(App app) {
+        this.app = app;
     }
 
     public int getBoardSize() {
