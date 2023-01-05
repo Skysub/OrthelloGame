@@ -67,8 +67,6 @@ public class GameView extends ViewState{
 
     private void initializeBoard() {
 
-        gridPane.setPadding(new Insets(0));
-
         // Initialize rows and columns of tiles and pieces GridPanes
         for (int i = 0; i < model.getBoardSize(); i++) {
             var columnConstraint = new ColumnConstraints();
@@ -145,6 +143,15 @@ public class GameView extends ViewState{
 	
 	@Override
 	public void Reset() {
+        gridPane.getChildren().clear();
+        gridPane.getRowConstraints().clear();
+        gridPane.getColumnConstraints().clear();
 
+        piecePane.getChildren().clear();
+        piecePane.getRowConstraints().clear();
+        piecePane.getColumnConstraints().clear();
+
+        verticalLabels.getChildren().clear();
+        horizontalLabels.getChildren().clear();
 	}
 }

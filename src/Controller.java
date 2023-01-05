@@ -1,6 +1,7 @@
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.event.ActionEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -39,5 +40,9 @@ public class Controller {
         System.out.println(row + "-" + column); //TODO Remove when done with debuggin
 
         //TODO Send indexes to model to handle move
+    }
+
+    public void QuitGame(ActionEvent event) {
+        view.ChangeViewState("MenuView");
     }
 }
