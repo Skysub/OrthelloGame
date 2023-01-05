@@ -25,9 +25,17 @@ public class MenuView extends ViewState {
 	public void OnEnter() {
 		stage.setScene(scene);
 	}
-
-	@Override
+  
+  @Override
 	public void Reset() {
 
+	}
+
+	private void toGame(ActionEvent event) {
+		ChangeViewState(ViewType.Game);
+	}
+
+	private void toSettings(ActionEvent event) {
+		ChangeViewState(ViewType.Settings);
 	}
 }

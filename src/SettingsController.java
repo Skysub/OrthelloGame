@@ -29,7 +29,7 @@ public class SettingsController {
     }
     
     public void back(ActionEvent event) {
-        view.ChangeViewState("MenuView");
+        view.ChangeViewState(ViewType.Menu);
     }
     
     public void boardSizeTextChanged(ActionEvent event) {
