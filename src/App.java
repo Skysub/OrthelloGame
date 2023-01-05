@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -18,6 +19,7 @@ public class App extends Application {
 
 		stage.setTitle("Othello Game");
 		stage.setResizable(false); //TODO Determine whether we should make the window responsive (Bind tiles size to percentage of window size)
+		stage.getIcons().add(new Image("icon.png"));
 		stage.show();
 	}
 
