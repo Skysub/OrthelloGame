@@ -22,22 +22,19 @@ public class Model {
     boolean isGameOver = false;
 
     public static void main(String[] args){
-        PathGrid myPathGrid = new PathGrid(4);
+        DebugModel myDeg = new DebugModel(7,2);
+        myDeg.whichColourTurn = 1;
 
+        myDeg.setColumnCheckers(0,1,3, 2);
+        int[] coords = {0,3};
+        myDeg.setStateOfChecker(coords,1);
 
-        Checker c1 = new Checker(1,2,1);
-        Checker c2 = new Checker(2,2,0);
+        myDeg.setColumnCheckers(0,4,6, 2);
+        coords = new int[] {0,6};
+        myDeg.setStateOfChecker(coords,0);
 
-        Path myPath1 = new Path();
-        Path myPath2 = new Path();
-
-        myPath1.addCheckerToPath(c1);
-        myPath2.addCheckerToPath(c2);
-
-        myPathGrid.addPathToGrid(myPath1);
-        myPathGrid.addPathToGrid(myPath2);
-        myPathGrid.resetGrid();
-
+        myDeg.calculatePossiblePaths();
+        myDeg.getListOfNonNullPaths();
     }
 
 
@@ -198,15 +195,23 @@ public class Model {
     }
 
 
+    //Sets status of the checker to be flipped to the current player's colour
     void flipChecker (Checker chosenChecker){
-        chosenChecker.state = this.whichColourTurn;
+        setStateOfChecker(chosenChecker,this.whichColourTurn);
     }
 
     void flipChecker (int[] coords){
-        Checker chosenChecker = getCheckerFromCoords(coords);
-        chosenChecker.state = this.whichColourTurn;
+        setStateOfChecker(coords,this.whichColourTurn);
     }
 
+    void setStateOfChecker( int[] coords, int newState){
+        Checker chosenChecker = getCheckerFromCoords(coords);
+        chosenChecker.state = newState;
+    }
+
+    void setStateOfChecker(Checker chosenChecker, int newState){
+        chosenChecker.state = newState;
+    }
 
     void setNextTurn () {
         this.whichColourTurn = ++this.whichColourTurn % this.nrPlayers;
@@ -223,26 +228,118 @@ public class Model {
     }
 
     //RandomlyAddsPaths to the PathGrid
-    void calculatePossiblePaths(){
-        gamePathGrid.resetGrid();
+    void calculatePossiblePaths() {
+        for (int x = 0; x < this.boardSize; x++) {
+            Path horizontalPath = new Path();
+            Path verticalPath = new Path();
 
-        Path selfMadePath = new Path();
-        int[] coords = {1,2};
-        selfMadePath.startingCoords = coords;
+            for (int y = 0; y < this.boardSize; y++) {
+                int[] horizontalCoords = getHorizontalCoords(x,y);
+                int[] verticalCoords = getVerticalCoords(x,y);
 
-        Random myR = new Random();
+                iteratePathAlgorithm(horizontalCoords,horizontalPath);
+                iteratePathAlgorithm(verticalCoords,verticalPath);
+            }
+        }
+    }
 
-        for(int i = 0; i<this.boardSize;i++){
-            int[] checkerCoords = {myR.nextInt(i), myR.nextInt(i)};
-            selfMadePath.addCheckerToPath(getCheckerFromCoords(coords));
+    //Top to down
+    int[] getHorizontalCoords(int[] originalCoords){
+        return originalCoords;
+    }
 
+    int[] getHorizontalCoords(int x, int y){
+        return new int[] {x,y};
+    }
+
+    //Left to right
+    int[] getVerticalCoords(int[] originalCoords) {
+        return new int[] {originalCoords[1],originalCoords[0]};
+    }
+
+    int[] getVerticalCoords(int x, int y){
+        return new int[] {y,x};
+    }
+
+    Path iteratePathAlgorithm(int[] coords,Path currentPath){
+
+        Checker currentChecker = getCheckerFromCoords(coords);
+
+        //The checker is empty
+        if (currentChecker.isEmpty()) {
+            currentPath = foundEmptyChecker(currentPath,currentChecker);
         }
 
-        gamePathGrid.addPathToGrid(selfMadePath);
+        //The checker is of the opponent's colour
+        else if (isNotAlreadyFlipped(currentChecker)) {
+            foundCheckerNotOurColour(currentPath, currentChecker);
+        }
+
+        //If checker isn't of opponent's colour or empty it is of our
+        else {
+            currentPath = foundCheckerOfSameColour(currentPath,currentChecker);
+        }
+
+        return currentPath;
     }
 
 
 
+    /*
+    Used in the calculate possible paths algorithm.
+    Used when we've observed a possible path for the player to select.
+     */
+    Path foundPossiblePath(Path chosenPath){
+        this.gamePathGrid.addPathToGrid(chosenPath);
+        chosenPath = new Path();
+
+        return chosenPath;
+    }
+
+    void foundCheckerNotOurColour(Path currentPath,Checker chosenChecker){
+        currentPath.addCheckerToPath(chosenChecker);
+    }
+
+    Path foundEmptyChecker(Path currentPath, Checker currentChecker){
+        //!Empty && CSeen <=> C !C... Ø
+        if (!currentPath.isEmpty() && currentPath.getStatusOfCurrentColourSeen()) {
+            setStartingCoordsOfPathToCheckers(currentPath, currentChecker);
+            currentPath = foundPossiblePath(currentPath);
+        }
+        //Empty V !CSeen <=> !C... Ø... C or Ø...C
+        else {
+            resetPath(currentPath);
+        }
+
+        //We set the starting coords of the path here regardless
+        setStartingCoordsOfPathToCheckers(currentPath,currentChecker);
+        return currentPath;
+    }
+
+    Path foundCheckerOfSameColour(Path currentPath, Checker currentChecker){
+
+        //HasCoords && !empty <=> Ø !C... C
+        if (!currentPath.isEmpty() && currentPath.hasStartingCoords()) {
+            currentPath = foundPossiblePath(currentPath);
+            //Not above implies either: C !C ... C V !C ... Ø... C C
+            //We reset the path and set SeenC true
+        } else {
+            resetPath(currentPath);
+        }
+
+        currentPath.setStatusOfCurrentColourSeen(true);
+        return currentPath;
+
+    }
+
+
+    void setStartingCoordsOfPathToCheckers(Path currentPath, Checker chosenChecker){
+        currentPath.setStartingCoords(chosenChecker.coordinates);
+    }
+
+    void resetPath(Path chosenPath){
+        chosenPath.resetPath();
+    }
 
     ArrayList<Path> getListOfNonNullPaths(){
         return this.gamePathGrid.getNonNullPaths();
@@ -252,9 +349,25 @@ public class Model {
         return this.gamePathGrid.getNrNonNullPaths();
     }
 
+    int getBoardSize(){
+        return this.boardSize;
+    }
 
 }
 
+class DebugModel extends Model{
+
+    DebugModel(int size, int nrPlayers){
+        super(size,nrPlayers);
+    }
+
+    void setColumnCheckers(int x, int lower, int upper, int newState){
+        for(int y = lower;y<upper;y++){
+            int[] currentCoords = {x,y};
+            super.setStateOfChecker(currentCoords,newState);
+        }
+    }
+}
 
 class Checker {
 
@@ -265,6 +378,10 @@ class Checker {
         this.coordinates[0] = x;
         this.coordinates[1] = y;
         this.state = state;
+    }
+
+    boolean isEmpty(){
+        return this.state == 0;
     }
 
 }
@@ -416,7 +533,7 @@ class Path{
 
     int[] startingCoords = new int[2];
     ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
-    boolean seenWhite;
+    boolean currentPlayerColourSeen;
     int sizeOfPath = 0; //For the AI later on
 
     //Appends the checkersInPath of another path to this' - used for when multiple paths for the same placement of a checker
@@ -435,12 +552,49 @@ class Path{
         this.updateSizeOfPath();
     }
 
+    boolean getStatusOfCurrentColourSeen(){
+        return this.currentPlayerColourSeen;
+    }
+
+    void setStatusOfCurrentColourSeen(boolean status){
+        this.currentPlayerColourSeen = status;
+    }
+
     int getSizeOfPath(){
         return sizeOfPath;
+    }
+
+    boolean isEmpty(){
+        return getSizeOfPath()==0;
     }
 
 
     void updateSizeOfPath(){
         this.sizeOfPath = this.checkersInPath.size();
+    }
+
+    void resetCheckersInPath(){
+        this.checkersInPath = new ArrayList<Checker>();
+    }
+
+    void resetCoords(){
+        this.startingCoords = new int[2];
+    }
+
+    void resetCurrentPlayerColourSeen(){
+        this.currentPlayerColourSeen = false;
+    }
+    void resetPath(){
+        resetCheckersInPath();
+        resetCoords();
+        resetCurrentPlayerColourSeen();
+    }
+
+    void setStartingCoords(int[] coords){
+        this.startingCoords = coords;
+    }
+
+    boolean hasStartingCoords(){
+        return java.util.Objects.nonNull(this.startingCoords);
     }
 }
