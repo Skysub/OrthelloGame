@@ -6,10 +6,10 @@ public class TimerModel {
     private int playerOneTime, playerTwoTime, updateTime;
     private boolean turn =true;
 
-    private TimerTask action = new TimerTask() { //reduces the players time
+    private TimerTask action = new TimerTask() { //TODO Opdaterer hver spillers tid, det virker som det skal som kan ses i konsollen
         @Override
         public void run() {
-            if(turn){
+            if(turn){ 
                 playerOneTime -= updateTime;
                 System.out.println(formatTime(playerOneTime));
             } else{
@@ -29,7 +29,7 @@ public class TimerModel {
         turn = !turn;
     }
 
-    public String getPlayerOneTime(){
+    public String getPlayerOneTime(){ //TODO getter metoderne der bliver brugt til at give informationen videre
         return formatTime(playerOneTime);
     }
 

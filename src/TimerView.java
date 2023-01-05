@@ -9,8 +9,10 @@ public class TimerView extends Pane{
 
     TimerView(int startTime, double spacing, double font) {
         model = new TimerModel(startTime*60000, 1);
-        playerOneText.setText(model.getPlayerOneTime());
+        playerOneText.setText(model.getPlayerOneTime()); //TODO det er her hvor tiden først bliver hentet
         playerTwoText.setText(model.getPlayerTwoTime());
+
+        //Places text
         playerOneText.setLayoutY(font);
         playerTwoText.setLayoutY(font);
         playerTwoText.setLayoutX(spacing);
@@ -24,7 +26,7 @@ public class TimerView extends Pane{
         model.swapTurn();
     }
 
-    public void onUpdate(){
+    public void onUpdate(){ //TODO, hvad der basically skal ske
         this.playerOneText.setText(model.getPlayerOneTime());
         this.playerTwoText.setText(model.getPlayerTwoTime());
     }
