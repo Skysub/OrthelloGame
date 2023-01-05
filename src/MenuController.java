@@ -11,10 +11,10 @@ public class MenuController {
     }
 
     public void startGame (ActionEvent event) {
-        view.ChangeViewState("GameView");
+        view.ChangeViewState(ViewType.Game);
     }
 
     public void openSettings (ActionEvent event) {
-        view.ChangeViewState("SettingsView");
+        view.ChangeViewState(ViewType.Settings);
     }
 }

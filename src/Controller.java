@@ -43,6 +43,6 @@ public class Controller {
     }
 
     public void QuitGame(ActionEvent event) {
-        view.ChangeViewState("MenuView");
+        view.ChangeViewState(ViewType.Menu);
     }
 }
