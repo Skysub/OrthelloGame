@@ -1,7 +1,7 @@
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TimerControl {
+public class TimerModel {
     private Timer timer;
     private int playerOneTime, playerTwoTime, updateTime;
     private boolean turn =true;
@@ -18,7 +18,7 @@ public class TimerControl {
         }
     };
 
-    TimerControl(int startTime, int updateTime){
+    TimerModel(int startTime, int updateTime){
         playerOneTime = playerTwoTime = startTime;
         this.updateTime = updateTime;
         timer = new Timer();

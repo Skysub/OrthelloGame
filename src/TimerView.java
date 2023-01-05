@@ -5,12 +5,12 @@ import javafx.scene.text.Text;
 public class TimerView extends Pane{
     private Text playerOneText = new Text();
     private Text playerTwoText = new Text();
-    private static TimerControl controller;
+    private static TimerModel model;
 
     TimerView(int startTime, double spacing, double font) {
-        controller = new TimerControl(startTime*60000, 1);
-        playerOneText.setText(controller.getPlayerOneTime());
-        playerTwoText.setText(controller.getPlayerTwoTime());
+        model = new TimerModel(startTime*60000, 1);
+        playerOneText.setText(model.getPlayerOneTime());
+        playerTwoText.setText(model.getPlayerTwoTime());
         playerOneText.setLayoutY(font);
         playerTwoText.setLayoutY(font);
         playerTwoText.setLayoutX(spacing);
@@ -21,11 +21,11 @@ public class TimerView extends Pane{
     }
 
     public static void changeTurn(){
-        controller.swapTurn();
+        model.swapTurn();
     }
 
     public void onUpdate(){
-        this.playerOneText.setText(controller.getPlayerOneTime());
-        this.playerTwoText.setText(controller.getPlayerTwoTime());
+        this.playerOneText.setText(model.getPlayerOneTime());
+        this.playerTwoText.setText(model.getPlayerTwoTime());
     }
 }
