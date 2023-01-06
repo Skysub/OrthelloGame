@@ -22,29 +22,13 @@ public class Model {
     boolean isGameOver = false;
 
     public static void main(String[] args){
-        DebugModel myDeg = new DebugModel(4,2);
-        myDeg.whichColourTurn = 1;
-
-        //1. kollonne
-        myDeg.setStateOfChecker(new int[] {0,0},1);
-        myDeg.setStateOfChecker(new int[] {0,1},1);
-        myDeg.setStateOfChecker(new int[] {0,2},2);
-        myDeg.setStateOfChecker(new int[] {0,3},0);
-
-        //2. Kolonne
-        myDeg.setStateOfChecker(new int[] {1,0},0);
-        myDeg.setStateOfChecker(new int[] {1,1},2);
-        myDeg.setStateOfChecker(new int[] {1,2},1);
-        myDeg.setStateOfChecker(new int[] {1,3},2);
-
-        //3. kolonne
-        myDeg.setStateOfChecker(new int[] {2,0},1);
-        myDeg.setStateOfChecker(new int[] {2,1},1);
-        myDeg.setStateOfChecker(new int[] {2,2},0);
-        myDeg.setStateOfChecker(new int[] {2,3},1);
-
-        myDeg.calculatePossiblePaths();
-        myDeg.getListOfNonNullPaths();
+        DebugModel myDeg = new DebugModel(8,2);
+        myDeg.step(new int[] {4,4});
+        myDeg.step(new int[] {3,4});
+        myDeg.step(new int[] {3,3});
+        myDeg.step(new int[] {4,3});
+        ArrayList<Path> nonNull = myDeg.getListOfNonNullPaths();
+        System.out.println(myDeg.getNrNonNullPaths());
     }
 
 
@@ -66,14 +50,15 @@ public class Model {
             case 0:
                 recordTurnTaken(startingMove(coords));
 
-                if(turnsTaken==nrPlayers*2){
-                    this.state = 1; //Now we place a brick
-                    this.calculatePossiblePaths();
-                }
 
                 //Each player gets to put 2 checkers on the board
                 if (this.turnsTaken%2 == 0){
                     this.setNextTurn();
+                }
+
+                if(turnsTaken == nrPlayers*2){
+                    this.state = 1; //Now we place a brick
+                    this.calculatePossiblePaths();
                 }
 
                 break;
@@ -139,7 +124,6 @@ public class Model {
         //Can't place outside the center square, can only place where there is no checker
         if(isLegalStartingMove(coords)){
             this.flipChecker(coords);
-            this.turnsTaken += 1;
 
             return true;
         }
@@ -195,9 +179,10 @@ public class Model {
         return (this.whichColourTurn != chosenChecker.state);
     }
 
+    //In other Orthello games, which are 1-indexed, the "center" contains the indices 4 and 5
     boolean isLegalStartingMove( int[] coords){
         int center_coord = this.boardSize/2;
-        return gameBoard.isWithinSquare(coords,center_coord,center_coord+1) && (gameBoard.getElementAt(coords).state == 0);
+        return gameBoard.isWithinSquare(coords,center_coord-1,center_coord+1) && (gameBoard.getElementAt(coords).isEmpty());
     }
 
     void recordTurnTaken(Boolean moveValue){
@@ -239,16 +224,26 @@ public class Model {
 
     //RandomlyAddsPaths to the PathGrid
     void calculatePossiblePaths() {
-        for (int x = 0; x < this.boardSize; x++) {
+        for (int i = 0; i < this.boardSize; i++) {
             Path horizontalPath = new Path();
             Path verticalPath = new Path();
+            Path diagonalTopPath = new Path();
+            Path diagonalBottomPath = new Path();
 
-            for (int y = 0; y < this.boardSize; y++) {
-                int[] horizontalCoords = getHorizontalCoords(x,y);
-                int[] verticalCoords = getVerticalCoords(x,y);
+            for (int j = 0; j < this.boardSize; j++) {
+                int[] horizontalCoords = getHorizontalCoords(i, j);
+                int[] verticalCoords = getVerticalCoords(i, j);
+                int[] diagonalTopCoords = getDiagonalTopCoords(i,j);
+                int[] diagonalBotttomCoords = getDiagonalBottomCoords(i,j);
 
                 horizontalPath = iteratePathAlgorithm(horizontalCoords,horizontalPath);
                 verticalPath = iteratePathAlgorithm(verticalCoords,verticalPath);
+
+                //The diagonal paths are dependent on this guard
+                if(j<boardSize-i){
+                    diagonalTopPath = iteratePathAlgorithm(diagonalTopCoords,diagonalTopPath);
+                    diagonalBottomPath = iteratePathAlgorithm(diagonalBotttomCoords,diagonalBottomPath);
+                }
             }
         }
     }
@@ -258,8 +253,8 @@ public class Model {
         return originalCoords;
     }
 
-    int[] getHorizontalCoords(int x, int y){
-        return new int[] {x,y};
+    int[] getHorizontalCoords(int i, int j){
+        return new int[] {i, j};
     }
 
     //Left to right
@@ -267,8 +262,16 @@ public class Model {
         return new int[] {originalCoords[1],originalCoords[0]};
     }
 
-    int[] getVerticalCoords(int x, int y){
-        return new int[] {y,x};
+    int[] getVerticalCoords(int i, int j){
+        return new int[] {j, i};
+    }
+
+    int[] getDiagonalTopCoords(int i, int j){
+        return new int[] {j, i + j};
+    }
+
+    int[] getDiagonalBottomCoords(int i, int j){
+        return new int[] {j, this.boardSize - (i+j)-1};
     }
 
     Path iteratePathAlgorithm(int[] coords,Path currentPath){
@@ -381,17 +384,19 @@ class DebugModel extends Model{
 
 class Checker {
 
+    final int isEmptyState;
     public int[] coordinates = new int[2];//x,y
-    public int state; //0: ingen brick, 1: hvid brick, 2: sort brick
+    public int state; //1000 er empty
 
-    Checker(int x, int y,int state){
+    Checker(int x, int y,int state,int isEmptyValue){
         this.coordinates[0] = x;
         this.coordinates[1] = y;
         this.state = state;
+        this.isEmptyState = isEmptyValue;
     }
 
     boolean isEmpty(){
-        return this.state == 0;
+        return this.state == 1000;
     }
 
 }
@@ -444,7 +449,7 @@ class Grid<E>{
 
 }
 class Board extends Grid<Checker>{
-
+    int emptyValue = 1000;
     Board(int size){
         super(size);
 
@@ -458,7 +463,7 @@ class Board extends Grid<Checker>{
         for(int x_0 = 0; x_0<this.gridSize; x_0++){
             for(int y_0 = 0; y_0<this.gridSize; y_0++){
                 int position = getPositionFromCoords(x_0,y_0);
-                this.gridArray[position] = new Checker(x_0,y_0,0);
+                this.gridArray[position] = new Checker(x_0,y_0,emptyValue,emptyValue);
             }
 
 
