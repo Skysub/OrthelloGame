@@ -41,6 +41,7 @@ public class Model {
 		myPathGrid.resetGrid();
 	}
 
+	//Denne Constructor bruges ikke lige nu af en eller anden grund
 	Model(int boardSize, int nrPlayers) {
 		this.boardSize = boardSize;
 		this.nrPlayers = nrPlayers;
