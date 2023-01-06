@@ -22,16 +22,26 @@ public class Model {
     boolean isGameOver = false;
 
     public static void main(String[] args){
-        DebugModel myDeg = new DebugModel(7,2);
+        DebugModel myDeg = new DebugModel(4,2);
         myDeg.whichColourTurn = 1;
 
-        myDeg.setColumnCheckers(0,1,3, 2);
-        int[] coords = {0,3};
-        myDeg.setStateOfChecker(coords,1);
+        //1. kollonne
+        myDeg.setStateOfChecker(new int[] {0,0},1);
+        myDeg.setStateOfChecker(new int[] {0,1},1);
+        myDeg.setStateOfChecker(new int[] {0,2},2);
+        myDeg.setStateOfChecker(new int[] {0,3},0);
 
-        myDeg.setColumnCheckers(0,4,6, 2);
-        coords = new int[] {0,6};
-        myDeg.setStateOfChecker(coords,0);
+        //2. Kolonne
+        myDeg.setStateOfChecker(new int[] {1,0},0);
+        myDeg.setStateOfChecker(new int[] {1,1},2);
+        myDeg.setStateOfChecker(new int[] {1,2},1);
+        myDeg.setStateOfChecker(new int[] {1,3},2);
+
+        //3. kolonne
+        myDeg.setStateOfChecker(new int[] {2,0},1);
+        myDeg.setStateOfChecker(new int[] {2,1},1);
+        myDeg.setStateOfChecker(new int[] {2,2},0);
+        myDeg.setStateOfChecker(new int[] {2,3},1);
 
         myDeg.calculatePossiblePaths();
         myDeg.getListOfNonNullPaths();
@@ -237,8 +247,8 @@ public class Model {
                 int[] horizontalCoords = getHorizontalCoords(x,y);
                 int[] verticalCoords = getVerticalCoords(x,y);
 
-                iteratePathAlgorithm(horizontalCoords,horizontalPath);
-                iteratePathAlgorithm(verticalCoords,verticalPath);
+                horizontalPath = iteratePathAlgorithm(horizontalCoords,horizontalPath);
+                verticalPath = iteratePathAlgorithm(verticalCoords,verticalPath);
             }
         }
     }
@@ -531,7 +541,8 @@ class PathGrid extends Grid<Path>{
 }
 class Path{
 
-    int[] startingCoords = new int[2];
+    final int numberEmptyCoords = 1000;
+    int[] startingCoords = new int[] {numberEmptyCoords,numberEmptyCoords};
     ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
     boolean currentPlayerColourSeen;
     int sizeOfPath = 0; //For the AI later on
@@ -575,10 +586,11 @@ class Path{
 
     void resetCheckersInPath(){
         this.checkersInPath = new ArrayList<Checker>();
+        updateSizeOfPath();
     }
 
     void resetCoords(){
-        this.startingCoords = new int[2];
+        this.startingCoords = new int[] {numberEmptyCoords,numberEmptyCoords};
     }
 
     void resetCurrentPlayerColourSeen(){
@@ -594,7 +606,8 @@ class Path{
         this.startingCoords = coords;
     }
 
+    //Vi kunne lave et flag i stedet...?
     boolean hasStartingCoords(){
-        return java.util.Objects.nonNull(this.startingCoords);
+        return startingCoords[0] != 1000;
     }
 }
