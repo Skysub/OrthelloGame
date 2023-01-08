@@ -30,12 +30,14 @@ public class View extends Application {
     public VBox verticalLabels;
     public HBox horizontalLabels;
 
+    private Circle[][] pieces;
+
     private double pieceRatio = 0.8;    // How big the piece is compared to the tile;
 
     @Override
     public void start(Stage primaryStage) {
 
-        model = new Model(this);
+        model = new Model(this, 8, 2);
         Scene scene;
        
         try {
@@ -82,6 +84,7 @@ public class View extends Application {
 
     private void initializeBoard() {
 
+        pieces = new Circle[model.getBoardSize()][model.getBoardSize()];
         gridPane.setPadding(new Insets(0));
 
         // Initialize rows and columns of tiles and pieces GridPanes
@@ -129,6 +132,7 @@ public class View extends Application {
                 piece.setId(col + "," + row);
     
                 piecePane.add(piece, col, row);
+                pieces[row][col] = piece;
             }
         }
 
@@ -156,5 +160,13 @@ public class View extends Application {
         //TODO Used for debugging, remove when ready
         //l.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
         return l;
+    }
+
+    public void updateBoard(Board board) {
+
+    }
+
+    public void updateCurrentPlayer(int currentPlayer) {
+
     }
 }

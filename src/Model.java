@@ -4,8 +4,9 @@ import java.util.Random;
 
 public class Model {
 
-	int state = 0; // 0: start, 1: place, 2: flip, 3: skip, 4: end
+    View view;
 
+	int state = 0; // 0: start, 1: place, 2: flip, 3: skip, 4: end
 	int nrCheckersToFlip;
 
 	Path pathChosen;
@@ -21,17 +22,8 @@ public class Model {
 
 	boolean isGameOver = false;
 
-	public Model(View view) {
-		DebugModel myDeg = new DebugModel(8, 2);
-		myDeg.step(new int[] { 4, 4 });
-		myDeg.step(new int[] { 3, 4 });
-		myDeg.step(new int[] { 3, 3 });
-		myDeg.step(new int[] { 4, 3 });
-		ArrayList<Path> nonNull = myDeg.getListOfNonNullPaths();
-		System.out.println(myDeg.getNrNonNullPaths());
-	}
-
-	Model(int boardSize, int nrPlayers) {
+	Model(View view, int boardSize, int nrPlayers) {
+        this.view = view;
 		this.boardSize = boardSize;
 		this.nrPlayers = nrPlayers;
 
@@ -369,8 +361,8 @@ public class Model {
 
 class DebugModel extends Model {
 
-	DebugModel(int size, int nrPlayers) {
-		super(size, nrPlayers);
+	DebugModel(View view, int size, int nrPlayers) {
+		super(view ,size, nrPlayers);
 	}
 
 	void setColumnCheckers(int x, int lower, int upper, int newState) {
