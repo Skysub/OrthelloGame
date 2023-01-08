@@ -390,6 +390,10 @@ class Checker {
 		return this.state == isEmptyState;
 	}
 
+    int getState() {
+        return state;
+    }
+
 }
 
 class Grid<E> {

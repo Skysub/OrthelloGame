@@ -37,7 +37,7 @@ public class Controller {
         int row = Integer.parseInt(split[1]);
 
         System.out.println(row + "-" + column); //TODO Remove when done with debuggin
-
-        //TODO Send indexes to model to handle move
+        int[] coords = {row, column};
+        model.step(coords);
     }
 }

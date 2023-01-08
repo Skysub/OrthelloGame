@@ -164,6 +164,21 @@ public class View extends Application {
 
     public void updateBoard(Board board) {
 
+        for (int i = 0; i < model.getBoardSize(); i++) {
+            for (int j = 0; j < model.getBoardSize(); j++) {
+                int[] coords = {i, j};
+                Checker c = board.getElementAt(coords);
+
+                pieces[i][j].setVisible(!c.isEmpty());
+
+                if (c.getState() == 0) {
+                    pieces[i][j].setFill(Color.WHITE);
+                }
+                else if (c.getState() == 1) {
+                    pieces[i][j].setFill(Color.BLACK);
+                }
+            }
+        }
     }
 
     public void updateCurrentPlayer(int currentPlayer) {
