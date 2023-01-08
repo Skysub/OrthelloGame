@@ -1,43 +1,58 @@
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 
 public class Controller {
-    
+
     private Model model;
     private View view;
 
-    @FXML private Label turnLabel;
-    @FXML private GridPane gridPane;
-    @FXML private GridPane piecePane;
-    @FXML private VBox verticalLabels;
+    @FXML private AnchorPane grid;
+    @FXML private Label turnText;
     @FXML private HBox horizontalLabels;
+    @FXML private VBox verticalLabels;
+
+    @FXML private VBox gameEndScreen;
+    @FXML private Label gameEndText;
+    @FXML private Label scoreText;
 
     public void setModelAndView(Model model, View view) {
         this.model = model;
         this.view = view;
     }
 
-    public Label getTurnLabel() {return turnLabel;}
-    public GridPane getGridPane() {return gridPane;}
-    public GridPane getPiecePane() {return piecePane;}
-    public VBox getVerticalLabels() {return verticalLabels;}
+    public AnchorPane getGrid() {return grid;}
+    public Label getTurnText() {return turnText;}
+    public Label getGameEndText() {return gameEndText;}
+    public Label getScoreText() {return scoreText;}
+    public VBox getGameEndScreen() {return gameEndScreen;}
     public HBox getHorizontalLabels() {return horizontalLabels;}
+    public VBox getVerticalLabels() {return verticalLabels;}
 
-    public void squarePress (MouseEvent event) {
-        
-        // Parse which tile was pressed based on ID: "row,column"
-        Rectangle r = (Rectangle) event.getTarget();
-        var split = r.getId().split(",");
-        int column = Integer.parseInt(split[0]);
-        int row = Integer.parseInt(split[1]);
+    public void tilePress (MouseEvent event) {
 
-        System.out.println(row + "-" + column); //TODO Remove when done with debuggin
+        Node n = (Node) event.getTarget();
+        String[] split = n.getId().split(",");
 
-        //TODO Send indexes to model to handle move
+        int row = Integer.parseInt(split[0]);
+        int col = Integer.parseInt(split[1]);
+
+        model.tryMove(row, col);
+    }
+
+    public void passButton(ActionEvent event) {
+        model.pass();
+    }
+
+    public void playAgain(ActionEvent event) {
+        model.newGame();
+        view.updateBoard();
+        view.updateTurnText(); 
+        gameEndScreen.setVisible(false);
     }
 }

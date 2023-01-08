@@ -1,160 +1,155 @@
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.HPos;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
 public class View extends Application {
 
-    private Controller controller;
     private Model model;
+    private Controller controller;
 
-    public Label turnLabel;
-    public GridPane gridPane;
-    public GridPane piecePane;
-    public VBox verticalLabels;
-    public HBox horizontalLabels;
+    private AnchorPane grid;
+    private Label turnText;
+    private HBox horizontalLabels;
+    private VBox verticalLabels;
 
-    private double pieceRatio = 0.8;    // How big the piece is compared to the tile;
+    private Circle[][] pieces;
 
-    @Override
-    public void start(Stage primaryStage) {
-
-        model = new Model(this);
-        Scene scene;
-       
-        try {
-            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
-            scene = loader.load();
-            controller = (Controller) loader.getController();            
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-        
-        controller.setModelAndView(model, this);
-        turnLabel = controller.getTurnLabel();
-        gridPane = controller.getGridPane();
-        piecePane = controller.getPiecePane();
-        verticalLabels = controller.getVerticalLabels();
-        horizontalLabels = controller.getHorizontalLabels();
-       
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Othello Game");
-        primaryStage.setResizable(false); //TODO Determine whether we should make the window responsive (Bind tiles size to percentage of window size)
-        primaryStage.show();
-
-        initializeBoard();
-    }
+    private double strokeWidth = 2;         // The width of the stroke on the tiles
+    private double pieceTileRatio = 0.85;   // How big a percentage the piece takes up on the tile
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    // TODO Add which color the circle should be
-    public void addPiece(int row, int column) {
-        Circle c = (Circle) piecePane.getChildren().get(column * model.getBoardSize() + row);
-        // Change COLOR!
-        c.setVisible(true);
-    }
-
-    // Changes the color of the specified piece to the opposite
-    public void flipPiece(int row, int column) {
-        Circle c = (Circle) piecePane.getChildren().get(column * model.getBoardSize() + row);
-        c.setFill(c.getFill() == Color.BLACK ? Color.WHITE : Color.BLACK);
-    }
-
-    private void initializeBoard() {
-
-        gridPane.setPadding(new Insets(0));
-
-        // Initialize rows and columns of tiles and pieces GridPanes
-        for (int i = 0; i < model.getBoardSize(); i++) {
-            var columnConstraint = new ColumnConstraints();
-            columnConstraint.setPercentWidth(100 / model.getBoardSize());
-            columnConstraint.setHalignment(HPos.CENTER);
-            gridPane.getColumnConstraints().add(columnConstraint);
-            piecePane.getColumnConstraints().add(columnConstraint);
-            
-            var rowConstraint = new RowConstraints();
-            rowConstraint.setPercentHeight(100 / model.getBoardSize());
-            rowConstraint.setValignment(VPos.CENTER);
-            gridPane.getRowConstraints().add(rowConstraint);
-            piecePane.getRowConstraints().add(rowConstraint);
+    @Override
+    public void start(Stage stage) {
+        model = new Model(this);
+        Scene scene;
+        try {
+            // Load UI from FXML and create Controller
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
+            scene = loader.load();
+            controller = loader.getController();
         }
-       
-        double tileSize = gridPane.getWidth() > gridPane.getHeight() ? gridPane.getHeight() / model.getBoardSize() : gridPane.getWidth() / model.getBoardSize();
+        catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        controller.setModelAndView(model, this);
+
+        // Retrieve objects from Controller FXML
+        grid = controller.getGrid();
+        turnText = controller.getTurnText();
+        horizontalLabels = controller.getHorizontalLabels();
+        verticalLabels = controller.getVerticalLabels();
+
+        // Setup Model and UI
+        model.newGame();
+        initializeBoard();
+        updateBoard();
+
+        stage.setTitle("Reversi");
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    private void initializeBoard() {
+        //TODO Check if prefWidth and prefHeight is the same
+        double boardWidth = grid.getPrefWidth();
+        double tileSize = (boardWidth - strokeWidth * (model.getBoardSize() + 1)) / model.getBoardSize();
+        double pieceSize = tileSize * pieceTileRatio;
+
+        pieces = new Circle[model.getBoardSize()][model.getBoardSize()];
         
-        // Setup tiles
-        for (int col = 0; col < model.getBoardSize(); col++) {
-            for (int row = 0; row < model.getBoardSize(); row++) {
+        for (int row = 0; row < model.getBoardSize(); row++) {
+            for (int col = 0; col < model.getBoardSize(); col++) {
                 Rectangle tile = new Rectangle(tileSize, tileSize, Color.BEIGE);
                 tile.setStroke(Color.BLACK);
-                tile.setStrokeWidth(2);
-                tile.setStrokeType(StrokeType.INSIDE);
-                tile.setArcHeight(0);
-                tile.setArcWidth(0);
-                tile.setOnMouseClicked(controller::squarePress);
-                tile.setId(col + "," + row);
-                gridPane.add(tile, col, row);
-            } 
-        }
-        
-        // Calculates the radius of pieces, based on how big a percentage the circle should in relation to the tile
-        var radius = tileSize * pieceRatio / 2;
-    
-        // Loop through all cells and initialize empty pieces
-        for (int col = 0; col < model.getBoardSize(); col++) {
-            for (int row = 0; row < model.getBoardSize(); row++) {
-                Circle piece = new Circle(radius, Color.WHITE);
+                tile.setStrokeWidth(strokeWidth);
+                tile.setStrokeType(StrokeType.OUTSIDE);
+                tile.setOnMouseClicked(controller::tilePress);
+                tile.setId(row + "," + col);
+                
+                AnchorPane.setTopAnchor(tile, row * (tileSize + strokeWidth));
+                AnchorPane.setLeftAnchor(tile, col * (tileSize + strokeWidth));
+                
+                Circle piece = new Circle(pieceSize / 2, Color.WHITE);
                 piece.setStroke(Color.BLACK);
+                piece.setStrokeWidth(1);
                 piece.setStrokeType(StrokeType.INSIDE);
+                piece.setMouseTransparent(true);
                 piece.setVisible(false);
-                piece.setId(col + "," + row);
-    
-                piecePane.add(piece, col, row);
+                
+                AnchorPane.setTopAnchor(piece, strokeWidth + (tileSize - pieceSize) / 2 + (tileSize + strokeWidth) * row);
+                AnchorPane.setLeftAnchor(piece, strokeWidth + (tileSize - pieceSize) / 2 + (tileSize + strokeWidth) * col);
+                
+                pieces[row][col] = piece;
+                grid.getChildren().addAll(tile, piece);
             }
         }
-
-        // Setup axis labels
+        
+        // Create axislabels
         for (int i = 0; i < model.getBoardSize(); i++) {
-            // Vertical (1-8)
-            var vertical = createAxisLabel(model.getBoardSize() - i + "");
-            vertical.setPrefHeight(tileSize);
-            verticalLabels.getChildren().add(vertical);
+            var vLabel = createAxisLabel(model.getBoardSize() - i + "");
+            vLabel.setPrefSize(verticalLabels.getPrefWidth(), tileSize + strokeWidth);
+            verticalLabels.getChildren().add(vLabel);
             
-            // Horizontal (a-h)
-            var horizontal = createAxisLabel((char)(i + 97) + "");
-            horizontal.setPrefWidth(tileSize);
-            horizontalLabels.getChildren().add(horizontal);
+            var hLabel = createAxisLabel((char)(i + 97) + "");
+            hLabel.setPrefSize(tileSize + strokeWidth, horizontalLabels.getPrefHeight());
+            horizontalLabels.getChildren().add(hLabel);
+        }
 
+        controller.getGameEndScreen().setVisible(false);
+    }
+    
+    private Label createAxisLabel(String text) {
+        Label label = new Label(text);
+        label.setFont(new Font(12));
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setAlignment(Pos.CENTER);
+        return label;
+    }
+
+    public void updateBoard() {
+        Tile[][] board = model.getBoard();
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                pieces[row][col].setVisible(board[row][col] != Tile.Empty);
+
+                if (board[row][col] == Tile.White) {
+                    pieces[row][col].setFill(Color.WHITE);
+                }
+                else if (board[row][col] == Tile.Black) {
+                    pieces[row][col].setFill(Color.BLACK);
+                }
+            }
         }
     }
 
-    private Label createAxisLabel(String text) {
-        Label l = new Label(text);
-        l.setFont(new Font(12));
-        l.setTextAlignment(TextAlignment.CENTER);
-        l.setAlignment(Pos.CENTER);
-        
-        //TODO Used for debugging, remove when ready
-        //l.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
-        return l;
+    public void updateTurnText() {
+        turnText.setText("Current Player: " + (model.getCurrentPlayer() == Tile.White ? "White" : "Black"));
+    }
+
+    public void showEndGame(Tile winner, int whiteTiles, int blackTiles) {
+        if (winner == Tile.Empty) {
+            controller.getGameEndText().setText("Draw");
+        }
+        else {
+            controller.getGameEndText().setText("Winner: " + winner.toString());
+        }
+        controller.getScoreText().setText("W: " + whiteTiles + " - B: " + blackTiles);
+        controller.getGameEndScreen().setVisible(true);
     }
 }
