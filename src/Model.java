@@ -12,8 +12,8 @@ public class Model {
     enum GameState { Start, Main }
     private GameState gameState;
 
-    private Tile currentPlayer;             // The next tile to be places
-    private Tile startedPreviousGame;       // The player that started the previous game
+    private TileType currentPlayer;         // The next tile to be places
+    private TileType startedPreviousGame;   // The player that started the previous game
     private boolean passedPreviousTurn;     // Whether the previous player passed their turn
     private int noOfMoves;                  // The numbers of moves played. Used to determine the GameState and if the game is finished
 
@@ -25,23 +25,24 @@ public class Model {
     // Public getters used by View to retrieve the state of the game
     public int getBoardSize() {return boardSize;}
     public Tile[][] getBoard() {return board;}
-    public Tile getCurrentPlayer() {return currentPlayer;}
+    public TileType getCurrentPlayer() {return currentPlayer;}
 
     public void newGame() {
         // Create empty board
         board = new Tile[boardSize][boardSize];
+
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
-                board[i][j] = Tile.Empty;
+                board[i][j] = new Tile(i, j, TileType.Empty);
             }
         }
 
         // Determine starting player
         if (startedPreviousGame == null) {
             if (random.nextBoolean()) {
-                currentPlayer = Tile.White;
+                currentPlayer = TileType.White;
             } else {
-                currentPlayer = Tile.Black;
+                currentPlayer = TileType.Black;
             }
         }
         else {
@@ -57,53 +58,65 @@ public class Model {
     }
 
     public void tryMove(int row, int col) {
+
+        if (!insideBoard(row, col)) {
+            System.out.println("ERROR: Not inside board!");
+        }
+
+        Tile tile = board[row][col];
+        boolean madeMove = false;
+
         switch (gameState) {
             case Start:
-                if (isValidStartMove(row, col)) {
-                    board[row][col] = currentPlayer;
+                if (isValidStartMove(tile)) {
+                    tile.setType(currentPlayer);
                     currentPlayer = currentPlayer.flip();
+
                     if (++noOfMoves >= 4) {
                         gameState = GameState.Main;
                     }
-                    passedPreviousTurn = false;
 
-                    view.updateBoard();
-                    view.updateTurnText();
+                    madeMove = true;
                 }
                 break;
             case Main:
-                if (isValidMove(row, col)) {
-                    board[row][col] = currentPlayer;
-                    flipTiles(row, col, currentPlayer);
-                    passedPreviousTurn = false;
-
+                if (isValidMove(tile)) {
+                    tile.setType(currentPlayer);
+                    flipTiles(tile);
+                    
                     currentPlayer = currentPlayer.flip();
                     if (++noOfMoves >= boardSize * boardSize) {
                         endGame();
                         return;
                     }
-
-                    view.updateBoard();
-                    view.updateTurnText();
+                    madeMove = true;
                 }
                 break;
+            }
+
+            if (madeMove) {
+                passedPreviousTurn = false;
+                view.updateBoard();
+                view.updateTurnText();
+
+                // TODO Add to borderTiles list
         }
     }
 
-    private boolean isValidStartMove(int row, int col) {
+    private boolean isValidStartMove(Tile tile) {
 
-        if (!insideBoard(row, col) || board[row][col] != Tile.Empty) {
+        if (!tile.isEmpty()) {
             return false;
         }
 
-        boolean inCenterRows = row == boardSize / 2 || row == (boardSize / 2) - 1;
-        boolean inCenterColumns = col == boardSize / 2 || col == (boardSize / 2) - 1;
+        boolean inCenterRows = tile.getRow() == boardSize / 2 || tile.getRow() == (boardSize / 2) - 1;
+        boolean inCenterColumns = tile.getCol() == boardSize / 2 || tile.getCol() == (boardSize / 2) - 1;
 
         return inCenterRows && inCenterColumns;
     }
 
-    private boolean isValidMove(int row, int col) {
-        if (!insideBoard(row, col) || board[row][col] != Tile.Empty) {
+    private boolean isValidMove(Tile tile) {
+        if (!tile.isEmpty()) {
             return false;
         }
         for (int dx = -1; dx <= 1; dx++) {
@@ -111,7 +124,7 @@ public class Model {
                 if (dx == 0 && dy == 0) {
                     continue;
                 }
-                if (checkDirection(row, col, dx, dy).size() > 0) {
+                if (checkDirection(tile, dx, dy).size() > 0) {
                     return true;
                 }
             }
@@ -123,31 +136,30 @@ public class Model {
         return 0 <= row && row < boardSize && 0 <= col && col < boardSize;
     }
 
-    private void flipTiles(int row, int col, Tile tile) {
-        ArrayList<Index> toBeFlipped = new ArrayList<Index>();
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                toBeFlipped.addAll(checkDirection(row, col, i, j)); 
+    private void flipTiles(Tile flipFromTile) {
+        ArrayList<Tile> toBeFlipped = new ArrayList<Tile>();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                toBeFlipped.addAll(checkDirection(flipFromTile, dx, dy)); 
             }
         }
 
         for (int i = 0; i < toBeFlipped.size(); i++) {
-            Index n = toBeFlipped.get(i);
-            board[n.x][n.y] = currentPlayer;
+            toBeFlipped.get(i).flip();
         }
     }
 
-    private ArrayList<Index> checkDirection(int x, int y, int dx, int dy) {
-        ArrayList<Index> tiles = new ArrayList<Index>();
+    private ArrayList<Tile> checkDirection(Tile tile, int dx, int dy) {
+        ArrayList<Tile> tiles = new ArrayList<Tile>();
 
-        x += dx;
-        y += dy;
+        int x = tile.getRow() + dx;
+        int y = tile.getCol() + dy;
 
-        while (insideBoard(x, y) && board[x][y] != Tile.Empty) {
-            if (board[x][y] == currentPlayer.flip()) {
-                tiles.add(new Index(x, y));
+        while (insideBoard(x, y) && !board[x][y].isEmpty()) {
+            if (board[x][y].isTile(currentPlayer.flip())) {
+                tiles.add(board[x][y]);
             }
-            else if (board[x][y] == currentPlayer) {
+            else if (board[x][y].isTile(currentPlayer)) {
                 return tiles;
             }
             x += dx;
@@ -155,17 +167,6 @@ public class Model {
         }
         tiles.clear();
         return tiles;
-    }
-
-    //TODO Remove this by implementing Tile class instead of Enum
-    class Index {
-        int x;
-        int y;
-
-        public Index(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
     }
 
     public void pass() {
@@ -189,34 +190,33 @@ public class Model {
 
         for (int row = 0; row < boardSize; row++) {
             for (int col = 0; col < boardSize; col++) {
-                if (board[row][col] == Tile.White) {
+                if (board[row][col].isTile(TileType.Black)) {
                     whiteTiles++;
                 }
-                else if (board[row][col] == Tile.Black) {
+                else if (board[row][col].isTile(TileType.Black)) {
                     blackTiles++;
                 }
             }
         }
 
         if (whiteTiles > blackTiles) {
-            view.showEndGame(Tile.White, whiteTiles, blackTiles);
+            view.showEndGame(TileType.White, whiteTiles, blackTiles);
         }
         else if (whiteTiles < blackTiles) {
-            view.showEndGame(Tile.Black, whiteTiles, blackTiles);
+            view.showEndGame(TileType.Black, whiteTiles, blackTiles);
         }
         else {
-            view.showEndGame(Tile.Empty, whiteTiles, blackTiles);
+            view.showEndGame(TileType.Empty, whiteTiles, blackTiles);
         }
     }
 }
 
-//TODO Make a Tile class instead, so it can have a reference to it's own position, and is an object.
-enum Tile {
+enum TileType {
     Empty,
     White,
     Black;
 
-    public Tile flip() {
+    public TileType flip() {
         switch (this) {
             case White:
                 return Black;
@@ -226,5 +226,40 @@ enum Tile {
                 System.out.println("Trying to flip empty tile!");
                 return Empty;
         }
+    }
+}
+
+class Tile {
+    private int row, col;
+    private TileType type;
+
+    public Tile(int row, int col, TileType type) {
+        this.row = row;
+        this.col = col;
+        this.type = type;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void flip() {
+        type = type.flip();
+    }
+
+    public boolean isEmpty() {
+        return type == TileType.Empty;
+    }
+
+    public void setType(TileType type) {
+        this.type = type;
+    }
+
+    public boolean isTile(TileType type) {
+        return this.type == type;
     }
 }

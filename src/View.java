@@ -24,6 +24,7 @@ public class View extends Application {
     private HBox horizontalLabels;
     private VBox verticalLabels;
 
+    private Rectangle[][] tiles;
     private Circle[][] pieces;
 
     private double strokeWidth = 2;         // The width of the stroke on the tiles
@@ -71,6 +72,7 @@ public class View extends Application {
         double tileSize = (boardWidth - strokeWidth * (model.getBoardSize() + 1)) / model.getBoardSize();
         double pieceSize = tileSize * pieceTileRatio;
 
+        tiles = new Rectangle[model.getBoardSize()][model.getBoardSize()];
         pieces = new Circle[model.getBoardSize()][model.getBoardSize()];
         
         for (int row = 0; row < model.getBoardSize(); row++) {
@@ -95,6 +97,7 @@ public class View extends Application {
                 AnchorPane.setTopAnchor(piece, strokeWidth + (tileSize - pieceSize) / 2 + (tileSize + strokeWidth) * row);
                 AnchorPane.setLeftAnchor(piece, strokeWidth + (tileSize - pieceSize) / 2 + (tileSize + strokeWidth) * col);
                 
+                tiles[row][col] = tile;
                 pieces[row][col] = piece;
                 grid.getChildren().addAll(tile, piece);
             }
@@ -126,12 +129,12 @@ public class View extends Application {
         Tile[][] board = model.getBoard();
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
-                pieces[row][col].setVisible(board[row][col] != Tile.Empty);
+                pieces[row][col].setVisible(!board[row][col].isEmpty());
 
-                if (board[row][col] == Tile.White) {
+                if (board[row][col].isTile(TileType.White)) {
                     pieces[row][col].setFill(Color.WHITE);
                 }
-                else if (board[row][col] == Tile.Black) {
+                else if (board[row][col].isTile(TileType.Black)) {
                     pieces[row][col].setFill(Color.BLACK);
                 }
             }
@@ -139,11 +142,11 @@ public class View extends Application {
     }
 
     public void updateTurnText() {
-        turnText.setText("Current Player: " + (model.getCurrentPlayer() == Tile.White ? "White" : "Black"));
+        turnText.setText("Current Player: " + model.getCurrentPlayer().toString()); 
     }
 
-    public void showEndGame(Tile winner, int whiteTiles, int blackTiles) {
-        if (winner == Tile.Empty) {
+    public void showEndGame(TileType winner, int whiteTiles, int blackTiles) {
+        if (winner == TileType.Empty) {
             controller.getGameEndText().setText("Draw");
         }
         else {
