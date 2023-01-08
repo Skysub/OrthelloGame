@@ -1,54 +1,29 @@
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
-public class TimerView extends Pane{
-    private Text playerOneText = new Text();
-    private Text playerTwoText = new Text();
+public class TimerView extends Text{
     private static TimerModel model;
+    private int turn, turns;
+    private Text[] times;
 
-    TimerView(int startTime, double spacing, double font) {
-        model = new TimerModel(startTime*60000, 1);
-        playerOneText.setText(model.getPlayerOneTime()); //TODO det er her hvor tiden først bliver hentet
-        playerTwoText.setText(model.getPlayerTwoTime());
-
-        //Places text
-        playerOneText.setLayoutY(font);
-        playerTwoText.setLayoutY(font);
-        playerTwoText.setLayoutX(spacing);
-        this.getChildren().add(playerOneText);
-        this.getChildren().add(playerTwoText);
-        playerOneText.setFont(new Font(font));
-        playerTwoText.setFont(new Font(font));
-
-        //Makes sure timer is updated
-        setTimeline(); //TODO den her metode fikser det, kan ses længere nede
+    
+    TimerView(int startTime, double font, int players) {
+    	turn = 0;
+    	turns = players-1;
+    	times = new Text[players];
+    	for (int i = 0; i < times.length; i++) times[i] = new Text();
+        model = new TimerModel(this, startTime*60000, 1, players);//StartTime is in minutes
+        this.setFont(new Font(font));
     }
 
-    public static void changeTurn(){
-        model.swapTurn();
+    public void updateText(String time, int index) {
+    	times[index].setText(time);
     }
-
-    public void onUpdate(ActionEvent event){ //TODO, hvad der basically skal ske
-        this.playerOneText.setText(model.getPlayerOneTime());
-        this.playerTwoText.setText(model.getPlayerTwoTime());
+    
+    public void swapTurn() {
+    	if(turn == turns) turn = 0;
+    	else turn++;
+    	model.swapTurn(turn);
     }
-
-    public void setTimeline(){ 
-        KeyFrame keyFrame = new KeyFrame(new Duration(1), new EventHandler<ActionEvent>() { //Runs the "handle event" (onUpdate) every Duration(1)
-            @Override
-            public void handle(ActionEvent event) {
-                // TODO Auto-generated method stub
-                onUpdate(event);
-            }
-        });
-        Timeline timeline = new Timeline(keyFrame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
-    }
+    
 }
