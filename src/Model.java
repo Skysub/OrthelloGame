@@ -396,7 +396,7 @@ class Checker {
     }
 
     boolean isEmpty(){
-        return this.state == 1000;
+        return this.state == isEmptyState;
     }
 
 }
@@ -449,7 +449,7 @@ class Grid<E>{
 
 }
 class Board extends Grid<Checker>{
-    int emptyValue = 1000;
+    int emptyValue = -1;
     Board(int size){
         super(size);
 
@@ -546,7 +546,7 @@ class PathGrid extends Grid<Path>{
 }
 class Path{
 
-    final int numberEmptyCoords = 1000;
+    final int numberEmptyCoords = -1;
     int[] startingCoords = new int[] {numberEmptyCoords,numberEmptyCoords};
     ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
     boolean currentPlayerColourSeen;
@@ -611,8 +611,8 @@ class Path{
         this.startingCoords = coords;
     }
 
-    //Vi kunne lave et flag i stedet...?
+    //Vi kunne lave et flag i stedet...?z
     boolean hasStartingCoords(){
-        return startingCoords[0] != 1000;
+        return startingCoords[0] != this.numberEmptyCoords;
     }
 }
