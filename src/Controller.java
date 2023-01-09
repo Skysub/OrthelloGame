@@ -36,8 +36,10 @@ public class Controller {
         int column = Integer.parseInt(split[0]);
         int row = Integer.parseInt(split[1]);
 
-        System.out.println(row + "-" + column); //TODO Remove when done with debuggin
+        //Send the tile to the model
+        System.out.println(row + "-" + column);
         int[] coords = {row, column};
         model.step(coords);
+
     }
 }
