@@ -3,9 +3,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import javafx.stage.Stage;
-
 import org.junit.jupiter.api.MethodOrderer;
 
 import java.util.ArrayList;
