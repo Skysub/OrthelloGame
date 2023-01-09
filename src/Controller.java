@@ -11,6 +11,7 @@ public class Controller {
 
     private Model model;
     private View view;
+    public boolean isAnimating;
 
     @FXML private AnchorPane grid;
     @FXML private Label turnText;
@@ -36,6 +37,7 @@ public class Controller {
 
     public void tilePress (MouseEvent event) {
 
+        if(isAnimating) return;
         Node n = (Node) event.getTarget();
         String[] split = n.getId().split(",");
 
@@ -51,6 +53,7 @@ public class Controller {
 
     public void playAgain(ActionEvent event) {
         model.newGame();
+        view.initializeBoard();
         view.updateBoard();
         view.updateTurnText(); 
         gameEndScreen.setVisible(false);

@@ -66,7 +66,7 @@ public class View extends Application {
         stage.show();
     }
     
-    private void initializeBoard() {
+    public void initializeBoard() {
         //TODO Check if prefWidth and prefHeight is the same
         double boardWidth = grid.getPrefWidth();
         double tileSize = (boardWidth - strokeWidth * (model.getBoardSize() + 1)) / model.getBoardSize();
@@ -87,7 +87,7 @@ public class View extends Application {
                 AnchorPane.setTopAnchor(tile, row * (tileSize + strokeWidth));
                 AnchorPane.setLeftAnchor(tile, col * (tileSize + strokeWidth));
                 
-                Circle piece = new Circle(pieceSize / 2, Color.WHITE);
+                Circle piece = new Circle(pieceSize / 2, Color.GRAY);
                 piece.setStroke(Color.BLACK);
                 piece.setStrokeWidth(1);
                 piece.setStrokeType(StrokeType.INSIDE);
@@ -132,14 +132,29 @@ public class View extends Application {
                 pieces[row][col].setVisible(!board[row][col].isEmpty());
 
                 if (board[row][col].isTile(TileType.White)) {
-                    pieces[row][col].setFill(Color.WHITE);
+                    
+                    if(pieces[row][col].getFill() == Color.BLACK){
+                        Animation.flipPiece(pieces[row][col], 2000, controller);
+                    }
+                    else if(pieces[row][col].getFill() == Color.GRAY){
+                        Animation.placePiece(pieces[row][col], Color.WHITE);
+                    }
+                    else pieces[row][col].setFill(Color.WHITE);
                 }
                 else if (board[row][col].isTile(TileType.Black)) {
-                    pieces[row][col].setFill(Color.BLACK);
+
+                    if(pieces[row][col].getFill() == Color.WHITE){
+                        Animation.flipPiece(pieces[row][col], 2000, controller);
+                    }
+                    else if(pieces[row][col].getFill() == Color.GRAY){
+                        Animation.placePiece(pieces[row][col], Color.BLACK);
+                    }
+                    else pieces[row][col].setFill(Color.BLACK);
                 }
             }
         }
     }
+    
 
     public void updateTurnText() {
         turnText.setText("Current Player: " + model.getCurrentPlayer().toString()); 
