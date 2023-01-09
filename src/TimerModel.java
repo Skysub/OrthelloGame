@@ -5,20 +5,24 @@ public class TimerModel {
     private Timer timer;
     private TimerView view;
     private int updateTime, turn;
-    private int[] times;
+    public int[] times;
 
     private TimerTask action = new TimerTask() {
         @Override
         public void run() {
             times[turn] -= updateTime;
-            view.updateText(formatTime(times[turn]), turn);
+            view.updateText(formatTime(times[turn]),turn);
         }
     };
 
-    TimerModel(TimerView view, int startTime, int updateTime, int players){
+    TimerModel(TimerView viewer, int startTime, int updateTime, int players){
+        view = viewer;
+        view = viewer;
+        turn = 0;
         times = new int[players];
         for(int i = 0; i < times.length; i++) {
         	times[i] = startTime;
+            view.updateText(formatTime(times[i]),i);
         }
         this.updateTime = updateTime;
         timer = new Timer();
@@ -39,7 +43,7 @@ public class TimerModel {
        
         formatted = "" + minutes + ":";
         //Formats seconds to always be "00"
-        if(seconds < 10) formatted += "0" + seconds;
+        if(seconds < 10) formatted += "0" + seconds + ":";
         else formatted += "" + seconds + ":";
         
         //Formats milliseconds to always be "000"
