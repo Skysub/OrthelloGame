@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -16,6 +17,20 @@ import javafx.stage.Stage;
 
 public class View extends Application {
 
+    private static final Color TILE_COLOR = Color.BEIGE;
+    private static final Color WHITE_COLOR = Color.WHITE;
+    private static final Color BLACK_COLOR = Color.BLACK;
+    private static final Color ERROR_COLOR = Color.PURPLE;
+
+    private static final Color POSSIBLE_MOVE_COLOR = new Color(0.25, 0.25, 1, 0.25);
+    private static final Color POSSIBLE_MOVE_HIGHLIGHET_COLOR = new Color(0.25, 0.25, 1, 0.5);
+
+    private static final Color STROKE_COLOR = Color.BLACK;
+    private static final double STROKE_WIDTH = 2;
+    private static final double PIECE_RATIO = 0.85;         // How big a percentage the piece takes up on the tile
+
+    private static final boolean SHOW_MOVE_HINTS = true;    // Whether possible moves are shown to the player
+
     private Model model;
     private Controller controller;
 
@@ -23,12 +38,12 @@ public class View extends Application {
     private Label turnText;
     private HBox horizontalLabels;
     private VBox verticalLabels;
+    private Button passButton;
 
     private Rectangle[][] tiles;
     private Circle[][] pieces;
 
-    private double strokeWidth = 2;         // The width of the stroke on the tiles
-    private double pieceTileRatio = 0.85;   // How big a percentage the piece takes up on the tile
+    private PossibleMove lastHighlightedMove;
 
     public static void main(String[] args) {
         launch(args);
@@ -55,11 +70,13 @@ public class View extends Application {
         turnText = controller.getTurnText();
         horizontalLabels = controller.getHorizontalLabels();
         verticalLabels = controller.getVerticalLabels();
+        passButton = controller.getPassButton();
 
         // Setup Model and UI
         model.newGame();
         initializeBoard();
         updateBoard();
+        updateTurnText();
 
         stage.setTitle("Reversi");
         stage.setScene(scene);
@@ -69,33 +86,36 @@ public class View extends Application {
     private void initializeBoard() {
         //TODO Check if prefWidth and prefHeight is the same
         double boardWidth = grid.getPrefWidth();
-        double tileSize = (boardWidth - strokeWidth * (model.getBoardSize() + 1)) / model.getBoardSize();
-        double pieceSize = tileSize * pieceTileRatio;
+        double tileSize = (boardWidth - STROKE_WIDTH * (model.getBoardSize() + 1)) / model.getBoardSize();
+        double pieceSize = tileSize * PIECE_RATIO;
 
         tiles = new Rectangle[model.getBoardSize()][model.getBoardSize()];
         pieces = new Circle[model.getBoardSize()][model.getBoardSize()];
         
         for (int row = 0; row < model.getBoardSize(); row++) {
             for (int col = 0; col < model.getBoardSize(); col++) {
-                Rectangle tile = new Rectangle(tileSize, tileSize, Color.BEIGE);
-                tile.setStroke(Color.BLACK);
-                tile.setStrokeWidth(strokeWidth);
+                Rectangle tile = new Rectangle(tileSize, tileSize, TILE_COLOR);
+                tile.setStroke(STROKE_COLOR);
+                tile.setStrokeWidth(STROKE_WIDTH);
                 tile.setStrokeType(StrokeType.OUTSIDE);
-                tile.setOnMouseClicked(controller::tilePress);
-                tile.setId(row + "," + col);
+                tile.setOnMousePressed(controller::tilePress);
+                if (SHOW_MOVE_HINTS) {
+                    tile.setOnMouseEntered(event -> onHover(tile));
+                }
+                tile.setId(Util.toId(row, col));
                 
-                AnchorPane.setTopAnchor(tile, row * (tileSize + strokeWidth));
-                AnchorPane.setLeftAnchor(tile, col * (tileSize + strokeWidth));
+                AnchorPane.setTopAnchor(tile, row * (tileSize + STROKE_WIDTH));
+                AnchorPane.setLeftAnchor(tile, col * (tileSize + STROKE_WIDTH));
                 
-                Circle piece = new Circle(pieceSize / 2, Color.WHITE);
-                piece.setStroke(Color.BLACK);
-                piece.setStrokeWidth(1);
+                Circle piece = new Circle(pieceSize / 2);
+                piece.setStroke(STROKE_COLOR);
+                piece.setStrokeWidth(STROKE_WIDTH / 2);
                 piece.setStrokeType(StrokeType.INSIDE);
                 piece.setMouseTransparent(true);
                 piece.setVisible(false);
                 
-                AnchorPane.setTopAnchor(piece, strokeWidth + (tileSize - pieceSize) / 2 + (tileSize + strokeWidth) * row);
-                AnchorPane.setLeftAnchor(piece, strokeWidth + (tileSize - pieceSize) / 2 + (tileSize + strokeWidth) * col);
+                AnchorPane.setTopAnchor(piece, STROKE_WIDTH + (tileSize - pieceSize) / 2 + (tileSize + STROKE_WIDTH) * row);
+                AnchorPane.setLeftAnchor(piece, STROKE_WIDTH + (tileSize - pieceSize) / 2 + (tileSize + STROKE_WIDTH) * col);
                 
                 tiles[row][col] = tile;
                 pieces[row][col] = piece;
@@ -106,11 +126,11 @@ public class View extends Application {
         // Create axislabels
         for (int i = 0; i < model.getBoardSize(); i++) {
             var vLabel = createAxisLabel(model.getBoardSize() - i + "");
-            vLabel.setPrefSize(verticalLabels.getPrefWidth(), tileSize + strokeWidth);
+            vLabel.setPrefSize(verticalLabels.getPrefWidth(), tileSize + STROKE_WIDTH);
             verticalLabels.getChildren().add(vLabel);
             
             var hLabel = createAxisLabel((char)(i + 97) + "");
-            hLabel.setPrefSize(tileSize + strokeWidth, horizontalLabels.getPrefHeight());
+            hLabel.setPrefSize(tileSize + STROKE_WIDTH, horizontalLabels.getPrefHeight());
             horizontalLabels.getChildren().add(hLabel);
         }
 
@@ -129,15 +149,27 @@ public class View extends Application {
         Tile[][] board = model.getBoard();
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
+                // Used for showin the edge, which is checked for possible moves
+                //tiles[row][col].setFill(board[row][col].isEdge() ? Color.RED : TILE_COLOR);
                 pieces[row][col].setVisible(!board[row][col].isEmpty());
-
-                if (board[row][col].isTile(TileType.White)) {
-                    pieces[row][col].setFill(Color.WHITE);
-                }
-                else if (board[row][col].isTile(TileType.Black)) {
-                    pieces[row][col].setFill(Color.BLACK);
-                }
+                pieces[row][col].setFill(getColorFromTile(board[row][col].getType()));
+                pieces[row][col].setStroke(STROKE_COLOR);
             }
+        }
+
+        var moves = model.getPossibleMoves();
+        // Only show passButton when the current player has no possible moves
+        passButton.setVisible(moves.size() == 0);
+        
+        if (!SHOW_MOVE_HINTS) {
+            return;
+        }
+
+        for (PossibleMove move : model.getPossibleMoves()) {
+            var t = move.getTile();
+            Circle c = pieces[t.getRow()][t.getCol()];
+            c.setFill(POSSIBLE_MOVE_COLOR);
+            c.setVisible(true);
         }
     }
 
@@ -154,5 +186,45 @@ public class View extends Application {
         }
         controller.getScoreText().setText("W: " + whiteTiles + " - B: " + blackTiles);
         controller.getGameEndScreen().setVisible(true);
+    }
+
+    private Color getColorFromTile(TileType t) {
+        if (t == TileType.White) {
+            return WHITE_COLOR;
+        }
+        else if (t == TileType.Black) {
+            return BLACK_COLOR;
+        }
+        else {
+            return ERROR_COLOR;
+        }
+    }
+
+    private void onHover(Rectangle rect) {
+        int[] coords = Util.fromId(rect.getId());
+
+        if (lastHighlightedMove != null) {
+            for (Tile flipTile : lastHighlightedMove.getToBeFlipped()) {
+                pieces[flipTile.getRow()][flipTile.getCol()].setFill(getColorFromTile(flipTile.getType()));
+            }
+            var moveTile = lastHighlightedMove.getTile();
+            if (moveTile.isEmpty()) {
+                pieces[moveTile.getRow()][moveTile.getCol()].setFill(POSSIBLE_MOVE_COLOR);
+            }
+            lastHighlightedMove = null;
+        }
+
+        PossibleMove move = model.getPossibleMove(coords[0], coords[1]);
+
+        if (move != null) {
+            lastHighlightedMove = move;
+            for (Tile t : move.getToBeFlipped()) {
+                //TODO Decide what colors tiles "to be flipped" should be
+                Color c = getColorFromTile(model.getCurrentPlayer());
+                c = Color.rgb((int)c.getRed(), (int)c.getGreen(), (int)c.getBlue(), 0.5);
+                pieces[t.getRow()][t.getCol()].setFill(c);
+            }
+            pieces[move.getTile().getRow()][move.getTile().getCol()].setFill(POSSIBLE_MOVE_HIGHLIGHET_COLOR);
+        }
     }
 }
