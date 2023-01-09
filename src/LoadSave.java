@@ -50,7 +50,7 @@ public class LoadSave {
 			// Makes data folder in appdata
 			File directory = new File(path);
 			if (!directory.exists()) {
-				directory.mkdir();
+				if(!directory.mkdirs()) System.out.println("Folder structure not created");;
 			}
 
 		} catch (Exception e) {
@@ -60,5 +60,9 @@ public class LoadSave {
 			return false;
 		}
 		return true;
+	}
+
+	public static String getPath() {
+		return path;
 	}
 }
