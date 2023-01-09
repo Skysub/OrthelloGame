@@ -9,7 +9,6 @@ public class Model {
 	int state = 0; // 0: start, 1: place, 2: flip, 3: skip, 4: end
 	int nrCheckersToFlip;
 
-	Path pathChosen;
 	int boardSize;
 	int whichColourTurn;
 	int nrPlayers;
@@ -34,6 +33,9 @@ public class Model {
 		this.gamePathGrid = new PathGrid(boardSize);
 	}
 
+
+
+
 	void step(int[] coords) {
 		switch (this.state) {
 
@@ -57,28 +59,11 @@ public class Model {
 			recordTurnTaken(placementMove(coords));
 			this.calculatePossiblePaths();
 
-			// This check will only be necessary in iteration 2, once we remove case 2
+			// If there are now moves
 			if (getNrNonNullPaths() == 0) {
 				this.state = 3; // Skip
-			} else {
-				this.state = 2; // Flip
-			}
-			break;
-		// Flip checkers - will be removed in iteration 2
-		case 2:
-			recordTurnTaken(flippingMove(coords));
-
-			if (this.nrCheckersToFlip == 0) {
-				this.state = 1;
-				this.setNextTurn();
-				this.calculatePossiblePaths();
 			}
 
-			if (getNrNonNullPaths() == 0) {
-				this.state = 3; // Skip
-			} else {
-				this.state = 1; // Flip
-			}
 
 			break;
 		// Turn has been skipped
@@ -95,8 +80,11 @@ public class Model {
 			if (this.turnsSkipped == nrPlayers) {
 				state = 4; // End the game
 				isGameOver = true;
+				// The next player also has no possible moves
 			} else if (nrPossiblePaths == 0) {
+				this.gamePathGrid.resetGrid();
 				state = 3;
+				// The next player has possible moves
 			} else {
 				state = 1; // We can now place a brick
 				this.turnsSkipped = 0; // we reset the counter
@@ -106,6 +94,8 @@ public class Model {
 			// Play the most dramatic ending game music ever
 			break;
 		}
+
+		view.updateBoard(this.gameBoard);
 	}
 
 	boolean startingMove(int[] coords) {
@@ -121,6 +111,7 @@ public class Model {
 		return false;
 	}
 
+	//Outdated after we've implemented automatic flipping
 	public boolean flippingMove(int coords[]) {
 		Checker chosenChecker = getCheckerFromCoords(coords);
 
@@ -142,11 +133,13 @@ public class Model {
 	// Returns true if turn taken, otherwise returns false
 	public boolean placementMove(int[] coords) {
 
-		// We check if the path exists, i.e is a possible path
+		// We check if the coordinates correspond to the starting coordinates of any path
+		//If it does, we flip all checkers (include the one in the starting coordinates) to the current player's colour
 		if (this.gamePathGrid.pathExists(coords)) {
-			this.pathChosen = getPathFromCoords(coords);
-			this.nrCheckersToFlip = this.pathChosen.sizeOfPath;
-			this.flipChecker(coords);
+			Path pathChosen = getPathFromCoords(coords);
+			flipCheckersInPath(pathChosen);
+			this.setNextTurn();
+			this.gamePathGrid.resetGrid();
 			return true;
 		}
 
@@ -202,6 +195,7 @@ public class Model {
 
 	void setNextTurn() {
 		this.whichColourTurn = ++this.whichColourTurn % this.nrPlayers;
+		view.updateCurrentPlayer(this.whichColourTurn);
 	}
 
 	Checker getCheckerFromCoords(int[] coords) {
@@ -219,24 +213,28 @@ public class Model {
 	// RandomlyAddsPaths to the PathGrid
 	void calculatePossiblePaths() {
 		for (int i = 0; i < this.boardSize; i++) {
+
 			Path horizontalPath = new Path();
 			Path verticalPath = new Path();
-			Path diagonalTopPath = new Path();
-			Path diagonalBottomPath = new Path();
+			Path diagonalTopToBottomPath = new Path();
+			Path diagonalBottomToRightPath = new Path();
+			Path diagonalTopToLeftPath = new Path();
 
 			for (int j = 0; j < this.boardSize; j++) {
 				int[] horizontalCoords = getHorizontalCoords(i, j);
 				int[] verticalCoords = getVerticalCoords(i, j);
-				int[] diagonalTopCoords = getDiagonalTopCoords(i, j);
-				int[] diagonalBotttomCoords = getDiagonalBottomCoords(i, j);
+				int[] diagonalTopToBottomCoordsCoords = getDiagonalTopToBottomCoords(i, j);
+				int[] diagonalBotttomToRightCoords = getDiagonalBottomToRightCoords(i, j);
+				int[] diagonalTopToLeftCoords = getDiagonalTopToLeftCoords(i,j);
 
 				horizontalPath = iteratePathAlgorithm(horizontalCoords, horizontalPath);
 				verticalPath = iteratePathAlgorithm(verticalCoords, verticalPath);
 
 				// The diagonal paths are dependent on this guard
 				if (j < boardSize - i) {
-					diagonalTopPath = iteratePathAlgorithm(diagonalTopCoords, diagonalTopPath);
-					diagonalBottomPath = iteratePathAlgorithm(diagonalBotttomCoords, diagonalBottomPath);
+					diagonalTopToBottomPath = iteratePathAlgorithm(diagonalTopToBottomCoordsCoords, diagonalTopToBottomPath);
+					diagonalBottomToRightPath = iteratePathAlgorithm(diagonalBotttomToRightCoords, diagonalBottomToRightPath);
+					diagonalTopToLeftPath = iteratePathAlgorithm(diagonalTopToLeftCoords,diagonalTopToLeftPath);
 				}
 			}
 		}
@@ -260,12 +258,16 @@ public class Model {
 		return new int[] { j, i };
 	}
 
-	int[] getDiagonalTopCoords(int i, int j) {
+	int[] getDiagonalTopToBottomCoords(int i, int j) {
 		return new int[] { j, i + j };
 	}
 
-	int[] getDiagonalBottomCoords(int i, int j) {
-		return new int[] { j, this.boardSize - (i + j) - 1 };
+	int[] getDiagonalBottomToRightCoords(int i, int j) {
+		return new int[] { i+ j, this.boardSize - (1 + j) };
+	}
+
+	int[] getDiagonalTopToLeftCoords(int i, int j){
+		return new int[] {this.boardSize - (1 + j + i),j};
 	}
 
 	Path iteratePathAlgorithm(int[] coords, Path currentPath) {
@@ -295,6 +297,8 @@ public class Model {
 	 * possible path for the player to select.
 	 */
 	Path foundPossiblePath(Path chosenPath) {
+		//We add the checker at the path's starting coordinate to the Path
+		chosenPath.addCheckerToPath(getCheckerFromCoords(chosenPath.startingCoords));
 		this.gamePathGrid.addPathToGrid(chosenPath);
 		chosenPath = new Path();
 
@@ -357,6 +361,10 @@ public class Model {
 		return this.boardSize;
 	}
 
+	void flipCheckersInPath(Path chosenPath){
+		chosenPath.flipCheckersInPath(this.whichColourTurn);
+	}
+
 }
 
 class DebugModel extends Model {
@@ -393,6 +401,10 @@ class Checker {
     int getState() {
         return state;
     }
+
+	void setState(int newState){
+		this.state = newState;
+	}
 
 }
 
@@ -574,6 +586,13 @@ class Path {
 
 	int getSizeOfPath() {
 		return sizeOfPath;
+	}
+
+	void flipCheckersInPath(int newState){
+		int sizeOfPath = this.getSizeOfPath();
+		for(int i = 0; i<sizeOfPath;i++){
+			this.checkersInPath.get(i).setState(newState);
+		}
 	}
 
 	boolean isEmpty() {
