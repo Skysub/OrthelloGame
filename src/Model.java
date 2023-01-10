@@ -98,7 +98,6 @@ public class Model {
 	
 			view.updateBoard();
 			view.updateTurnText();
-			System.out.println("YEet!");
 		}
     }
 
