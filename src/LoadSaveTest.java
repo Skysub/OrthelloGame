@@ -1,4 +1,5 @@
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
@@ -15,7 +16,7 @@ class LoadSaveTest {
 	static ArrayList<String> moveList;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void localSetUp() throws Exception {
 		moveList = new ArrayList<String>();
 		moveList.add("4");
 		moveList.add("1 4-7");
@@ -55,12 +56,22 @@ class LoadSaveTest {
 
 	@Test
 	@Order(4)
-	@Disabled
 	void ExportFileTest() {
 		App app = new App();
 		String[] args = new String[2];
 		args[0] = "RunTests";
 		args[1] = "ExportTest";
+		app.main(args);
+	}
+
+	@Test
+	@Order(5)
+	@Disabled
+	void ImportFileTest() {
+		App app = new App();
+		String[] args = new String[2];
+		args[0] = "RunTests";
+		args[1] = "ImportTest";
 		app.main(args);
 	}
 }

@@ -13,6 +13,8 @@ public class InstanceTests {
 	public void Run(List<String> arguments) {
 		if (arguments.get(1).equals("ExportTest"))
 			TestExportSave();
+		if (arguments.get(1).equals("ImportTest"))
+			TestImportSave();
 	}
 
 	public void TestExportSave() {
@@ -23,6 +25,13 @@ public class InstanceTests {
 		moveList.add("1 0");
 		moveList.add("2 0");
 		LoadSave.ExportReplayFile(moveList, app.getStage());
+
+		// Testen er færdig og vi lukker programmet
+		Platform.exit();
+	}
+	
+	public void TestImportSave() {
+		LoadSave.ImportReplayFile(app.getStage());
 
 		// Testen er færdig og vi lukker programmet
 		Platform.exit();

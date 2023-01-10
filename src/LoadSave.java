@@ -57,7 +57,7 @@ public class LoadSave {
 		return SaveToFile(moveList, exportFile);
 	}
 
-	public static ArrayList<String> ImmportReplayFile(Stage primaryStage) {
+	public static ArrayList<String> ImportReplayFile(Stage primaryStage) {
 		FileChooser fileChooser = new FileChooser();
 
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
@@ -65,7 +65,7 @@ public class LoadSave {
 		fileChooser.setTitle("Import Othello Replay File");
 		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
 
-		File importFile = fileChooser.showSaveDialog(primaryStage);
+		File importFile = fileChooser.showOpenDialog(primaryStage);
 
 		if (importFile == null)
 			return null;
