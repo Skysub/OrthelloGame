@@ -63,32 +63,29 @@ public class Model {
 
         if (!isInsideBoard(row, col)) {
             System.out.println("ERROR: Not inside board!");
+			return;
         }
 
         Tile tile = board[row][col];
 
 		// Check if the pressed tile is in the list of possible moves
-		PossibleMove move = null;
-
-		for (PossibleMove m : possibleMoves) {
-			if (tile.equals(m.getTile())) {
-				move = m; 
-				break;
-			}
-		}
+		var move = getPossibleMove(row, col);
 
 		if (move != null) {
 
 			tile.setType(currentPlayer);
 			move.flipTiles();
-			currentPlayer = currentPlayer.flip();
 			
 			if (gameState == GameState.Start) {
 				if (++noOfMoves >= 4) {
 					gameState = GameState.Main;
 				}
+				if (noOfMoves % 2 == 0) {
+					currentPlayer = currentPlayer.flip();
+				}
 			}
 			else if (gameState == GameState.Main) {
+				currentPlayer = currentPlayer.flip();
 				if (++noOfMoves >= boardSize * boardSize) {
 					endGame();
 					return;
@@ -101,6 +98,7 @@ public class Model {
 	
 			view.updateBoard();
 			view.updateTurnText();
+			System.out.println("YEet!");
 		}
     }
 
