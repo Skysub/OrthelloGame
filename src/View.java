@@ -138,8 +138,11 @@ public class View extends Application {
                     controller.isAnimating = true;
                     if (c.getFill() == Color.TRANSPARENT) {
                         Animation.playSound();
+                        Animation.halfFlip(c, 250, getColorFromTile(t.getType()), () -> controller.isAnimating = false);
                     }
-                    Animation.flipPiece(c, 500, (Color)c.getFill(), getColorFromTile(t.getType()), () -> controller.isAnimating = false);
+                    else {
+                        Animation.flipPiece(c, 500, (Color)c.getFill(), getColorFromTile(t.getType()), () -> controller.isAnimating = false);
+                    }
                 }
                 else {
                     c.setFill(getColorFromTile(t.getType()));
@@ -153,25 +156,20 @@ public class View extends Application {
     }
 
     public void showEndGame(TileType winner, int whiteTiles, int blackTiles) {
-        if (winner == TileType.Empty) {
-            controller.getGameEndText().setText("Draw");
-        }
-        else {
-            controller.getGameEndText().setText("Winner: " + winner.toString());
-        }
+        controller.getGameEndText().setText((winner == TileType.Empty) ? "Draw" : "Winner: " + winner.toString());
         controller.getScoreText().setText("W: " + whiteTiles + " - B: " + blackTiles);
         controller.getGameEndScreen().setVisible(true);
     }
 
     private Color getColorFromTile(TileType t) {
-        if (t == TileType.White) {
-            return Color.WHITE;
-        }
-        else if (t == TileType.Black) {
-            return Color.BLACK;
-        }
-        else {
-            return Color.TRANSPARENT;
+        switch (t) {
+            case White:
+                return Color.WHITE;
+            case Black:
+                return Color.BLACK;
+            case Empty:
+            default:
+                return Color.TRANSPARENT;
         }
     }
 }

@@ -41,4 +41,17 @@ public class Animation {
         stroke.setDelay(time.divide(2));
         stroke.play();
     }
+
+    public static void halfFlip(Circle circle, int duration, Color to, Runnable onFinished) {
+        circle.setRotationAxis(Rotate.Y_AXIS);
+        circle.setRotate(90);
+        circle.setFill(to);
+        circle.setStroke(Color.BLACK);
+        Duration time = new Duration(duration);
+        RotateTransition rotate = new RotateTransition(time, circle);
+        rotate.setByAngle(90);
+        rotate.setAxis(Rotate.Y_AXIS);
+        rotate.setOnFinished(e -> onFinished.run());
+        rotate.play();
+    }  
 }
