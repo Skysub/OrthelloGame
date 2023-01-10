@@ -182,6 +182,6 @@ public class View extends Application {
     }
 
     public void updateCurrentPlayer(int currentPlayer) {
-
+        turnLabel.setText("Current Player: " + ((currentPlayer == 0) ? "White" : "Black"));
     }
 }

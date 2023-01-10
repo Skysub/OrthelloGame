@@ -16,7 +16,7 @@
    <root>
       <VBox fx:id="vbox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="633" prefWidth="600.0">
          <children>
-            <Label fx:id="turnLabel" alignment="CENTER" graphicTextGap="0.0" prefHeight="100.0" prefWidth="600.0" text="Turn: WHITE" VBox.vgrow="NEVER">
+            <Label fx:id="turnLabel" alignment="CENTER" graphicTextGap="0.0" prefHeight="100.0" prefWidth="600.0" text="Turn: White" VBox.vgrow="NEVER">
                <font>
                   <Font size="28.0" />
                </font>
