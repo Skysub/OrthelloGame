@@ -40,6 +40,8 @@ public class Controller {
         System.out.println(row + "-" + column);
         int[] coords = {row, column};
         model.step(coords);
-
+        int[] array = model.calculateScoreArray();
+        System.out.println(model.whichColourTurn);
+        System.out.println(model.turnsTaken);
     }
 }

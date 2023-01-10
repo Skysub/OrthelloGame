@@ -19,6 +19,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+import java.util.ArrayList;
+
 public class View extends Application {
 
     private Controller controller;
@@ -61,6 +63,7 @@ public class View extends Application {
         primaryStage.setTitle("Othello Game");
         primaryStage.setResizable(false); //TODO Determine whether we should make the window responsive (Bind tiles size to percentage of window size)
         primaryStage.show();
+
 
         initializeBoard();
     }
@@ -183,5 +186,20 @@ public class View extends Application {
 
     public void updateCurrentPlayer(int currentPlayer) {
         turnLabel.setText("Current Player: " + ((currentPlayer == 0) ? "White" : "Black"));
+    }
+
+    //Hvis nu, at vi skal vise nogen grafik, når spillet er slut, før vi viser, hvem der vandt
+    public void setEndingScreen(){
+    }
+
+    //Bruges til at vise, hvem der vandt og deres score
+    public void setWinner(int winnerNr,int score){
+
+    }
+
+    //Den samlede funktion, der bliver kaldt i Model.step() metoden i case 4
+    public void endGame(int winnerNr, int score){
+        setEndingScreen();
+        setWinner(winnerNr,score);
     }
 }

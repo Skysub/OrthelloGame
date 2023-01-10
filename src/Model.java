@@ -5,7 +5,7 @@ import java.util.Random;
 public class Model {
 
     View view;
-
+	int emptyValue;
 	int state = 0; // 0: start, 1: place, 2: flip, 3: skip, 4: end
 	int nrCheckersToFlip;
 
@@ -29,7 +29,7 @@ public class Model {
 		Random randomObject = new Random();
 		this.whichColourTurn = randomObject.nextInt(nrPlayers);
 
-		this.gameBoard = new Board(boardSize);
+		this.gameBoard = new Board(boardSize,emptyValue);
 		this.gamePathGrid = new PathGrid(boardSize);
 	}
 
@@ -41,10 +41,11 @@ public class Model {
 
 		// Start
 		case 0:
-			recordTurnTaken(startingMove(coords));
+			boolean moveResult = startingMove(coords);
+			recordTurnTaken(moveResult);
 
 			// Each player gets to put 2 checkers on the board
-			if (this.turnsTaken % 2 == 0) {
+			if (this.turnsTaken % 2 == 0 && turnsTaken>0 && moveResult) {
 				this.setNextTurn();
 			}
 
@@ -92,6 +93,7 @@ public class Model {
 			// C'est le end
 		case 4:
 			// Play the most dramatic ending game music ever
+			setEndingScreenForView();
 			break;
 		}
 
@@ -221,18 +223,21 @@ public class Model {
 			Path diagonalTopToLeftPath = new Path();
 
 			for (int j = 0; j < this.boardSize; j++) {
+
 				int[] horizontalCoords = getHorizontalCoords(i, j);
 				int[] verticalCoords = getVerticalCoords(i, j);
-				int[] diagonalTopToBottomCoordsCoords = getDiagonalTopToBottomCoords(i, j);
+
+				int[] diagonalTopToBottomCoords = getDiagonalTopToBottomCoords(i, j);
 				int[] diagonalBotttomToRightCoords = getDiagonalBottomToRightCoords(i, j);
 				int[] diagonalTopToLeftCoords = getDiagonalTopToLeftCoords(i,j);
 
+				//Calculate the vertical and horizontal paths
 				horizontalPath = iteratePathAlgorithm(horizontalCoords, horizontalPath);
 				verticalPath = iteratePathAlgorithm(verticalCoords, verticalPath);
 
 				// The diagonal paths are dependent on this guard
 				if (j < boardSize - i) {
-					diagonalTopToBottomPath = iteratePathAlgorithm(diagonalTopToBottomCoordsCoords, diagonalTopToBottomPath);
+					diagonalTopToBottomPath = iteratePathAlgorithm(diagonalTopToBottomCoords, diagonalTopToBottomPath);
 					diagonalBottomToRightPath = iteratePathAlgorithm(diagonalBotttomToRightCoords, diagonalBottomToRightPath);
 					diagonalTopToLeftPath = iteratePathAlgorithm(diagonalTopToLeftCoords,diagonalTopToLeftPath);
 				}
@@ -365,6 +370,50 @@ public class Model {
 		chosenPath.flipCheckersInPath(this.whichColourTurn);
 	}
 
+	//The current way we calculate the score is just to count how many checkers each player has
+	int[] calculateScoreArray(){
+		int[] scoreArray = countCheckersForEachPlayerArray();
+		return scoreArray;
+	}
+
+	//Returns an array the size of nrPlayers, where each element signifies the number of checker's with that player's colour
+	int[] countCheckersForEachPlayerArray(){
+		int[] countArray = new int[nrPlayers];
+
+		for(int i = 0; i<boardSize;i++){
+			for(int j = 0; j<boardSize;j++){
+				Checker currentChecker = this.gameBoard.getElementAt(new int[] {i,j});
+				if(!currentChecker.isEmpty()){
+					countArray[currentChecker.getState()] += 1;
+				}
+			}
+		}
+		return countArray;
+	}
+
+	int calculateWinnerNr(int[] scoreArray){
+
+		//Empty value is -1
+		int currentHighestScore = -1;
+		int currentBestPlayer = -1;
+		for(int idx = 0; idx<nrPlayers;idx++){
+			//Vi antager, at der ikke er en eneste spiller uden en eneste checker
+			if(scoreArray[idx]>currentHighestScore){
+				currentBestPlayer = idx;
+				currentHighestScore = scoreArray[idx];
+			}
+
+		}
+
+		return currentBestPlayer;
+	}
+
+	void setEndingScreenForView(){
+		int[] scoreArray = calculateScoreArray();
+		int winnerNr = calculateWinnerNr(scoreArray);
+		view.setWinner(winnerNr,scoreArray[winnerNr]);
+	}
+
 }
 
 class DebugModel extends Model {
@@ -455,10 +504,11 @@ class Grid<E> {
 }
 
 class Board extends Grid<Checker> {
-	int emptyValue = -1;
+	int emptyValue;
 
-	Board(int size) {
+	Board(int size,int emptyValue) {
 		super(size);
+		this.emptyValue = emptyValue;
 
 		// We fill the board in with empty checkers
 		this.fillInitialBoard();
