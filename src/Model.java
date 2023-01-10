@@ -91,14 +91,13 @@ public class Model {
 					return;
 				}
 			}
-
+            
 			passedPreviousTurn = false;
 			expandEdge(tile);
 			calculatePossibleMoves();
 	
 			view.updateBoard();
 			view.updateTurnText();
-			System.out.println("YEet!");
 		}
     }
 
