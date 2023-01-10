@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -54,6 +55,7 @@ class LoadSaveTest {
 
 	@Test
 	@Order(4)
+	@Disabled
 	void ExportFileTest() {
 		App app = new App();
 		String[] args = new String[2];

@@ -12,8 +12,69 @@ public class LoadSave {
 	public static String path = System.getenv("APPDATA") + "\\OthelloGame\\data";
 
 	public static boolean SaveGame(ArrayList<String> moveList) {
+		File saveFile = new File(path + "\\save.txt");
+		return SaveToFile(moveList, saveFile);
+	}
+
+	public static ArrayList<String> LoadGame() {
+		File loadFile = new File(path + "\\save.txt");
+		return LoadFromFile(loadFile);
+	}
+
+	public static boolean CreateFolderStructure() {
+		// sørger for at de forskellige foldere og filer, som spillet skal bruge,
+		// eksisterer
 		try {
-			File saveFile = new File(path + "\\save.txt");
+			// Makes data folder in appdata
+			File directory = new File(path);
+			if (!directory.exists()) {
+				if (!directory.mkdirs())
+					System.out.println("Folder structure not created");
+			}
+		} catch (Exception e) {
+			System.out.println("Exception: " + e);
+			System.out.println("Error creating folder Structure");
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean ExportReplayFile(ArrayList<String> moveList, Stage primaryStage) {
+		FileChooser fileChooser = new FileChooser();
+
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+		fileChooser.getExtensionFilters().add(extFilter);
+		fileChooser.setTitle("Export Othello Replay File");
+		fileChooser.setInitialFileName("Othello Replay");
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
+
+		File exportFile = fileChooser.showSaveDialog(primaryStage);
+
+		if (exportFile == null)
+			return false;
+
+		return SaveToFile(moveList, exportFile);
+	}
+
+	public static ArrayList<String> ImmportReplayFile(Stage primaryStage) {
+		FileChooser fileChooser = new FileChooser();
+
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+		fileChooser.getExtensionFilters().add(extFilter);
+		fileChooser.setTitle("Import Othello Replay File");
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
+
+		File importFile = fileChooser.showSaveDialog(primaryStage);
+
+		if (importFile == null)
+			return null;
+
+		return LoadFromFile(importFile);
+	}
+
+	public static boolean SaveToFile(ArrayList<String> moveList, File saveFile) {
+		try {
 			FileWriter myWriter = new FileWriter(saveFile);
 			for (int i = 0; i < moveList.size(); i++) {
 				myWriter.write(moveList.get(i) + "\n");
@@ -28,7 +89,7 @@ public class LoadSave {
 		return true;
 	}
 
-	public static ArrayList<String> LoadGame() {
+	public static ArrayList<String> LoadFromFile(File loadFile) {
 		ArrayList<String> moveList = new ArrayList<String>();
 		try {
 			File saveFile = new File(path + "\\save.txt");
@@ -44,54 +105,6 @@ public class LoadSave {
 			return null;
 		}
 		return moveList;
-	}
-
-	public static boolean CreateFolderStructure() {
-		// sørger for at de forskellige foldere og filer, som spillet skal bruge,
-		// eksisterer
-		try {
-			// Makes data folder in appdata
-			File directory = new File(path);
-			if (!directory.exists()) {
-				if (!directory.mkdirs())
-					System.out.println("Folder structure not created");
-				;
-			}
-
-		} catch (Exception e) {
-			System.out.println("Exception: " + e);
-			System.out.println("Error creating folder Structure");
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	public static boolean ExportReplayFile(ArrayList<String> moveList, Stage primaryStage) {
-		FileChooser fileChooser = new FileChooser();
-		 
-        //Set extension filter for text files
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        //Show save file dialog
-        File exportFile = fileChooser.showSaveDialog(primaryStage);
-
-        if (exportFile == null) return false;
-        
-		try {
-			FileWriter myWriter = new FileWriter(exportFile);
-			for (int i = 0; i < moveList.size(); i++) {
-				myWriter.write(moveList.get(i) + "\n");
-			}
-			myWriter.close();
-		} catch (IOException e) {
-			System.out.println("Exception: " + e);
-			System.out.println("Error while exporting the moveList");
-			e.printStackTrace();
-			return false;
-		}
-		return true;
 	}
 
 	public static String getPath() {
