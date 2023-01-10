@@ -4,9 +4,9 @@ import java.util.Random;
 
 public class Model {
 
-    View view;
-	int emptyValue;
-	int state = 0; // 0: start, 1: place, 2: flip, 3: skip, 4: end
+	View view;
+	int emptyValue = Constants.EMPTY;
+	int state = Constants.START;
 	int nrCheckersToFlip;
 
 	int boardSize;
@@ -22,14 +22,14 @@ public class Model {
 	boolean isGameOver = false;
 
 	Model(View view, int boardSize, int nrPlayers) {
-        this.view = view;
+		this.view = view;
 		this.boardSize = boardSize;
 		this.nrPlayers = nrPlayers;
 
 		Random randomObject = new Random();
 		this.whichColourTurn = randomObject.nextInt(nrPlayers);
 
-		this.gameBoard = new Board(boardSize,emptyValue);
+		this.gameBoard = new Board(boardSize);
 		this.gamePathGrid = new PathGrid(boardSize);
 	}
 
@@ -39,62 +39,62 @@ public class Model {
 	void step(int[] coords) {
 		switch (this.state) {
 
-		// Start
-		case 0:
-			boolean moveResult = startingMove(coords);
-			recordTurnTaken(moveResult);
+			// Start
+			case Constants.START:
+				boolean moveResult = startingMove(coords);
+				recordTurnTaken(moveResult);
 
-			// Each player gets to put 2 checkers on the board
-			if (this.turnsTaken % 2 == 0 && turnsTaken>0 && moveResult) {
-				this.setNextTurn();
-			}
+				// Each player gets to put 2 checkers on the board
+				if (this.turnsTaken % 2 == 0 && turnsTaken>0 && moveResult) {
+					this.setNextTurn();
+				}
 
-			if (turnsTaken == nrPlayers * 2) {
-				this.state = 1; // Now we place a brick
+				if (turnsTaken == nrPlayers * 2) {
+					this.state = Constants.PLACEMENT; // Now we place a brick
+					this.calculatePossiblePaths();
+				}
+
+				break;
+			// Place checkers
+			case Constants.PLACEMENT:
+				recordTurnTaken(placementMove(coords));
 				this.calculatePossiblePaths();
-			}
 
-			break;
-		// Place checkers
-		case 1:
-			recordTurnTaken(placementMove(coords));
-			this.calculatePossiblePaths();
-
-			// If there are now moves
-			if (getNrNonNullPaths() == 0) {
-				this.state = 3; // Skip
-			}
+				// If there are now moves
+				if (getNrNonNullPaths() == 0) {
+					this.state = Constants.TURN_SKIPPED; // Skip
+				}
 
 
-			break;
-		// Turn has been skipped
-		case 3:
-			// In order to get to this state, we need to skip a turn
-			this.turnsSkipped += 1;
+				break;
+			// Turn has been skipped
+			case Constants.TURN_SKIPPED:
+				// In order to get to this state, we need to skip a turn
+				this.turnsSkipped += 1;
 
-			// See if the next person can play their turn
-			setNextTurn();
-			calculatePossiblePaths();
-			int nrPossiblePaths = getNrNonNullPaths();
+				// See if the next person can play their turn
+				setNextTurn();
+				calculatePossiblePaths();
+				int nrPossiblePaths = getNrNonNullPaths();
 
-			// No one has been able to play
-			if (this.turnsSkipped == nrPlayers) {
-				state = 4; // End the game
-				isGameOver = true;
-				// The next player also has no possible moves
-			} else if (nrPossiblePaths == 0) {
-				this.gamePathGrid.resetGrid();
-				state = 3;
-				// The next player has possible moves
-			} else {
-				state = 1; // We can now place a brick
-				this.turnsSkipped = 0; // we reset the counter
-			}
-			// C'est le end
-		case 4:
-			// Play the most dramatic ending game music ever
-			setEndingScreenForView();
-			break;
+				// No one has been able to play
+				if (this.turnsSkipped == nrPlayers) {
+					state = Constants.GAME_ENDED; // End the game
+					isGameOver = true;
+					// The next player also has no possible moves
+				} else if (nrPossiblePaths == 0) {
+					this.gamePathGrid.resetGrid();
+					state = Constants.TURN_SKIPPED;
+					// The next player has possible moves
+				} else {
+					state = Constants.PLACEMENT; // We can now place a brick
+					this.turnsSkipped = 0; // we reset the counter
+				}
+				// C'est le end
+			case Constants.GAME_ENDED:
+				// Play the most dramatic ending game music ever
+				setEndingScreenForView();
+				break;
 		}
 
 		view.updateBoard(this.gameBoard);
@@ -303,7 +303,7 @@ public class Model {
 	 */
 	Path foundPossiblePath(Path chosenPath) {
 		//We add the checker at the path's starting coordinate to the Path
-		chosenPath.addCheckerToPath(getCheckerFromCoords(chosenPath.startingCoords));
+		chosenPath.addCheckerToPath(getCheckerFromCoords(chosenPath.coordinates));
 		this.gamePathGrid.addPathToGrid(chosenPath);
 		chosenPath = new Path();
 
@@ -333,7 +333,7 @@ public class Model {
 	Path foundCheckerOfSameColour(Path currentPath, Checker currentChecker) {
 
 		// HasCoords && !empty <=> Ø !C... C
-		if (!currentPath.isEmpty() && currentPath.hasStartingCoords()) {
+		if (!currentPath.isEmpty() && currentPath.hasCoords()) {
 			currentPath = foundPossiblePath(currentPath);
 			// Not above implies either: C !C ... C V !C ... Ø... C C
 			// We reset the path and set SeenC true
@@ -347,7 +347,7 @@ public class Model {
 	}
 
 	void setStartingCoordsOfPathToCheckers(Path currentPath, Checker chosenChecker) {
-		currentPath.setStartingCoords(chosenChecker.coordinates);
+		currentPath.setCoords(chosenChecker.coordinates);
 	}
 
 	void resetPath(Path chosenPath) {
@@ -430,26 +430,32 @@ class DebugModel extends Model {
 	}
 }
 
-class Checker {
+abstract class Element{
 
-	final int isEmptyState;
-	public int[] coordinates = new int[2];// x,y
-	public int state; // 1000 er empty
+	int emptyValue = Constants.EMPTY;
 
-	Checker(int x, int y, int state, int isEmptyValue) {
+	//All coords start as undefined/Empty
+	int[] coordinates = new int[] {emptyValue,emptyValue};
+
+	abstract boolean isEmpty();
+}
+class Checker extends Element{
+
+	//Initialiserer dette som en tom værdi
+	int state = emptyValue ;
+
+	Checker(int x, int y) {
 		this.coordinates[0] = x;
 		this.coordinates[1] = y;
-		this.state = state;
-		this.isEmptyState = isEmptyValue;
 	}
 
 	boolean isEmpty() {
-		return this.state == isEmptyState;
+		return this.state == emptyValue;
 	}
 
-    int getState() {
-        return state;
-    }
+	int getState() {
+		return state;
+	}
 
 	void setState(int newState){
 		this.state = newState;
@@ -457,8 +463,11 @@ class Checker {
 
 }
 
+
 class Grid<E> {
 	int gridSize;
+
+	int emptyValue = Constants.EMPTY;
 	E[] gridArray;
 
 	/*
@@ -504,11 +513,9 @@ class Grid<E> {
 }
 
 class Board extends Grid<Checker> {
-	int emptyValue;
 
-	Board(int size,int emptyValue) {
+	Board(int size) {
 		super(size);
-		this.emptyValue = emptyValue;
 
 		// We fill the board in with empty checkers
 		this.fillInitialBoard();
@@ -520,7 +527,7 @@ class Board extends Grid<Checker> {
 		for (int x_0 = 0; x_0 < this.gridSize; x_0++) {
 			for (int y_0 = 0; y_0 < this.gridSize; y_0++) {
 				int position = getPositionFromCoords(x_0, y_0);
-				this.gridArray[position] = new Checker(x_0, y_0, emptyValue, emptyValue);
+				this.gridArray[position] = new Checker(x_0, y_0);
 			}
 
 		}
@@ -562,12 +569,12 @@ class PathGrid extends Grid<Path> {
 
 	/*
 	 * Adds the path to the gridArray
-	 * 
+	 *
 	 * If two paths have the same starting coords, we will just concat the checkers
 	 * in their paths
 	 */
 	void addPathToGrid(Path newPath) {
-		int positionOfNewPath = this.getPositionFromCoords(newPath.startingCoords);
+		int positionOfNewPath = this.getPositionFromCoords(newPath.coordinates);
 		Path currentPath = this.getElementAt(positionOfNewPath);
 
 		// There already exists a path from this coordinate
@@ -600,10 +607,7 @@ class PathGrid extends Grid<Path> {
 
 }
 
-class Path {
-
-	final int numberEmptyCoords = -1;
-	int[] startingCoords = new int[] { numberEmptyCoords, numberEmptyCoords };
+class Path extends Element{
 	ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
 	boolean currentPlayerColourSeen;
 	int sizeOfPath = 0; // For the AI later on
@@ -612,7 +616,7 @@ class Path {
 	// paths for the same placement of a checker
 	void concatCheckersInPaths(Path otherPath) {
 		this.checkersInPath.addAll(otherPath.checkersInPath); // None of the checkers will overlap and count twice, so
-																// we can append all
+		// we can append all
 		this.updateSizeOfPath();
 	}
 
@@ -659,7 +663,7 @@ class Path {
 	}
 
 	void resetCoords() {
-		this.startingCoords = new int[] { numberEmptyCoords, numberEmptyCoords };
+		this.coordinates = new int[] { emptyValue, emptyValue };
 	}
 
 	void resetCurrentPlayerColourSeen() {
@@ -672,12 +676,11 @@ class Path {
 		resetCurrentPlayerColourSeen();
 	}
 
-	void setStartingCoords(int[] coords) {
-		this.startingCoords = coords;
+	void setCoords(int[] coords) {
+		this.coordinates = coords;
 	}
 
-	// Vi kunne lave et flag i stedet...?z
-	boolean hasStartingCoords() {
-		return startingCoords[0] != this.numberEmptyCoords;
+	boolean hasCoords() {
+		return coordinates[0] != this.emptyValue;
 	}
 }
