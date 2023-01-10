@@ -59,7 +59,6 @@ public class View extends Application {
         // Setup Model and UI
         model.newGame();
         initializeBoard();
-        updateBoard();
 
         stage.setTitle("Reversi");
         stage.setScene(scene);
@@ -87,8 +86,8 @@ public class View extends Application {
                 AnchorPane.setTopAnchor(tile, row * (tileSize + strokeWidth));
                 AnchorPane.setLeftAnchor(tile, col * (tileSize + strokeWidth));
                 
-                Circle piece = new Circle(pieceSize / 2, Color.GRAY);
-                piece.setStroke(Color.BLACK);
+                Circle piece = new Circle(pieceSize / 2, Color.TRANSPARENT);
+                piece.setStroke(Color.TRANSPARENT);
                 piece.setStrokeWidth(1);
                 piece.setStrokeType(StrokeType.INSIDE);
                 piece.setMouseTransparent(true);
@@ -127,34 +126,27 @@ public class View extends Application {
 
     public void updateBoard() {
         Tile[][] board = model.getBoard();
+
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
-                pieces[row][col].setVisible(!board[row][col].isEmpty());
+                Circle c = pieces[row][col];
+                Tile t = board[row][col];
 
-                if (board[row][col].isTile(TileType.White)) {
-                    
-                    if(pieces[row][col].getFill() == Color.BLACK){
-                        Animation.flipPiece(pieces[row][col], 2000, controller);
+                c.setVisible(!t.isEmpty());
+
+                if (c.getFill() != getColorFromTile(t.getType())) {
+                    controller.isAnimating = true;
+                    if (c.getFill() == Color.TRANSPARENT) {
+                        Animation.playSound();
                     }
-                    else if(pieces[row][col].getFill() == Color.GRAY){
-                        Animation.placePiece(pieces[row][col], Color.WHITE);
-                    }
-                    else pieces[row][col].setFill(Color.WHITE);
+                    Animation.flipPiece(c, 500, (Color)c.getFill(), getColorFromTile(t.getType()), () -> controller.isAnimating = false);
                 }
-                else if (board[row][col].isTile(TileType.Black)) {
-
-                    if(pieces[row][col].getFill() == Color.WHITE){
-                        Animation.flipPiece(pieces[row][col], 2000, controller);
-                    }
-                    else if(pieces[row][col].getFill() == Color.GRAY){
-                        Animation.placePiece(pieces[row][col], Color.BLACK);
-                    }
-                    else pieces[row][col].setFill(Color.BLACK);
+                else {
+                    c.setFill(getColorFromTile(t.getType()));
                 }
             }
         }
     }
-    
 
     public void updateTurnText() {
         turnText.setText("Current Player: " + model.getCurrentPlayer().toString()); 
@@ -169,5 +161,17 @@ public class View extends Application {
         }
         controller.getScoreText().setText("W: " + whiteTiles + " - B: " + blackTiles);
         controller.getGameEndScreen().setVisible(true);
+    }
+
+    private Color getColorFromTile(TileType t) {
+        if (t == TileType.White) {
+            return Color.WHITE;
+        }
+        else if (t == TileType.Black) {
+            return Color.BLACK;
+        }
+        else {
+            return Color.TRANSPARENT;
+        }
     }
 }

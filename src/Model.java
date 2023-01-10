@@ -259,6 +259,10 @@ class Tile {
         this.type = type;
     }
 
+	public TileType getType() {
+		return type;
+	}
+
     public boolean isTile(TileType type) {
         return this.type == type;
     }
