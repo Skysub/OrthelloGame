@@ -70,12 +70,13 @@ public class Model {
             case Start:
                 if (isValidStartMove(tile)) {
                     tile.setType(currentPlayer);
-                    currentPlayer = currentPlayer.flip();
-
+                    
                     if (++noOfMoves >= 4) {
                         gameState = GameState.Main;
                     }
-
+                    if (noOfMoves % 2 == 0) {
+                        currentPlayer = currentPlayer.flip();
+                    }
                     madeMove = true;
                 }
                 break;
