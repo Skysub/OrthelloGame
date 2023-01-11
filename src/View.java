@@ -83,7 +83,7 @@ public class View extends Application {
         stage.show();
     }
     
-    private void initializeBoard() {
+    public void initializeBoard() {
         //TODO Check if prefWidth and prefHeight is the same
         double boardWidth = grid.getPrefWidth();
         double tileSize = (boardWidth - STROKE_WIDTH * (model.getBoardSize() + 1)) / model.getBoardSize();
@@ -106,10 +106,11 @@ public class View extends Application {
                 
                 AnchorPane.setTopAnchor(tile, row * (tileSize + STROKE_WIDTH));
                 AnchorPane.setLeftAnchor(tile, col * (tileSize + STROKE_WIDTH));
-                
-                Circle piece = new Circle(pieceSize / 2);
-                piece.setStroke(STROKE_COLOR);
+
+                Circle piece = new Circle(pieceSize / 2, Color.TRANSPARENT);
+                piece.setStroke(Color.TRANSPARENT);
                 piece.setStrokeWidth(STROKE_WIDTH / 2);
+                
                 piece.setStrokeType(StrokeType.INSIDE);
                 piece.setMouseTransparent(true);
                 piece.setVisible(false);
@@ -147,13 +148,29 @@ public class View extends Application {
 
     public void updateBoard() {
         Tile[][] board = model.getBoard();
+
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
+                Circle c = pieces[row][col];
+                Tile t = board[row][col];
+
+                c.setVisible(!t.isEmpty());
+
+                if (c.getFill() != getColorFromTile(t.getType())) {
+                    controller.isAnimating = true;
+                    if (c.getFill() == Color.TRANSPARENT) {
+                        Animation.playSound();
+                        Animation.halfFlip(c, 250, getColorFromTile(t.getType()), () -> controller.isAnimating = false);
+                    }
+                    else {
+                        Animation.flipPiece(c, 500, (Color)c.getFill(), getColorFromTile(t.getType()), () -> controller.isAnimating = false);
+                    }
+                }
+                else {
+                    c.setFill(getColorFromTile(t.getType()));
+                }
                 // Used for showin the edge, which is checked for possible moves
                 //tiles[row][col].setFill(board[row][col].isEdge() ? Color.RED : TILE_COLOR);
-                pieces[row][col].setVisible(!board[row][col].isEmpty());
-                pieces[row][col].setFill(getColorFromTile(board[row][col].getType()));
-                pieces[row][col].setStroke(STROKE_COLOR);
             }
         }
 
@@ -178,26 +195,20 @@ public class View extends Application {
     }
 
     public void showEndGame(TileType winner, int whiteTiles, int blackTiles) {
-        if (winner == TileType.Empty) {
-            controller.getGameEndText().setText("Draw");
-        }
-        else {
-            controller.getGameEndText().setText("Winner: " + winner.toString());
-        }
+        controller.getGameEndText().setText((winner == TileType.Empty) ? "Draw" : "Winner: " + winner.toString());
         controller.getScoreText().setText("W: " + whiteTiles + " - B: " + blackTiles);
         controller.getGameEndScreen().setVisible(true);
     }
 
     private Color getColorFromTile(TileType t) {
-        if (t == TileType.White) {
-            return WHITE_COLOR;
-        }
-        else if (t == TileType.Black) {
-            return BLACK_COLOR;
-        }
-        else {
-            return ERROR_COLOR;
-        }
+        switch (t) {
+            case White:
+                return Color.WHITE;
+            case Black:
+                return Color.BLACK;
+            case Empty:
+            default:
+                return Color.TRANSPARENT;
     }
 
     private void onHover(Rectangle rect) {
