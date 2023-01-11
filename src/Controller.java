@@ -16,6 +16,9 @@ public class Controller {
     @FXML private GridPane piecePane;
     @FXML private VBox verticalLabels;
     @FXML private HBox horizontalLabels;
+    @FXML private VBox gameEndScreen;
+    @FXML private Label gameEndText;
+    @FXML private Label scoreText;
 
     public void setModelAndView(Model model, View view) {
         this.model = model;
@@ -27,6 +30,9 @@ public class Controller {
     public GridPane getPiecePane() {return piecePane;}
     public VBox getVerticalLabels() {return verticalLabels;}
     public HBox getHorizontalLabels() {return horizontalLabels;}
+    public VBox getGameEndScreen() {return gameEndScreen;}
+    public Label getGameEndText() {return gameEndText;}
+    public Label getScoreText() {return scoreText;}
 
     public void squarePress (MouseEvent event) {
         
@@ -43,5 +49,10 @@ public class Controller {
         int[] array = model.calculateScoreArray();
         System.out.println(model.whichColourTurn);
         System.out.println(model.turnsTaken);
+    }
+
+    public void playAgain(MouseEvent event) {
+        //TODO Play again
+        System.out.println("Play Again");
     }
 }
