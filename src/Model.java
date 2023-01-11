@@ -49,6 +49,7 @@ public class Model {
 					this.setNextTurn();
 				}
 
+				//After each player has taken 2 turns, we start the main part of the game
 				if (turnsTaken == nrPlayers * 2) {
 					this.state = Constants.PLACEMENT; // Now we place a brick
 					this.calculatePossiblePaths();
@@ -65,12 +66,13 @@ public class Model {
 					this.state = Constants.TURN_SKIPPED; // Skip
 				}
 
-
 				break;
+
 			// Turn has been skipped
 			case Constants.TURN_SKIPPED:
 				// In order to get to this state, we need to skip a turn
 				this.turnsSkipped += 1;
+				System.out.println("TURN SKIPPED");
 
 				// See if the next person can play their turn
 				setNextTurn();
@@ -90,8 +92,10 @@ public class Model {
 					state = Constants.PLACEMENT; // We can now place a brick
 					this.turnsSkipped = 0; // we reset the counter
 				}
+				break;
 				// C'est le end
 			case Constants.GAME_ENDED:
+				System.out.println("GAME ENDED");
 				// Play the most dramatic ending game music ever
 				setEndingScreenForView();
 				break;
@@ -113,26 +117,8 @@ public class Model {
 		return false;
 	}
 
-	//Outdated after we've implemented automatic flipping
-	public boolean flippingMove(int coords[]) {
-		Checker chosenChecker = getCheckerFromCoords(coords);
 
-		if (isLegalFlip(coords)) {
-			this.flipChecker(chosenChecker);
 
-			// update the stats
-			this.nrCheckersToFlip -= 1;
-			this.turnsTaken += 1;
-
-			return true;
-		}
-
-		return false;
-	}
-
-	// There are no checkers to flip, so the players just places a brick in one of
-	// the
-	// Returns true if turn taken, otherwise returns false
 	public boolean placementMove(int[] coords) {
 
 		// We check if the coordinates correspond to the starting coordinates of any path
@@ -148,19 +134,9 @@ public class Model {
 		return false;
 	}
 
-	// Checks if the player may flip the chosen checker - will be deleted in
-	// iteration 2 where we automatically flip
-	boolean isLegalFlip(int[] coords) {
-		Checker chosenChecker = getCheckerFromCoords(coords);
-		Path pathChosen = getPathFromCoords(coords);
-
-		// This checker is in the chosen path and has not already been flipped
-		return pathChosen.isCheckerInPath(chosenChecker) && this.isNotAlreadyFlipped(chosenChecker);
-	}
-
 	// Checks if a player has the same colour as the checker he/she wishes to flip
 	boolean isNotAlreadyFlipped(Checker chosenChecker) {
-		return (this.whichColourTurn != chosenChecker.state);
+		return (this.whichColourTurn != chosenChecker.getState());
 	}
 
 	// In other Orthello games, which are 1-indexed, the "center" contains the
@@ -303,7 +279,8 @@ public class Model {
 	 */
 	Path foundPossiblePath(Path chosenPath) {
 		//We add the checker at the path's starting coordinate to the Path
-		chosenPath.addCheckerToPath(getCheckerFromCoords(chosenPath.coordinates));
+		Checker startingCoordinatesChecker = getCheckerFromCoords(chosenPath.coordinates);
+		chosenPath.addCheckerToPath(startingCoordinatesChecker);
 		this.gamePathGrid.addPathToGrid(chosenPath);
 		chosenPath = new Path();
 
@@ -411,7 +388,7 @@ public class Model {
 	void setEndingScreenForView(){
 		int[] scoreArray = calculateScoreArray();
 		int winnerNr = calculateWinnerNr(scoreArray);
-		view.setWinner(winnerNr,scoreArray[winnerNr]);
+		view.endGame(winnerNr,scoreArray[winnerNr]);
 	}
 
 }
