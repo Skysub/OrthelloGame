@@ -43,7 +43,7 @@
                         <HBox fx:id="horizontalLabels" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" snapToPixel="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
-                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#passButton" text="Pass Turn" textAlignment="CENTER">
+                  <Button fx:id="passButton" alignment="CENTER" mnemonicParsing="false" onAction="#passButton" text="Pass Turn" textAlignment="CENTER">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -53,7 +53,7 @@
                   </Button>
                </children>
             </VBox>
-            <VBox fx:id="gameEndScreen" alignment="CENTER" spacing="10.0" style="-fx-background-color: white;">
+            <VBox fx:id="gameEndScreen" alignment="CENTER" spacing="10.0" style="-fx-background-color: rgba(255, 255, 255, 0.85);">
                <children>
                   <Label fx:id="gameEndText" text="White Won!">
                      <font>

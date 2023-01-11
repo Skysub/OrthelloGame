@@ -1,11 +1,12 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 
 public class Controller {
 
@@ -17,7 +18,7 @@ public class Controller {
     @FXML private Label turnText;
     @FXML private HBox horizontalLabels;
     @FXML private VBox verticalLabels;
-
+    @FXML private Button passButton;
     @FXML private VBox gameEndScreen;
     @FXML private Label gameEndText;
     @FXML private Label scoreText;
@@ -30,21 +31,17 @@ public class Controller {
     public AnchorPane getGrid() {return grid;}
     public Label getTurnText() {return turnText;}
     public Label getGameEndText() {return gameEndText;}
+    public Button getPassButton() {return passButton;}
     public Label getScoreText() {return scoreText;}
     public VBox getGameEndScreen() {return gameEndScreen;}
     public HBox getHorizontalLabels() {return horizontalLabels;}
     public VBox getVerticalLabels() {return verticalLabels;}
 
     public void tilePress (MouseEvent event) {
-
         if(isAnimating) return;
-        Node n = (Node) event.getTarget();
-        String[] split = n.getId().split(",");
-
-        int row = Integer.parseInt(split[0]);
-        int col = Integer.parseInt(split[1]);
-
-        model.tryMove(row, col);
+        Rectangle tile = (Rectangle) event.getTarget();
+        int[] coords = Util.fromId(tile.getId());
+        model.tryMove(coords[0], coords[1]);
     }
 
     public void passButton(ActionEvent event) {
