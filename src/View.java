@@ -20,7 +20,6 @@ public class View extends Application {
     private static final Color TILE_COLOR = Color.BEIGE;
     private static final Color WHITE_COLOR = Color.WHITE;
     private static final Color BLACK_COLOR = Color.BLACK;
-    private static final Color ERROR_COLOR = Color.PURPLE;
 
     private static final Color POSSIBLE_MOVE_COLOR = new Color(0.25, 0.25, 1, 0.25);
     private static final Color POSSIBLE_MOVE_HIGHLIGHET_COLOR = new Color(0.25, 0.25, 1, 0.5);
@@ -156,7 +155,7 @@ public class View extends Application {
 
                 c.setVisible(!t.isEmpty());
 
-                if (c.getFill() != getColorFromTile(t.getType())) {
+                if (c.getFill() != getColorFromTile(t.getType()) && c.getFill() != POSSIBLE_MOVE_COLOR) {
                     controller.isAnimating = true;
                     if (c.getFill() == Color.TRANSPARENT) {
                         Animation.playSound();
@@ -186,6 +185,7 @@ public class View extends Application {
             var t = move.getTile();
             Circle c = pieces[t.getRow()][t.getCol()];
             c.setFill(POSSIBLE_MOVE_COLOR);
+            c.setStroke(STROKE_COLOR);
             c.setVisible(true);
         }
     }
@@ -203,12 +203,13 @@ public class View extends Application {
     private Color getColorFromTile(TileType t) {
         switch (t) {
             case White:
-                return Color.WHITE;
+                return WHITE_COLOR;
             case Black:
-                return Color.BLACK;
+                return BLACK_COLOR;
             case Empty:
             default:
                 return Color.TRANSPARENT;
+        }
     }
 
     private void onHover(Rectangle rect) {
