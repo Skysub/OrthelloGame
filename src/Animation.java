@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.ArrayList;
 
 import javafx.animation.FillTransition;
 import javafx.animation.RotateTransition;
@@ -14,23 +15,34 @@ public class Animation {
     private static String soundfile = "PiecePlace.mp3";
     private static AudioClip sound = new AudioClip(new File(soundfile).toURI().toString());
 
-    public static void placePiece(Circle circle, Color color){
-        circle.setFill(color);
-        sound.play();
+    private static ArrayList<Integer> activeAnimations = new ArrayList<Integer>();
+    private static int nextId = 0;
+
+    private static int getNextId() {
+        //TODO Reset at some fixed value: "(boardSize - 2) * 3 + 1" which is the maximum number of flips at one time
+        return nextId++;
     }
 
     public static void playSound() {
         sound.play();
     }
 
-    public static void flipPiece(Circle circle, int duration, Color from, Color to, Runnable onFinished){
+    public static boolean isAnimating() {
+        return activeAnimations.size() != 0;
+    }
+
+    public static void flipPiece(Circle circle, int duration, Color from, Color to){
+
+        int animationId = getNextId();
+        activeAnimations.add(animationId);
+
         Duration time = new Duration(duration);
         RotateTransition rotate = new RotateTransition();
         rotate.setNode(circle);
         rotate.setByAngle(180);
         rotate.setAxis(Rotate.Y_AXIS);
         rotate.setDuration(time);
-        rotate.setOnFinished(e -> onFinished.run());
+        rotate.setOnFinished(e -> activeAnimations.remove(Integer.valueOf(animationId))); 
         rotate.play();
 
         FillTransition fill = new FillTransition(new Duration(1), circle, from, to);
@@ -42,7 +54,11 @@ public class Animation {
         stroke.play();
     }
 
-    public static void halfFlip(Circle circle, int duration, Color to, Runnable onFinished) {
+    public static void halfFlip(Circle circle, int duration, Color to) {
+
+        int animationId = getNextId();
+        activeAnimations.add(animationId);
+
         circle.setRotationAxis(Rotate.Y_AXIS);
         circle.setRotate(90);
         circle.setFill(to);
@@ -51,7 +67,7 @@ public class Animation {
         RotateTransition rotate = new RotateTransition(time, circle);
         rotate.setByAngle(90);
         rotate.setAxis(Rotate.Y_AXIS);
-        rotate.setOnFinished(e -> onFinished.run());
+        rotate.setOnFinished(e -> activeAnimations.remove(Integer.valueOf(animationId)));
         rotate.play();
     }  
 }

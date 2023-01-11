@@ -156,13 +156,12 @@ public class View extends Application {
                 c.setVisible(!t.isEmpty());
 
                 if (c.getFill() != getColorFromTile(t.getType()) && c.getFill() != POSSIBLE_MOVE_COLOR) {
-                    controller.isAnimating = true;
-                    if (c.getFill() == Color.TRANSPARENT) {
+                    if (c.getFill() == Color.TRANSPARENT || c.getFill() == POSSIBLE_MOVE_HIGHLIGHET_COLOR) {
                         Animation.playSound();
-                        Animation.halfFlip(c, 250, getColorFromTile(t.getType()), () -> controller.isAnimating = false);
+                        Animation.halfFlip(c, 250, getColorFromTile(t.getType()));
                     }
                     else {
-                        Animation.flipPiece(c, 500, (Color)c.getFill(), getColorFromTile(t.getType()), () -> controller.isAnimating = false);
+                        Animation.flipPiece(c, 500, (Color)c.getFill(), getColorFromTile(t.getType()));
                     }
                 }
                 else {
@@ -185,7 +184,6 @@ public class View extends Application {
             var t = move.getTile();
             Circle c = pieces[t.getRow()][t.getCol()];
             c.setFill(POSSIBLE_MOVE_COLOR);
-            c.setStroke(STROKE_COLOR);
             c.setVisible(true);
         }
     }

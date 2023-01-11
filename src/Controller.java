@@ -12,7 +12,6 @@ public class Controller {
 
     private Model model;
     private View view;
-    public boolean isAnimating;
 
     @FXML private AnchorPane grid;
     @FXML private Label turnText;
@@ -38,7 +37,8 @@ public class Controller {
     public VBox getVerticalLabels() {return verticalLabels;}
 
     public void tilePress (MouseEvent event) {
-        if(isAnimating) return;
+        if(Animation.isAnimating()) return;
+
         Rectangle tile = (Rectangle) event.getTarget();
         int[] coords = Util.fromId(tile.getId());
         model.tryMove(coords[0], coords[1]);
