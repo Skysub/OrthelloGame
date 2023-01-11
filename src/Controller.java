@@ -7,7 +7,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
 public class Controller {
-    
+
     private Model model;
     private View view;
 
@@ -35,7 +35,7 @@ public class Controller {
     public Label getScoreText() {return scoreText;}
 
     public void squarePress (MouseEvent event) {
-        
+
         // Parse which tile was pressed based on ID: "row,column"
         Rectangle r = (Rectangle) event.getTarget();
         var split = r.getId().split(",");
@@ -47,9 +47,14 @@ public class Controller {
         int[] coords = {row, column};
         model.step(coords);
         int[] array = model.calculateScoreArray();
-        System.out.println(model.whichColourTurn);
-        System.out.println(model.turnsTaken);
+
+        if(model.state == Constants.GAME_ENDED){
+            model.endGame();
+        }
+
     }
+
+
 
     public void playAgain(MouseEvent event) {
         //TODO Play again

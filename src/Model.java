@@ -34,7 +34,37 @@ public class Model {
 	}
 
 
+	void endGame(){
+		System.out.println("GAME ENDED");
+		//TODO: Play the most dramatic ending game music ever
+		setEndingScreenForView();
+		view.updateBoard(gameBoard);
+	}
 
+	void skipTurn(){
+		// In order to get to this state, we need to skip a turn
+		this.turnsSkipped += 1;
+		System.out.println("TURN SKIPPED");
+
+		// See if the next person can play their turn
+		setNextTurn();
+		calculatePossiblePaths();
+		int nrPossiblePaths = getNrNonNullPaths();
+
+		// No one has been able to play
+		if (this.turnsSkipped == nrPlayers) {
+			state = Constants.GAME_ENDED; // End the game
+			isGameOver = true;
+			// The next player also has no possible moves
+		} else if (nrPossiblePaths == 0) {
+			this.gamePathGrid.resetGrid();
+			state = Constants.TURN_SKIPPED;
+			// The next player has possible moves
+		} else {
+			state = Constants.PLACEMENT; // We can now place a brick
+			this.turnsSkipped = 0; // we reset the counter
+		}
+	}
 
 	void step(int[] coords) {
 		switch (this.state) {
@@ -61,43 +91,11 @@ public class Model {
 				recordTurnTaken(placementMove(coords));
 				this.calculatePossiblePaths();
 
-				// If there are now moves
+				// If there are no moves
 				if (getNrNonNullPaths() == 0) {
 					this.state = Constants.TURN_SKIPPED; // Skip
 				}
 
-				break;
-
-			// Turn has been skipped
-			case Constants.TURN_SKIPPED:
-				// In order to get to this state, we need to skip a turn
-				this.turnsSkipped += 1;
-				System.out.println("TURN SKIPPED");
-
-				// See if the next person can play their turn
-				setNextTurn();
-				calculatePossiblePaths();
-				int nrPossiblePaths = getNrNonNullPaths();
-
-				// No one has been able to play
-				if (this.turnsSkipped == nrPlayers) {
-					state = Constants.GAME_ENDED; // End the game
-					isGameOver = true;
-					// The next player also has no possible moves
-				} else if (nrPossiblePaths == 0) {
-					this.gamePathGrid.resetGrid();
-					state = Constants.TURN_SKIPPED;
-					// The next player has possible moves
-				} else {
-					state = Constants.PLACEMENT; // We can now place a brick
-					this.turnsSkipped = 0; // we reset the counter
-				}
-				break;
-				// C'est le end
-			case Constants.GAME_ENDED:
-				System.out.println("GAME ENDED");
-				// Play the most dramatic ending game music ever
-				setEndingScreenForView();
 				break;
 		}
 
@@ -419,7 +417,7 @@ abstract class Element{
 class Checker extends Element{
 
 	//Initialiserer dette som en tom værdi
-	int state = emptyValue ;
+	int state = super.emptyValue ;
 
 	Checker(int x, int y) {
 		this.coordinates[0] = x;
@@ -541,6 +539,7 @@ class PathGrid extends Grid<Path> {
 	// objects
 	void resetGrid() {
 		nonNullPaths = new ArrayList<Path>();
+		nrNonNullPaths = 0;
 		gridArray = new Path[gridSize * gridSize];
 	}
 
