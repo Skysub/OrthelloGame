@@ -388,7 +388,7 @@ public class Model {
 	void setEndingScreenForView(){
 		int[] scoreArray = calculateScoreArray();
 		int winnerNr = calculateWinnerNr(scoreArray);
-		view.setWinner(winnerNr,scoreArray[winnerNr]);
+		view.endGame(winnerNr,scoreArray[winnerNr]);
 	}
 
 }

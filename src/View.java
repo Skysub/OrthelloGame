@@ -66,6 +66,7 @@ public class View extends Application {
 
 
         initializeBoard();
+        controller.getGameEndScreen().setVisible(false);
     }
 
     public static void main(String[] args) {
@@ -190,11 +191,22 @@ public class View extends Application {
 
     //Hvis nu, at vi skal vise nogen grafik, når spillet er slut, før vi viser, hvem der vandt
     public void setEndingScreen(){
+        controller.getGameEndScreen().setVisible(true);
     }
 
     //Bruges til at vise, hvem der vandt og deres score
     public void setWinner(int winnerNr,int score){
 
+        String winner = "";
+        if (winnerNr == 0) {
+            winner += "White";
+        }
+        else if (winnerNr == 1) {
+            winner += "Black";
+        }
+        //TODO Handle draw
+        controller.getGameEndText().setText("Winner: " + winner);
+        controller.getScoreText().setText("Score: " + score);
     }
 
     //Den samlede funktion, der bliver kaldt i Model.step() metoden i case 4
