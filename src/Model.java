@@ -107,13 +107,15 @@ public class Model {
 		if (possibleMoves.size() > 0) {
 			return;
 		}
-		if (!passedPreviousTurn) {
+        // If the previous player didn't pass, then we switch player and calculate the new moves
+		else if (!passedPreviousTurn) {
 			passedPreviousTurn = true;
 			currentPlayer = currentPlayer.flip();
 			calculatePossibleMoves();
 			view.updateBoard();
 			view.updateTurnText();
 		}
+        // If the previous player passed, then the game should end
 		else {
 			endGame();
 		}
@@ -137,17 +139,24 @@ public class Model {
 
 	private void calculatePossibleMoves() {
 		possibleMoves.clear();
+        // If we're at the start of the game, only check the 4 center squares.
+        if (gameState == GameState.Start) {
+            for (int row = (boardSize / 2) - 1; row <= boardSize / 2; row++) {
+                for (int col = (boardSize / 2) - 1; col <= boardSize / 2; col++) {
+                    if (isValidStartMove(board[row][col])) {
+                        possibleMoves.add(new PossibleMove(currentPlayer, board[row][col], new ArrayList<Tile>()));
+                    }
+                }
+            }
+            return;
+        }
+        // Else, loop through the board and check squares that are part of the edge
 		for (int row = 0; row < boardSize; row++) {
 			for (int col = 0; col < boardSize; col++) {
-				Tile t = board[row][col];
-
-				if (gameState == GameState.Start && isValidStartMove(t)) {
-					possibleMoves.add(new PossibleMove(currentPlayer, t, new ArrayList<Tile>()));
-				}
-				else if (gameState == GameState.Main && t.isEdge()) {
-					var flip = tilesToBeFlipped(t);
+				if (board[row][col].isEdge()) {
+					var flip = tilesToBeFlipped(board[row][col]);
 					if (flip.size() > 0) {
-						possibleMoves.add(new PossibleMove(currentPlayer, t, flip));
+						possibleMoves.add(new PossibleMove(currentPlayer, board[row][col], flip));
 					}
 				}
 			}
@@ -166,7 +175,7 @@ public class Model {
 
 	// Expands the edge around places pieces from the argument "fromTile"
 	private void expandEdge(Tile fromTile) {
-		// Set isEdge flag to true for all empty neighbour tiles
+		// Set isEdge flag to true for all empty neighbour tiles, and false for all non-empty tiles (including itself)
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dy = -1; dy <= 1; dy++) {
 				int row = fromTile.getRow() + dx;
@@ -205,11 +214,13 @@ public class Model {
         int y = tile.getCol() + dy;
 
         while (isInsideBoard(x, y) && !board[x][y].isEmpty()) {
-            if (board[x][y].isTile(currentPlayer.flip())) {
-                tiles.add(board[x][y]);
-            }
-            else if (board[x][y].isTile(currentPlayer)) {
+            if (board[x][y].isTile(currentPlayer)) {
                 return tiles;
+            }
+            else {
+                // IF the tiles isn't empty or the current player it's an opponents tile
+                // which will be flipped if the current players tiles is at the end of the chain.
+                tiles.add(board[x][y]);
             }
             x += dx;
             y += dy;
@@ -221,8 +232,11 @@ public class Model {
     }
 
     private void endGame() {
+        //Clears the possible moves and updates the board one last time to show the last move
 		possibleMoves.clear();
 		view.updateBoard();
+
+        //TODO Make more general way to determine this.
         int whiteTiles = 0;
         int blackTiles = 0;
 
