@@ -15,7 +15,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-public class View extends Application {
+public class GameView extends Application {
 
     private static final Color TILE_COLOR = Color.BEIGE;
     private static final Color WHITE_COLOR = Color.WHITE;
@@ -33,7 +33,7 @@ public class View extends Application {
 
     // MCV
     private Model model;
-    private Controller controller;
+    private GameController controller;
 
     // UI Elements
     private Scene scene;

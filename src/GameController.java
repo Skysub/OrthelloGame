@@ -8,10 +8,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
-public class Controller {
+public class GameController {
 
     private Model model;
-    private View view;
+    private GameView view;
 
     @FXML private AnchorPane grid;
     @FXML private Label turnText;
@@ -22,7 +22,7 @@ public class Controller {
     @FXML private Label gameEndText;
     @FXML private Label scoreText;
 
-    public void setModelAndView(Model model, View view) {
+    public void setModelAndView(Model model, GameView view) {
         this.model = model;
         this.view = view;
     }

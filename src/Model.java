@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class Model {
     
-    private View view;
+    private GameView view;
     private Random random;
     
     private int boardSize = 8;
@@ -18,7 +18,7 @@ public class Model {
     private TileType startedPreviousGame;   // The player that started the previous game
     private boolean passedPreviousTurn;     // Whether the previous player passed their turn
 
-    public Model(View view) {
+    public Model(GameView view) {
         this.view = view;
         random = new Random();
     }
