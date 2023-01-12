@@ -38,8 +38,7 @@ public class View extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
-        model = new Model(this, 8, 2);
+        model = new Model(this, 8, 2,);
         Scene scene;
        
         try {
@@ -195,7 +194,7 @@ public class View extends Application {
     }
 
     //Bruges til at vise, hvem der vandt og deres score
-    public void setWinner(int winnerNr,int score){
+    public void setWinner(ArrayList<Player> winnersArrayList,int score){
 
         String winner = "";
         if (winnerNr == 0) {
@@ -210,7 +209,7 @@ public class View extends Application {
     }
 
     //Den samlede funktion, der bliver kaldt i Model.step() metoden i case 4
-    public void endGame(int winnerNr, int score){
+    public void endGame(ArrayList<Player> winnersArrayList, int score){
         setEndingScreen();
         setWinner(winnerNr,score);
     }

@@ -34,6 +34,7 @@ public class Controller {
     public Label getGameEndText() {return gameEndText;}
     public Label getScoreText() {return scoreText;}
 
+    //TODO: Tilføje knappen til skip turn
     public void squarePress (MouseEvent event) {
 
         // Parse which tile was pressed based on ID: "row,column"
@@ -48,6 +49,10 @@ public class Controller {
         model.step(coords);
         int[] array = model.calculateScoreArray();
 
+        //TODO: Fjern dette efter, at du har lavet knappen til turnskip
+        if(model.state == Constants.TURN_SKIPPED){
+            model.skipTurn();
+        }
         if(model.state == Constants.GAME_ENDED){
             model.endGame();
         }

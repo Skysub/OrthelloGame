@@ -1,16 +1,20 @@
+import javafx.scene.paint.Color;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 public class Model {
 
 	View view;
-	int emptyValue = Constants.EMPTY;
 	int state = Constants.START;
-	int nrCheckersToFlip;
 
 	int boardSize;
-	int whichColourTurn;
+
+	PlayerManager gamePlayerManager;
+	int currentPlayerIndex;
+	Player currentPlayer;
 	int nrPlayers;
 	Board gameBoard;
 
@@ -21,16 +25,13 @@ public class Model {
 
 	boolean isGameOver = false;
 
-	Model(View view, int boardSize, int nrPlayers) {
+	Model(View view, int boardSize, int nrPlayers, ArrayList<Color> playerColors, ArrayList<String> playerNames) {
 		this.view = view;
 		this.boardSize = boardSize;
 		this.nrPlayers = nrPlayers;
-
-		Random randomObject = new Random();
-		this.whichColourTurn = randomObject.nextInt(nrPlayers);
-
 		this.gameBoard = new Board(boardSize);
 		this.gamePathGrid = new PathGrid(boardSize);
+		this.gamePlayerManager = new PlayerManager(nrPlayers,playerColors,playerNames);
 	}
 
 
@@ -64,18 +65,22 @@ public class Model {
 			state = Constants.PLACEMENT; // We can now place a brick
 			this.turnsSkipped = 0; // we reset the counter
 		}
+
+		view.updateBoard(this.gameBoard);
 	}
 
 	void step(int[] coords) {
+		Turn currentTurn = new Turn(coords);
+
 		switch (this.state) {
 
 			// Start
-			case Constants.START:
+			case Constants.START -> {
 				boolean moveResult = startingMove(coords);
-				recordTurnTaken(moveResult);
+				recordTurnTaken(moveResult,currentTurn);
 
 				// Each player gets to put 2 checkers on the board
-				if (this.turnsTaken % 2 == 0 && turnsTaken>0 && moveResult) {
+				if (this.turnsTaken % 2 == 0 && turnsTaken > 0 && moveResult) {
 					this.setNextTurn();
 				}
 
@@ -84,19 +89,16 @@ public class Model {
 					this.state = Constants.PLACEMENT; // Now we place a brick
 					this.calculatePossiblePaths();
 				}
-
-				break;
+			}
 			// Place checkers
-			case Constants.PLACEMENT:
-				recordTurnTaken(placementMove(coords));
-				this.calculatePossiblePaths();
+			case Constants.PLACEMENT -> {
+				recordTurnTaken(placementMove(coords),currentTurn);
 
 				// If there are no moves
 				if (getNrNonNullPaths() == 0) {
 					this.state = Constants.TURN_SKIPPED; // Skip
 				}
-
-				break;
+			}
 		}
 
 		view.updateBoard(this.gameBoard);
@@ -107,7 +109,8 @@ public class Model {
 		// Can't place outside the center square, can only place where there is no
 		// checker
 		if (isLegalStartingMove(coords)) {
-			this.flipChecker(coords);
+			Checker currentChecker = this.gameBoard.getElementAt(coords);
+			currentChecker.flipChecker(currentPlayer);
 
 			return true;
 		}
@@ -123,9 +126,10 @@ public class Model {
 		//If it does, we flip all checkers (include the one in the starting coordinates) to the current player's colour
 		if (this.gamePathGrid.pathExists(coords)) {
 			Path pathChosen = getPathFromCoords(coords);
-			flipCheckersInPath(pathChosen);
+			pathChosen.flipCheckersInPath(this.currentPlayer);
 			this.setNextTurn();
 			this.gamePathGrid.resetGrid();
+			this.calculatePossiblePaths();
 			return true;
 		}
 
@@ -134,7 +138,7 @@ public class Model {
 
 	// Checks if a player has the same colour as the checker he/she wishes to flip
 	boolean isNotAlreadyFlipped(Checker chosenChecker) {
-		return (this.whichColourTurn != chosenChecker.getState());
+		return (this.currentPlayer != chosenChecker.getState());
 	}
 
 	// In other Orthello games, which are 1-indexed, the "center" contains the
@@ -145,33 +149,17 @@ public class Model {
 				&& (gameBoard.getElementAt(coords).isEmpty());
 	}
 
-	void recordTurnTaken(Boolean moveValue) {
+	void recordTurnTaken(Boolean moveValue,Turn turnTaken) {
 		if (moveValue) {
 			this.turnsTaken += 1;
+			this.currentPlayer.recordTurn(turnTaken);
 		}
 	}
 
-	// Sets status of the checker to be flipped to the current player's colour
-	void flipChecker(Checker chosenChecker) {
-		setStateOfChecker(chosenChecker, this.whichColourTurn);
-	}
-
-	void flipChecker(int[] coords) {
-		setStateOfChecker(coords, this.whichColourTurn);
-	}
-
-	void setStateOfChecker(int[] coords, int newState) {
-		Checker chosenChecker = getCheckerFromCoords(coords);
-		chosenChecker.state = newState;
-	}
-
-	void setStateOfChecker(Checker chosenChecker, int newState) {
-		chosenChecker.state = newState;
-	}
-
 	void setNextTurn() {
-		this.whichColourTurn = ++this.whichColourTurn % this.nrPlayers;
-		view.updateCurrentPlayer(this.whichColourTurn);
+		this.currentPlayerIndex = ++this.currentPlayerIndex % this.nrPlayers;
+		this.currentPlayer = this.gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
+		view.updateCurrentPlayer(this.currentPlayerIndex);
 	}
 
 	Checker getCheckerFromCoords(int[] coords) {
@@ -182,9 +170,6 @@ public class Model {
 		return this.gamePathGrid.getElementAt(coords);
 	}
 
-	void resetGrid() {
-		this.gamePathGrid.resetGrid();
-	}
 
 	// RandomlyAddsPaths to the PathGrid
 	void calculatePossiblePaths() {
@@ -195,6 +180,7 @@ public class Model {
 			Path diagonalTopToBottomPath = new Path();
 			Path diagonalBottomToRightPath = new Path();
 			Path diagonalTopToLeftPath = new Path();
+			Path diagonalTopToRightPath = new Path();
 
 			for (int j = 0; j < this.boardSize; j++) {
 
@@ -204,6 +190,7 @@ public class Model {
 				int[] diagonalTopToBottomCoords = getDiagonalTopToBottomCoords(i, j);
 				int[] diagonalBotttomToRightCoords = getDiagonalBottomToRightCoords(i, j);
 				int[] diagonalTopToLeftCoords = getDiagonalTopToLeftCoords(i,j);
+				int[] diagonalTopToRightCoords = getDiagonalTopToRightCoords(i,j);
 
 				//Calculate the vertical and horizontal paths
 				horizontalPath = iteratePathAlgorithm(horizontalCoords, horizontalPath);
@@ -214,6 +201,7 @@ public class Model {
 					diagonalTopToBottomPath = iteratePathAlgorithm(diagonalTopToBottomCoords, diagonalTopToBottomPath);
 					diagonalBottomToRightPath = iteratePathAlgorithm(diagonalBotttomToRightCoords, diagonalBottomToRightPath);
 					diagonalTopToLeftPath = iteratePathAlgorithm(diagonalTopToLeftCoords,diagonalTopToLeftPath);
+					diagonalTopToRightPath = iteratePathAlgorithm(diagonalTopToRightCoords,diagonalTopToRightPath);
 				}
 			}
 		}
@@ -238,7 +226,7 @@ public class Model {
 	}
 
 	int[] getDiagonalTopToBottomCoords(int i, int j) {
-		return new int[] { j, i + j };
+		return new int[] { j+i,  j };
 	}
 
 	int[] getDiagonalBottomToRightCoords(int i, int j) {
@@ -248,6 +236,11 @@ public class Model {
 	int[] getDiagonalTopToLeftCoords(int i, int j){
 		return new int[] {this.boardSize - (1 + j + i),j};
 	}
+
+	int[] getDiagonalTopToRightCoords(int i, int j){
+		return new int[] { j,  j+i };
+	}
+
 
 	Path iteratePathAlgorithm(int[] coords, Path currentPath) {
 
@@ -292,7 +285,7 @@ public class Model {
 	Path foundEmptyChecker(Path currentPath, Checker currentChecker) {
 		// !Empty && CSeen <=> C !C... Ø
 		if (!currentPath.isEmpty() && currentPath.getStatusOfCurrentColourSeen()) {
-			setStartingCoordsOfPathToCheckers(currentPath, currentChecker);
+			currentPath.setCoords(currentChecker.coordinates);
 			currentPath = foundPossiblePath(currentPath);
 		}
 		// Empty V !CSeen <=> !C... Ø... C or Ø...C
@@ -301,7 +294,7 @@ public class Model {
 		}
 
 		// We set the starting coords of the path here regardless
-		setStartingCoordsOfPathToCheckers(currentPath, currentChecker);
+		currentPath.setCoords(currentChecker.coordinates);
 		return currentPath;
 	}
 
@@ -321,9 +314,6 @@ public class Model {
 
 	}
 
-	void setStartingCoordsOfPathToCheckers(Path currentPath, Checker chosenChecker) {
-		currentPath.setCoords(chosenChecker.coordinates);
-	}
 
 	void resetPath(Path chosenPath) {
 		chosenPath.resetPath();
@@ -341,71 +331,17 @@ public class Model {
 		return this.boardSize;
 	}
 
-	void flipCheckersInPath(Path chosenPath){
-		chosenPath.flipCheckersInPath(this.whichColourTurn);
-	}
-
-	//The current way we calculate the score is just to count how many checkers each player has
-	int[] calculateScoreArray(){
-		int[] scoreArray = countCheckersForEachPlayerArray();
-		return scoreArray;
-	}
-
-	//Returns an array the size of nrPlayers, where each element signifies the number of checker's with that player's colour
-	int[] countCheckersForEachPlayerArray(){
-		int[] countArray = new int[nrPlayers];
-
-		for(int i = 0; i<boardSize;i++){
-			for(int j = 0; j<boardSize;j++){
-				Checker currentChecker = this.gameBoard.getElementAt(new int[] {i,j});
-				if(!currentChecker.isEmpty()){
-					countArray[currentChecker.getState()] += 1;
-				}
-			}
-		}
-		return countArray;
-	}
-
-	int calculateWinnerNr(int[] scoreArray){
-
-		//Empty value is -1
-		int currentHighestScore = -1;
-		int currentBestPlayer = -1;
-		for(int idx = 0; idx<nrPlayers;idx++){
-			//Vi antager, at der ikke er en eneste spiller uden en eneste checker
-			if(scoreArray[idx]>currentHighestScore){
-				currentBestPlayer = idx;
-				currentHighestScore = scoreArray[idx];
-			}
-
-		}
-
-		return currentBestPlayer;
-	}
 
 	void setEndingScreenForView(){
-		int[] scoreArray = calculateScoreArray();
-		int winnerNr = calculateWinnerNr(scoreArray);
-		view.endGame(winnerNr,scoreArray[winnerNr]);
+		ArrayList<Player> winnersArrayList = this.gamePlayerManager.setHighScoreAndGetHighestScoringPlayers();
+		view.endGame(winnersArrayList, gamePlayerManager.highScore);
 	}
 
 }
 
-class DebugModel extends Model {
 
-	DebugModel(View view, int size, int nrPlayers) {
-		super(view ,size, nrPlayers);
-	}
 
-	void setColumnCheckers(int x, int lower, int upper, int newState) {
-		for (int y = lower; y < upper; y++) {
-			int[] currentCoords = { x, y };
-			super.setStateOfChecker(currentCoords, newState);
-		}
-	}
-}
-
-abstract class Element{
+abstract class BoardElement {
 
 	int emptyValue = Constants.EMPTY;
 
@@ -414,10 +350,9 @@ abstract class Element{
 
 	abstract boolean isEmpty();
 }
-class Checker extends Element{
+class Checker extends BoardElement {
 
-	//Initialiserer dette som en tom værdi
-	int state = super.emptyValue ;
+	Player state;
 
 	Checker(int x, int y) {
 		this.coordinates[0] = x;
@@ -425,21 +360,26 @@ class Checker extends Element{
 	}
 
 	boolean isEmpty() {
-		return this.state == emptyValue;
+		return Objects.isNull(this.state);
 	}
 
-	int getState() {
+	Player getState() {
 		return state;
 	}
 
-	void setState(int newState){
-		this.state = newState;
+	void flipChecker(Player newPlayer){
+		if(!isEmpty()){
+			Player oldPlayer = this.state;
+			oldPlayer.decreaseNumberOfCheckers();
+		}
+		newPlayer.increaseNumberOfCheckers();
+		this.state = newPlayer;
 	}
 
 }
 
 
-class Grid<E> {
+class TwoDimensionalGrid<E> {
 	int gridSize;
 
 	int emptyValue = Constants.EMPTY;
@@ -449,7 +389,7 @@ class Grid<E> {
 	 * Koden er baseret på kode skrevet af user4910279, link:
 	 * https://stackoverflow.com/a/45045080/12190113
 	 */
-	Grid(int size, E... classtype) {
+	TwoDimensionalGrid(int size, E... classtype) {
 		this.gridSize = size;
 		gridArray = Arrays.copyOf(classtype, gridSize * gridSize);
 	}
@@ -487,7 +427,7 @@ class Grid<E> {
 
 }
 
-class Board extends Grid<Checker> {
+class Board extends TwoDimensionalGrid<Checker> {
 
 	Board(int size) {
 		super(size);
@@ -524,9 +464,14 @@ class Board extends Grid<Checker> {
 		return (x >= lower && x < upper && y >= lower && y < upper);
 	}
 
+	void flipCheckerAtCoords(int[] coords, Player newPlayer){
+		Checker chosenChecker = getElementAt(coords);
+		chosenChecker.flipChecker(newPlayer);
+	}
+
 }
 
-class PathGrid extends Grid<Path> {
+class PathGrid extends TwoDimensionalGrid<Path> {
 
 	int nrNonNullPaths = 0;
 	ArrayList<Path> nonNullPaths = new ArrayList<Path>();
@@ -583,7 +528,7 @@ class PathGrid extends Grid<Path> {
 
 }
 
-class Path extends Element{
+class Path extends BoardElement {
 	ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
 	boolean currentPlayerColourSeen;
 	int sizeOfPath = 0; // For the AI later on
@@ -618,10 +563,10 @@ class Path extends Element{
 		return sizeOfPath;
 	}
 
-	void flipCheckersInPath(int newState){
+	void flipCheckersInPath(Player newPlayer){
 		int sizeOfPath = this.getSizeOfPath();
 		for(int i = 0; i<sizeOfPath;i++){
-			this.checkersInPath.get(i).setState(newState);
+			this.checkersInPath.get(i).flipChecker(newPlayer);
 		}
 	}
 
@@ -659,4 +604,127 @@ class Path extends Element{
 	boolean hasCoords() {
 		return coordinates[0] != this.emptyValue;
 	}
+}
+
+class Turn{
+
+	int[] coordinates;
+	int timeTaken;
+
+	Turn(int[] coordinates){
+		this.coordinates = coordinates;
+	}
+}
+
+class Player{
+	private String playerName;
+	private int score;
+	private ArrayList<Turn> turnHistory;
+	private Color playerColor;
+	private int nrCheckers;
+	private boolean isPlayer;
+
+
+	Player(String name,Color playerColor){
+		this.playerName = name;
+		this.playerColor = playerColor;
+	}
+
+	void recordTurn(Turn newTurn){
+		turnHistory.add(newTurn);
+	}
+
+	void decreaseNumberOfCheckers(){
+		this.nrCheckers -= 1;
+	}
+
+	void increaseNumberOfCheckers(){
+		this.nrCheckers += 1;
+	}
+
+	Color getPlayerColor(){
+		return this.playerColor;
+	}
+
+	int getScore(){
+		return this.score;
+	}
+
+	int getNrCheckers(){ return this.nrCheckers;}
+
+	//Calculates and updates the score
+	int calculateScore(){
+		this.score = this.getNrCheckers();
+		return this.score;
+	}
+
+}
+
+class PlayerManager {
+	ArrayList<Player> playersArray = new ArrayList<Player>();
+	int highScore = Constants.UNDEFINED;
+	int currentPlayerIndex;
+	int nrPlayers;
+	int nrTurnsTaken;
+
+	PlayerManager(int nrPlayers, ArrayList<javafx.scene.paint.Color> playerColors, ArrayList<String> playerNames){
+		this.nrPlayers = nrPlayers;
+		for(int i = 0; i<nrPlayers; i++){
+			Color currentColor = playerColors.get(i);
+			String currentName = playerNames.get(i);
+			Player newPlayer = new Player(currentName,currentColor);
+		}
+
+		Random randomObject = new Random();
+		this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
+
+	}
+	void addPlayer(Player newPlayer){
+		playersArray.add(newPlayer);
+	}
+
+	/*
+	Sets the class variable highScore and gets an arrayList, where:
+	For all elements in the calculated arrayList, there exists no element in the playersArray, that has a higher score.
+	For all elements in the calculated arrayList, all elements in the playersArray have the same or lower score.
+	 */
+	ArrayList<Player> setHighScoreAndGetHighestScoringPlayers(){
+		ArrayList<Player> highestScoringPlayersArray = new ArrayList<Player>();
+
+		for (Player currentPlayer : this.playersArray) {
+
+			currentPlayer.calculateScore();
+			int currentScore = currentPlayer.getScore();
+
+			//Hvis playeren har samme score som highscoren tilføjer vi det til arrayet
+			if (currentScore == this.highScore) {
+				highestScoringPlayersArray.add(currentPlayer);
+
+
+			}
+
+			/*
+				Hvis denne playeren har højere score end den nuværende highscore, betyder det, at alle andre i arrayet har lavere score end denne player,
+				og vi genstarter derfor arrayet.
+				 */
+			else if (currentScore > this.highScore) {
+				highestScoringPlayersArray = new ArrayList<Player>();
+				highestScoringPlayersArray.add(currentPlayer);
+				this.highScore = currentPlayer.getScore();
+			}
+
+		}
+		return highestScoringPlayersArray;
+	}
+
+	Player getPlayerAtIndex(int i){
+		return this.playersArray.get(i);
+	}
+
+
+
+
+
+
+
 }
