@@ -55,8 +55,7 @@ public class Model {
         passedPreviousTurn = false;
         
         moves = new ArrayList<Move>();
-        possibleMoves = new ArrayList<Move>();
-		calculatePossibleMoves();
+        possibleMoves = calculatePossibleMoves(currentPlayer);
     }
 
     public void tryMove(int row, int col) {
@@ -96,7 +95,7 @@ public class Model {
 
 			passedPreviousTurn = false;
 			expandEdge(tile);
-			calculatePossibleMoves();
+			possibleMoves = calculatePossibleMoves(currentPlayer);
 	
 			view.updateBoard();
 			view.updateTurnText();
@@ -113,7 +112,7 @@ public class Model {
 		else if (!passedPreviousTurn) {
 			passedPreviousTurn = true;
 			currentPlayer = currentPlayer.flip();
-			calculatePossibleMoves();
+			possibleMoves = calculatePossibleMoves(currentPlayer);
 			view.updateBoard();
 			view.updateTurnText();
 		}
@@ -139,30 +138,31 @@ public class Model {
 		return null;
 	}
 
-	private void calculatePossibleMoves() {
-		possibleMoves.clear();
+	private ArrayList<Move> calculatePossibleMoves(TileType player) {
+        var result = new ArrayList<Move>();
         // If we're at the start of the game, only check the 4 center squares.
         if (gameState == GameState.Start) {
             for (int row = (boardSize / 2) - 1; row <= boardSize / 2; row++) {
                 for (int col = (boardSize / 2) - 1; col <= boardSize / 2; col++) {
                     if (isValidStartMove(board[row][col])) {
-                        possibleMoves.add(new Move(currentPlayer, board[row][col], new ArrayList<Tile>()));
+                        result.add(new Move(player, board[row][col], new ArrayList<Tile>()));
                     }
                 }
             }
-            return;
+            return result;
         }
         // Else, loop through the board and check squares that are part of the edge
 		for (int row = 0; row < boardSize; row++) {
 			for (int col = 0; col < boardSize; col++) {
 				if (board[row][col].isEdge()) {
-					var flip = tilesToBeFlipped(board[row][col]);
+					var flip = tilesToBeFlipped(board[row][col], player);
 					if (flip.size() > 0) {
-						possibleMoves.add(new Move(currentPlayer, board[row][col], flip));
+						result.add(new Move(player, board[row][col], flip));
 					}
 				}
 			}
 		}
+        return result;
 	}
 
 	// Returns true if the argument "tile" is empty and inside the 4 center squares (assuming boardSize is even).
@@ -196,27 +196,27 @@ public class Model {
     }
 
 	// Returns a list of all the tiles to be flipped given a move on "from"
-	private ArrayList<Tile> tilesToBeFlipped(Tile from) {
+	private ArrayList<Tile> tilesToBeFlipped(Tile tile, TileType player) {
         ArrayList<Tile> toBeFlipped = new ArrayList<Tile>();
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
 				if (dx == 0 && dy == 0) {
 					continue;
 				}
-                toBeFlipped.addAll(checkDirection(from, dx, dy)); 
+                toBeFlipped.addAll(checkDirection(tile, player, dx, dy)); 
             }
         }
 		return toBeFlipped;
 	}
 
 	// Returns a list of all the tiles that will be flipped given a move on tile in the given direction.
-    private ArrayList<Tile> checkDirection(Tile tile, int dx, int dy) {
+    private ArrayList<Tile> checkDirection(Tile tile, TileType player, int dx, int dy) {
         ArrayList<Tile> tiles = new ArrayList<Tile>();
         int x = tile.getRow() + dx;
         int y = tile.getCol() + dy;
 
         while (isInsideBoard(x, y) && !board[x][y].isEmpty()) {
-            if (board[x][y].isTile(currentPlayer)) {
+            if (board[x][y].isTile(player)) {
                 return tiles;
             }
             else {
