@@ -20,15 +20,16 @@ public class View extends Application {
     private static final Color TILE_COLOR = Color.BEIGE;
     private static final Color WHITE_COLOR = Color.WHITE;
     private static final Color BLACK_COLOR = Color.BLACK;
-
     private static final Color POSSIBLE_MOVE_COLOR = new Color(0.25, 0.25, 1, 0.25);
     private static final Color POSSIBLE_MOVE_HIGHLIGHET_COLOR = new Color(0.25, 0.25, 1, 0.5);
-
-    private static final Color STROKE_COLOR = Color.BLACK;
+    
     private static final double STROKE_WIDTH = 2;
-    private static final double PIECE_RATIO = 0.85;         // How big a percentage the piece takes up on the tile
+    private static final double PIECE_RATIO = 0.85;             // How big a percentage the piece takes up on the tile
+    private static final Color STROKE_COLOR = Color.BLACK;
 
-    private static final boolean SHOW_MOVE_HINTS = true;    // Whether possible moves are shown to the player
+    private static final boolean SHOW_MOVE_HINTS = true;        // Whether possible moves are shown to the player
+    private static final boolean SHOW_EDGE = false;             // Whether to show the edge where possible moves are possible. For debugging purposes
+    private static final Color EDGE_COLOR = Color.LIGHTPINK;
 
     private Model model;
     private Controller controller;
@@ -177,8 +178,11 @@ public class View extends Application {
                 else {
                     c.setFill(getColorFromTile(t.getType()));
                 }
-                // Used for showin the edge, which is checked for possible moves
-                //tiles[row][col].setFill(board[row][col].isEdge() ? Color.RED : TILE_COLOR);
+
+                if (SHOW_EDGE) {
+                    // Used for showin the edge, which is checked for possible moves
+                    tiles[row][col].setFill(board[row][col].isEdge() ? EDGE_COLOR : TILE_COLOR);
+                }
             }
         }
 
