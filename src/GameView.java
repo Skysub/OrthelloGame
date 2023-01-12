@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -18,8 +20,6 @@ import javafx.stage.Stage;
 public class GameView extends Application {
 
     private static final Color TILE_COLOR = Color.BEIGE;
-    private static final Color WHITE_COLOR = Color.WHITE;
-    private static final Color BLACK_COLOR = Color.BLACK;
     private static final Color POSSIBLE_MOVE_COLOR = new Color(0.25, 0.25, 1, 0.25);
     private static final Color POSSIBLE_MOVE_HIGHLIGHET_COLOR = new Color(0.25, 0.25, 1, 0.5);
     
@@ -82,7 +82,9 @@ public class GameView extends Application {
         passButton = controller.getPassButton();
     
         // Setup Model and UI
-        model.newGame();
+        //TODO Get gametype from settings
+
+        model.newGame(GameType.Rolit);
         initializeBoard();
         updateBoard();
         updateTurnText();
@@ -172,22 +174,22 @@ public class GameView extends Application {
 
                 c.setVisible(!t.isEmpty());
 
-                if (c.getFill() != getColorFromTile(t.getType()) && c.getFill() != POSSIBLE_MOVE_COLOR) {
+                if (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR) {
                     if (c.getFill() == Color.TRANSPARENT || c.getFill() == POSSIBLE_MOVE_HIGHLIGHET_COLOR) {
                         Animation.playSound();
-                        Animation.halfFlip(c, 250, getColorFromTile(t.getType()));
+                        Animation.halfFlip(c, 250, t.getColor()); 
                     }
                     else {
-                        Animation.flipPiece(c, 500, (Color)c.getFill(), getColorFromTile(t.getType()));
+                        Animation.flipPiece(c, 500, (Color)c.getFill(), t.getColor());
                     }
                 }
                 else {
-                    c.setFill(getColorFromTile(t.getType()));
+                    c.setFill(t.getColor());
                 }
 
                 if (SHOW_EDGE) {
                     // Used for showin the edge, which is checked for possible moves
-                    tiles[row][col].setFill(board[row][col].isEdge() ? EDGE_COLOR : TILE_COLOR);
+                    tiles[row][col].setFill(board[row][col].isEdge ? EDGE_COLOR : TILE_COLOR);
                 }
             }
         }
@@ -201,7 +203,7 @@ public class GameView extends Application {
         }
 
         for (Move move : possibleMoves) {
-            var t = move.getTile();
+            var t = move.getMoveTile();
             Circle c = pieces[t.getRow()][t.getCol()];
             c.setFill(POSSIBLE_MOVE_COLOR);
             c.setStroke(Color.TRANSPARENT);
@@ -210,27 +212,29 @@ public class GameView extends Application {
     }
 
     public void updateTurnText() {
-        turnText.setText("Current Player: " + model.getCurrentPlayer().toString()); 
+        turnText.setText("Current Player: " + model.getCurrentPlayer().getName()); 
     }
 
-    public void showEndGame(TileType winner, int whiteTiles, int blackTiles) {
+    public void showEndGame(ArrayList<Player> winners, int[] scores) {
         turnText.setVisible(false);
         passButton.setVisible(false);
-        controller.getGameEndText().setText((winner == TileType.Empty) ? "Draw" : "Winner: " + winner.toString());
-        controller.getScoreText().setText("W: " + whiteTiles + " - B: " + blackTiles);
-        controller.getGameEndScreen().setVisible(true);
-    }
 
-    private Color getColorFromTile(TileType t) {
-        switch (t) {
-            case White:
-                return WHITE_COLOR;
-            case Black:
-                return BLACK_COLOR;
-            case Empty:
-            default:
-                return Color.TRANSPARENT;
+        if (winners.size() == 1) {
+            controller.getGameEndText().setText("Winner: " + winners.get(0).getName());
         }
+        else {
+            controller.getGameEndText().setText("Draw");
+        }
+
+        ArrayList<Player> players = model.getPlayers();
+        String scoreText = players.get(0).getName() + ": " + scores[0];
+
+        for (int i = 1; i < scores.length; i++) {
+            scoreText += " - " + players.get(i).getName() + ": " + scores[i]; 
+        } 
+
+        controller.getScoreText().setText(scoreText);
+        controller.getGameEndScreen().setVisible(true);
     }
 
     private void onHover(Rectangle rect) {
@@ -238,9 +242,9 @@ public class GameView extends Application {
 
         if (lastHighlightedMove != null) {
             for (Tile flipTile : lastHighlightedMove.getFlips()) {
-                pieces[flipTile.getRow()][flipTile.getCol()].setFill(getColorFromTile(flipTile.getType()));
+                pieces[flipTile.getRow()][flipTile.getCol()].setFill(flipTile.getColor());
             }
-            var moveTile = lastHighlightedMove.getTile();
+            var moveTile = lastHighlightedMove.getMoveTile();
             if (moveTile.isEmpty()) {
                 pieces[moveTile.getRow()][moveTile.getCol()].setFill(POSSIBLE_MOVE_COLOR);
             }
@@ -253,11 +257,11 @@ public class GameView extends Application {
             lastHighlightedMove = move;
             for (Tile t : move.getFlips()) {
                 //TODO Decide what colors tiles "to be flipped" should be
-                Color c = getColorFromTile(model.getCurrentPlayer());
+                Color c = t.getColor();
                 c = Color.rgb((int)c.getRed(), (int)c.getGreen(), (int)c.getBlue(), 0.5);
                 pieces[t.getRow()][t.getCol()].setFill(c);
             }
-            pieces[move.getTile().getRow()][move.getTile().getCol()].setFill(POSSIBLE_MOVE_HIGHLIGHET_COLOR);
+            pieces[move.getMoveTile().getRow()][move.getMoveTile().getCol()].setFill(POSSIBLE_MOVE_HIGHLIGHET_COLOR);
         }
     }
 }

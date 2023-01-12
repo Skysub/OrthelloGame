@@ -49,7 +49,7 @@ public class GameController {
     }
 
     public void playAgain(ActionEvent event) {
-        model.newGame();
+        model.newGame(model.gameType);
         view.resetBoard();
         view.updateBoard();
         view.updateTurnText(); 
