@@ -24,6 +24,7 @@ public class Model {
 
 	public Model(App app) {
 		this.app = app;
+        boardSize = 8;
 
 		PathGrid myPathGrid = new PathGrid(4);
 

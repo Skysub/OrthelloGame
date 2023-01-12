@@ -55,4 +55,27 @@ public class SettingsController {
         model.setBoardSize(newBoardSize);
         return true;
     }
+
+    //GameType Buttons
+    public void radio1v1(ActionEvent event) {
+        System.out.println("1v1");
+    }
+
+    public void radioRandom(ActionEvent event) {
+        System.out.println("Random");
+    }
+
+    public void radioGreedy(ActionEvent event) {
+        System.out.println("Greed");
+    }
+
+    public void radioWeighted(ActionEvent event) {
+        System.out.println("Weight");
+    }
+
+    public void radioThinking(ActionEvent event) {
+        System.out.println("Think");
+    }
+
+
 }
