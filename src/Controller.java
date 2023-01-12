@@ -50,7 +50,7 @@ public class Controller {
 
     public void playAgain(ActionEvent event) {
         model.newGame();
-        view.initializeBoard();
+        view.resetBoard();
         view.updateBoard();
         view.updateTurnText(); 
         gameEndScreen.setVisible(false);

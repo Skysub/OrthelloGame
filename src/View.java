@@ -76,6 +76,7 @@ public class View extends Application {
         initializeBoard();
         updateBoard();
         updateTurnText();
+        controller.getGameEndScreen().setVisible(false);
 
         stage.setTitle("Reversi");
         stage.setScene(scene);
@@ -84,6 +85,7 @@ public class View extends Application {
     
     public void initializeBoard() {
         //TODO Check if prefWidth and prefHeight is the same
+        // Right now they are defined to in game.fxml, but if the layout is changed we need to make sure to calculate it correctly
         double boardWidth = grid.getPrefWidth();
         double tileSize = (boardWidth - STROKE_WIDTH * (model.getBoardSize() + 1)) / model.getBoardSize();
         double pieceSize = tileSize * PIECE_RATIO;
@@ -134,7 +136,6 @@ public class View extends Application {
             horizontalLabels.getChildren().add(hLabel);
         }
 
-        controller.getGameEndScreen().setVisible(false);
     }
     
     private Label createAxisLabel(String text) {
@@ -143,6 +144,15 @@ public class View extends Application {
         label.setTextAlignment(TextAlignment.CENTER);
         label.setAlignment(Pos.CENTER);
         return label;
+    }
+
+    public void resetBoard() {
+        for (int row = 0; row < model.getBoardSize(); row++) {
+            for (int col = 0; col < model.getBoardSize(); col++) {
+                pieces[row][col].setFill(Color.TRANSPARENT);
+                pieces[row][col].setStroke(Color.TRANSPARENT);
+            }
+        }
     }
 
     public void updateBoard() {
@@ -172,18 +182,19 @@ public class View extends Application {
             }
         }
 
-        var moves = model.getPossibleMoves();
+        var possibleMoves = model.getPossibleMoves();
         // Only show passButton when the current player has no possible moves
-        passButton.setVisible(moves.size() == 0);
+        passButton.setVisible(possibleMoves.size() == 0);
         
         if (!SHOW_MOVE_HINTS) {
             return;
         }
 
-        for (Move move : model.getPossibleMoves()) {
+        for (Move move : possibleMoves) {
             var t = move.getTile();
             Circle c = pieces[t.getRow()][t.getCol()];
             c.setFill(POSSIBLE_MOVE_COLOR);
+            c.setStroke(Color.TRANSPARENT);
             c.setVisible(true);
         }
     }
