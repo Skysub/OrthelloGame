@@ -3,8 +3,8 @@ import java.util.ArrayList;
 public class GreedyAI extends Ai{
 
     ArrayList<Integer> bestMoves;
-    GreedyAI(Controller controller, Model model) {
-        super(controller, model);
+    GreedyAI(Model model) {
+        super(model);
         bestMoves = new ArrayList<Integer>();
     }
 
