@@ -42,7 +42,7 @@ public class View extends Application {
     private Rectangle[][] tiles;
     private Circle[][] pieces;
 
-    private PossibleMove lastHighlightedMove;
+    private Move lastHighlightedMove;
 
     public static void main(String[] args) {
         launch(args);
@@ -180,7 +180,7 @@ public class View extends Application {
             return;
         }
 
-        for (PossibleMove move : model.getPossibleMoves()) {
+        for (Move move : model.getPossibleMoves()) {
             var t = move.getTile();
             Circle c = pieces[t.getRow()][t.getCol()];
             c.setFill(POSSIBLE_MOVE_COLOR);
@@ -214,7 +214,7 @@ public class View extends Application {
         int[] coords = Util.fromId(rect.getId());
 
         if (lastHighlightedMove != null) {
-            for (Tile flipTile : lastHighlightedMove.getToBeFlipped()) {
+            for (Tile flipTile : lastHighlightedMove.getFlips()) {
                 pieces[flipTile.getRow()][flipTile.getCol()].setFill(getColorFromTile(flipTile.getType()));
             }
             var moveTile = lastHighlightedMove.getTile();
@@ -224,11 +224,11 @@ public class View extends Application {
             lastHighlightedMove = null;
         }
 
-        PossibleMove move = model.getPossibleMove(coords[0], coords[1]);
+        Move move = model.getPossibleMove(coords[0], coords[1]);
 
         if (move != null) {
             lastHighlightedMove = move;
-            for (Tile t : move.getToBeFlipped()) {
+            for (Tile t : move.getFlips()) {
                 //TODO Decide what colors tiles "to be flipped" should be
                 Color c = getColorFromTile(model.getCurrentPlayer());
                 c = Color.rgb((int)c.getRed(), (int)c.getGreen(), (int)c.getBlue(), 0.5);

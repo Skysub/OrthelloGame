@@ -8,7 +8,8 @@ public class Model {
     
     private int boardSize = 8;
     private Tile[][] board;
-	private ArrayList<PossibleMove> possibleMoves;
+	private ArrayList<Move> possibleMoves;  // List of possible moves to be performed by the current player
+    private ArrayList<Move> moves;          // A list of all the moves performed in the game
 
     enum GameState { Start, Main }
     private GameState gameState;
@@ -16,18 +17,16 @@ public class Model {
     private TileType currentPlayer;         // The next tile to be places
     private TileType startedPreviousGame;   // The player that started the previous game
     private boolean passedPreviousTurn;     // Whether the previous player passed their turn
-    private int noOfMoves;                  // The numbers of moves played. Used to determine the GameState and if the game is finished
 
     public Model(View view) {
         this.view = view;
         random = new Random();
-		possibleMoves = new ArrayList<PossibleMove>();
     }
-
+    
     // Public getters used by View to retrieve the state of the game
     public int getBoardSize() {return boardSize;}
     public Tile[][] getBoard() {return board;}
-	public ArrayList<PossibleMove> getPossibleMoves() {return possibleMoves;}
+	public ArrayList<Move> getPossibleMoves() {return possibleMoves;}
     public TileType getCurrentPlayer() {return currentPlayer;}
 
     public void newGame() {
@@ -38,7 +37,7 @@ public class Model {
                 board[i][j] = new Tile(i, j, TileType.Empty);
             }
         }
-
+        
         // Determine starting player
         if (startedPreviousGame == null) {
             if (random.nextBoolean()) {
@@ -50,12 +49,13 @@ public class Model {
         else {
             currentPlayer = startedPreviousGame.flip();
         }
-
+        
         startedPreviousGame = currentPlayer;
         gameState = GameState.Start;
         passedPreviousTurn = false;
-        noOfMoves = 0;
-
+        
+        moves = new ArrayList<Move>();
+        possibleMoves = new ArrayList<Move>();
 		calculatePossibleMoves();
     }
 
@@ -73,20 +73,22 @@ public class Model {
 
 		if (move != null) {
 
+            moves.add(move);
+
 			tile.setType(currentPlayer);
 			move.flipTiles();
 			
 			if (gameState == GameState.Start) {
-				if (++noOfMoves >= 4) {
+				if (moves.size() >= 4) {
 					gameState = GameState.Main;
 				}
-				if (noOfMoves % 2 == 0) {
+				if (moves.size() % 2 == 0) {
 					currentPlayer = currentPlayer.flip();
 				}
 			}
 			else if (gameState == GameState.Main) {
 				currentPlayer = currentPlayer.flip();
-				if (++noOfMoves >= boardSize * boardSize) {
+				if (moves.size() >= boardSize * boardSize) {
 					endGame();
 					return;
 				}
@@ -128,8 +130,8 @@ public class Model {
 		return board[row][col];
 	}
 
-	public PossibleMove getPossibleMove(int row, int col) {
-		for (PossibleMove move : possibleMoves) {
+	public Move getPossibleMove(int row, int col) {
+		for (Move move : possibleMoves) {
 			if (move.getTile().getRow() == row && move.getTile().getCol() == col) {
 				return move;
 			}
@@ -144,7 +146,7 @@ public class Model {
             for (int row = (boardSize / 2) - 1; row <= boardSize / 2; row++) {
                 for (int col = (boardSize / 2) - 1; col <= boardSize / 2; col++) {
                     if (isValidStartMove(board[row][col])) {
-                        possibleMoves.add(new PossibleMove(currentPlayer, board[row][col], new ArrayList<Tile>()));
+                        possibleMoves.add(new Move(currentPlayer, board[row][col], new ArrayList<Tile>()));
                     }
                 }
             }
@@ -156,7 +158,7 @@ public class Model {
 				if (board[row][col].isEdge()) {
 					var flip = tilesToBeFlipped(board[row][col]);
 					if (flip.size() > 0) {
-						possibleMoves.add(new PossibleMove(currentPlayer, board[row][col], flip));
+						possibleMoves.add(new Move(currentPlayer, board[row][col], flip));
 					}
 				}
 			}
@@ -320,22 +322,22 @@ class Tile {
     }
 }
 
-class PossibleMove {
-	TileType possibleFor;
-	Tile moveTile;
-	ArrayList<Tile> toBeFlipped;
+class Move {
+	TileType player;
+	Tile tile;
+	ArrayList<Tile> flips;
 
-	public PossibleMove(TileType possibleFor,Tile moveTile, ArrayList<Tile> toBeFlipped) {
-		this.possibleFor = possibleFor;
-		this.moveTile = moveTile;
-		this.toBeFlipped = toBeFlipped;
+	public Move(TileType possibleFor,Tile moveTile, ArrayList<Tile> toBeFlipped) {
+		this.player = possibleFor;
+		this.tile = moveTile;
+		this.flips = toBeFlipped;
 	}
 
-	public Tile getTile() {return moveTile;}
-	public ArrayList<Tile> getToBeFlipped() {return toBeFlipped;}
+	public Tile getTile() {return tile;}
+	public ArrayList<Tile> getFlips() {return flips;}
 
 	public void flipTiles() {
-		for (Tile tile : toBeFlipped) {
+		for (Tile tile : flips) {
 			tile.flip();
 		}
 	}
