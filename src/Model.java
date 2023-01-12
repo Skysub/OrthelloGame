@@ -58,8 +58,17 @@ public class Model {
         possibleMoves = calculatePossibleMoves(currentPlayer);
     }
 
-    public void tryMove(int row, int col) {
+    private void setupOrthelloStart() {
+        for (int row = (boardSize / 2) - 1; row <= (boardSize / 2); row++) {
+            for (int col = (boardSize / 2) - 1; col <= (boardSize / 2); col++) {
+                board[row][col].setType(row == col ? TileType.White : TileType.Black);
+                expandEdge(board[row][col]); 
+            } 
+        }
+        gameState = GameState.Main;
+    }
 
+    public void tryMove(int row, int col) {
         if (!isInsideBoard(row, col)) {
             System.out.println("ERROR: Not inside board!");
 			return;
