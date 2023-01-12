@@ -32,6 +32,10 @@ public class Model {
 		this.gameBoard = new Board(boardSize);
 		this.gamePathGrid = new PathGrid(boardSize);
 		this.gamePlayerManager = new PlayerManager(nrPlayers,playerColors,playerNames);
+
+		Random randomObject = new Random();
+		this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
+		this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
 	}
 
 
@@ -46,6 +50,10 @@ public class Model {
 		// In order to get to this state, we need to skip a turn
 		this.turnsSkipped += 1;
 		System.out.println("TURN SKIPPED");
+
+		//We create a dummy turn and record it
+		int[] dummyCoords = new int[] {Constants.UNDEFINED,Constants.UNDEFINED};
+		recordTurnTaken(true,new Turn(dummyCoords,this.state));
 
 		// See if the next person can play their turn
 		setNextTurn();
@@ -70,7 +78,7 @@ public class Model {
 	}
 
 	void step(int[] coords) {
-		Turn currentTurn = new Turn(coords);
+		Turn currentTurn = new Turn(coords,this.state);
 
 		switch (this.state) {
 
@@ -125,7 +133,7 @@ public class Model {
 		// We check if the coordinates correspond to the starting coordinates of any path
 		//If it does, we flip all checkers (include the one in the starting coordinates) to the current player's colour
 		if (this.gamePathGrid.pathExists(coords)) {
-			Path pathChosen = getPathFromCoords(coords);
+			Path pathChosen = this.gamePathGrid.getElementAt(coords);
 			pathChosen.flipCheckersInPath(this.currentPlayer);
 			this.setNextTurn();
 			this.gamePathGrid.resetGrid();
@@ -161,15 +169,6 @@ public class Model {
 		this.currentPlayer = this.gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
 		view.updateCurrentPlayer(this.currentPlayerIndex);
 	}
-
-	Checker getCheckerFromCoords(int[] coords) {
-		return this.gameBoard.getElementAt(coords);
-	}
-
-	Path getPathFromCoords(int[] coords) {
-		return this.gamePathGrid.getElementAt(coords);
-	}
-
 
 	// RandomlyAddsPaths to the PathGrid
 	void calculatePossiblePaths() {
@@ -207,18 +206,9 @@ public class Model {
 		}
 	}
 
-	// Top to down
-	int[] getHorizontalCoords(int[] originalCoords) {
-		return originalCoords;
-	}
 
 	int[] getHorizontalCoords(int i, int j) {
 		return new int[] { i, j };
-	}
-
-	// Left to right
-	int[] getVerticalCoords(int[] originalCoords) {
-		return new int[] { originalCoords[1], originalCoords[0] };
 	}
 
 	int[] getVerticalCoords(int i, int j) {
@@ -244,7 +234,7 @@ public class Model {
 
 	Path iteratePathAlgorithm(int[] coords, Path currentPath) {
 
-		Checker currentChecker = getCheckerFromCoords(coords);
+		Checker currentChecker = this.gameBoard.getElementAt(coords);
 
 		// The checker is empty
 		if (currentChecker.isEmpty()) {
@@ -270,7 +260,7 @@ public class Model {
 	 */
 	Path foundPossiblePath(Path chosenPath) {
 		//We add the checker at the path's starting coordinate to the Path
-		Checker startingCoordinatesChecker = getCheckerFromCoords(chosenPath.coordinates);
+		Checker startingCoordinatesChecker = this.gameBoard.getElementAt(chosenPath.coordinates);
 		chosenPath.addCheckerToPath(startingCoordinatesChecker);
 		this.gamePathGrid.addPathToGrid(chosenPath);
 		chosenPath = new Path();
@@ -610,16 +600,18 @@ class Turn{
 
 	int[] coordinates;
 	int timeTaken;
+	int gameStateAtTurnTaken = Constants.UNDEFINED;
 
-	Turn(int[] coordinates){
+	Turn(int[] coordinates,int gameStateAtTurnTaken){
 		this.coordinates = coordinates;
+		this.gameStateAtTurnTaken = gameStateAtTurnTaken;
 	}
 }
 
 class Player{
 	private String playerName;
 	private int score;
-	private ArrayList<Turn> turnHistory;
+	private ArrayList<Turn> turnHistory = new ArrayList<Turn>();
 	private Color playerColor;
 	private int nrCheckers;
 	private boolean isPlayer;
@@ -652,6 +644,8 @@ class Player{
 
 	int getNrCheckers(){ return this.nrCheckers;}
 
+	String getPlayerName(){ return this.playerName;}
+
 	//Calculates and updates the score
 	int calculateScore(){
 		this.score = this.getNrCheckers();
@@ -673,6 +667,7 @@ class PlayerManager {
 			Color currentColor = playerColors.get(i);
 			String currentName = playerNames.get(i);
 			Player newPlayer = new Player(currentName,currentColor);
+			this.addPlayer(newPlayer);
 		}
 
 		Random randomObject = new Random();

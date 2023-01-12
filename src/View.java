@@ -20,6 +20,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class View extends Application {
 
@@ -38,7 +39,16 @@ public class View extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        model = new Model(this, 8, 2,);
+        //TODO: REMOVE THIS
+        ArrayList<String> nameArrayList = new ArrayList<String>();
+        nameArrayList.add("WHITE");
+        nameArrayList.add("BLACK");
+
+        ArrayList<Color> colorArrayList = new ArrayList<Color>();
+        colorArrayList.add(Color.WHITE);
+        colorArrayList.add(Color.BLACK);
+
+        model = new Model(this, 8, 2,colorArrayList,nameArrayList);
         Scene scene;
        
         try {
@@ -173,12 +183,13 @@ public class View extends Application {
                 Checker c = board.getElementAt(coords);
 
                 pieces[i][j].setVisible(!c.isEmpty());
-
-                if (c.getState() == 0) {
+                    if(!c.isEmpty()){
+                if (c.getState().getPlayerName() == "WHITE") {
                     pieces[i][j].setFill(Color.WHITE);
                 }
-                else if (c.getState() == 1) {
+                else if (c.getState().getPlayerName() == "BLACK") {
                     pieces[i][j].setFill(Color.BLACK);
+                }
                 }
             }
         }
@@ -197,10 +208,10 @@ public class View extends Application {
     public void setWinner(ArrayList<Player> winnersArrayList,int score){
 
         String winner = "";
-        if (winnerNr == 0) {
+        if (winnersArrayList.get(0).getPlayerName() == "WHITE") {
             winner += "White";
         }
-        else if (winnerNr == 1) {
+        else if (winnersArrayList.get(0).getPlayerName() == "BLACK") {
             winner += "Black";
         }
         //TODO Handle draw
@@ -211,6 +222,6 @@ public class View extends Application {
     //Den samlede funktion, der bliver kaldt i Model.step() metoden i case 4
     public void endGame(ArrayList<Player> winnersArrayList, int score){
         setEndingScreen();
-        setWinner(winnerNr,score);
+        setWinner(winnersArrayList,score);
     }
 }

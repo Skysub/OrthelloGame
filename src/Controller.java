@@ -47,7 +47,6 @@ public class Controller {
         System.out.println(row + "-" + column);
         int[] coords = {row, column};
         model.step(coords);
-        int[] array = model.calculateScoreArray();
 
         //TODO: Fjern dette efter, at du har lavet knappen til turnskip
         if(model.state == Constants.TURN_SKIPPED){
