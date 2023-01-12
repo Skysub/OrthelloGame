@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Model {
+
+    private Ai ai;
     
     private View view;
     private Random random;
@@ -15,6 +17,7 @@ public class Model {
 
     private TileType currentPlayer;         // The next tile to be places
     private TileType startedPreviousGame;   // The player that started the previous game
+    private TileType AiPlayer;
     private boolean passedPreviousTurn;     // Whether the previous player passed their turn
     private int noOfMoves;                  // The numbers of moves played. Used to determine the GameState and if the game is finished
 
@@ -22,6 +25,7 @@ public class Model {
         this.view = view;
         random = new Random();
 		possibleMoves = new ArrayList<PossibleMove>();
+        ai = new WeightedAI(this);
     }
 
     // Public getters used by View to retrieve the state of the game
@@ -49,6 +53,12 @@ public class Model {
         }
         else {
             currentPlayer = startedPreviousGame.flip();
+        }
+
+        if (random.nextBoolean()) {
+            AiPlayer = TileType.White;
+        } else {
+            AiPlayer = TileType.Black;
         }
 
         startedPreviousGame = currentPlayer;
@@ -99,6 +109,11 @@ public class Model {
 			view.updateBoard();
 			view.updateTurnText();
 		}
+
+        if(currentPlayer == AiPlayer){
+            ai.placePiece();
+        }
+
     }
 
 	// Called by controller when a player presses the "Pass Turn" button
