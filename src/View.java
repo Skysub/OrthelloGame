@@ -31,19 +31,21 @@ public class View extends Application {
     private static final boolean SHOW_EDGE = false;             // Whether to show the edge where possible moves are possible. For debugging purposes
     private static final Color EDGE_COLOR = Color.LIGHTPINK;
 
+    // MCV
     private Model model;
     private Controller controller;
 
+    // UI Elements
+    private Scene scene;
     private AnchorPane grid;
     private Label turnText;
     private HBox horizontalLabels;
     private VBox verticalLabels;
     private Button passButton;
-
     private Rectangle[][] tiles;
     private Circle[][] pieces;
 
-    private Move lastHighlightedMove;
+    private Move lastHighlightedMove;   // A reference to the last highlighted move, used to reset the colors once the move is no longer highlighted
 
     public static void main(String[] args) {
         launch(args);
@@ -51,10 +53,17 @@ public class View extends Application {
 
     @Override
     public void start(Stage stage) {
+        setupView();
+        
+        stage.setTitle("Reversi");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void setupView() {
         model = new Model(this);
-        Scene scene;
         try {
-            // Load UI from FXML and create Controller
+            // Load UI from FXML and create an instance of the corresponding controller class "Controller"
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
             scene = loader.load();
             controller = loader.getController();
@@ -64,24 +73,20 @@ public class View extends Application {
             return;
         }
         controller.setModelAndView(model, this);
-
+    
         // Retrieve objects from Controller FXML
         grid = controller.getGrid();
         turnText = controller.getTurnText();
         horizontalLabels = controller.getHorizontalLabels();
         verticalLabels = controller.getVerticalLabels();
         passButton = controller.getPassButton();
-
+    
         // Setup Model and UI
         model.newGame();
         initializeBoard();
         updateBoard();
         updateTurnText();
         controller.getGameEndScreen().setVisible(false);
-
-        stage.setTitle("Reversi");
-        stage.setScene(scene);
-        stage.show();
     }
     
     public void initializeBoard() {
