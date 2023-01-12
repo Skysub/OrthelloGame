@@ -2,42 +2,45 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Model {
-    
+   
+    // MVC
     private GameView view;
+
+    // GameState
+    enum GameState { Start, Main }
+    private GameState gameState;
+
+    // Random to determine which player should start the game
     private Random random;
-    
+   
+    // Game specific variables
     private int boardSize = 8;
     private Tile[][] board;
 	private ArrayList<Move> possibleMoves;  // List of possible moves to be performed by the current player
     private ArrayList<Move> moves;          // A list of all the moves performed in the game
-
-    enum GameState { Start, Main }
-    private GameState gameState;
-
     private TileType currentPlayer;         // The next tile to be places
     private TileType startedPreviousGame;   // The player that started the previous game
     private boolean passedPreviousTurn;     // Whether the previous player passed their turn
+
+    // Public getters used by View to retrieve the state of the game
+    public int getBoardSize() {return boardSize;}
+    public Tile[][] getBoard() {return board;}
+    public ArrayList<Move> getPossibleMoves() {return possibleMoves;}
+    public TileType getCurrentPlayer() {return currentPlayer;}
 
     public Model(GameView view) {
         this.view = view;
         random = new Random();
     }
     
-    // Public getters used by View to retrieve the state of the game
-    public int getBoardSize() {return boardSize;}
-    public Tile[][] getBoard() {return board;}
-	public ArrayList<Move> getPossibleMoves() {return possibleMoves;}
-    public TileType getCurrentPlayer() {return currentPlayer;}
-
     public void newGame() {
-        // Create empty board
         board = new Tile[boardSize][boardSize];
+        // Initialize all tiles as empty
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
                 board[i][j] = new Tile(i, j, TileType.Empty);
             }
         }
-        
         // Determine starting player
         if (startedPreviousGame == null) {
             if (random.nextBoolean()) {
