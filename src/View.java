@@ -153,6 +153,7 @@ public class View extends Application {
     }
 
     public void resetBoard() {
+        turnText.setVisible(true);
         for (int row = 0; row < model.getBoardSize(); row++) {
             for (int col = 0; col < model.getBoardSize(); col++) {
                 pieces[row][col].setFill(Color.TRANSPARENT);
@@ -213,6 +214,8 @@ public class View extends Application {
     }
 
     public void showEndGame(TileType winner, int whiteTiles, int blackTiles) {
+        turnText.setVisible(false);
+        passButton.setVisible(false);
         controller.getGameEndText().setText((winner == TileType.Empty) ? "Draw" : "Winner: " + winner.toString());
         controller.getScoreText().setText("W: " + whiteTiles + " - B: " + blackTiles);
         controller.getGameEndScreen().setVisible(true);
