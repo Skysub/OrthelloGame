@@ -78,9 +78,17 @@ public class GameView {
         updateTurnText();
         controller.getGameEndScreen().setVisible(false);
     }
+
+    public void toMenu() {
+        manager.toMenu();
+    }
     
     public void initializeBoard() {
-        //TODO clear board!
+        // Clear board
+        grid.getChildren().clear();
+        verticalLabels.getChildren().clear();
+        horizontalLabels.getChildren().clear();
+
         //TODO Check if prefWidth and prefHeight is the same
         // Right now they are defined to in game.fxml, but if the layout is changed we need to make sure to calculate it correctly
         double boardWidth = grid.getPrefWidth();

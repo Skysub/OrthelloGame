@@ -56,4 +56,8 @@ public class GameController {
         view.updateTurnText(); 
         gameEndScreen.setVisible(false);
     }
+
+    public void quitGame(ActionEvent event) {
+        view.toMenu();
+    }
 }

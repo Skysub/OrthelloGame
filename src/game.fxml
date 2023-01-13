@@ -15,9 +15,9 @@
 
 <Scene xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameController">
    <root>
-      <StackPane>
+      <StackPane prefHeight="700.0" prefWidth="600.0">
          <children>
-            <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" snapToPixel="false" spacing="10.0">
+            <VBox alignment="CENTER" snapToPixel="false" spacing="10.0">
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
@@ -38,7 +38,7 @@
                       <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <AnchorPane fx:id="grid" prefHeight="440.0" prefWidth="440.0" snapToPixel="false" GridPane.columnIndex="1" />
+                        <AnchorPane fx:id="grid" prefHeight="480.0" prefWidth="480.0" snapToPixel="false" GridPane.columnIndex="1" />
                         <VBox fx:id="verticalLabels" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" snapToPixel="false" />
                         <HBox fx:id="horizontalLabels" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" snapToPixel="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
@@ -50,6 +50,11 @@
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
+                  </Button>
+                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#quitGame" text="Quit Game" textAlignment="CENTER">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
                   </Button>
                </children>
             </VBox>
