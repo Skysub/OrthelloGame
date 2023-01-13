@@ -59,7 +59,6 @@ public class Model {
         }
         else {
             currentPlayerIndex = 0;
-            System.out.println(getCurrentPlayer().name);
         }
         
         setupInitialBoard();
