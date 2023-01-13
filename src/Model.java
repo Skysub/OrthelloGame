@@ -58,11 +58,11 @@ public class Model {
         players = Player.getDefaultPlayers(gameType);
 
         if (gameType == GameType.Reversi) {
-            if (resetStartingPlayer || currentPlayerIndex == -1) {
+            if (resetStartingPlayer || startedPreviousIndex == -1) {
                 currentPlayerIndex = random.nextInt(players.size());
             }
             else {
-                currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+                currentPlayerIndex = (startedPreviousIndex + 1) % players.size();
             }
         }
         else if (gameType == GameType.Rolit) {
