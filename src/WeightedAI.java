@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class WeightedAI extends Ai {
     int[][] weights;
     int count = 0;
+    private Tile move;
     
     WeightedAI(Model model) {
         super(model);
@@ -22,28 +23,31 @@ public class WeightedAI extends Ai {
 
     @Override
     public void placePiece() {
-        int weight = -101;
-        Tile move = new Tile(0, 0, TileType.Empty);
+        move = calculateMove();
+        model.tryMove(move.getRow(), move.getCol());
+    }
+
+    private Tile calculateMove(){
+        int weight = -10000;
+        Tile newMove = new Tile(0, 0, TileType.Empty);
         getMoves();
-        System.out.println("Turn:" + count++);
         for(int i = 0; i < possibleMoves.size(); i++){
             int currentWeigth = calculateWeight(possibleMoves.get(i).getTile(),possibleMoves.get(i).getToBeFlipped());
             System.out.println(currentWeigth);
             if( currentWeigth > weight){
                 weight = currentWeigth;
-                move = possibleMoves.get(i).getTile();
+                newMove = possibleMoves.get(i).getTile();
             }
             else if(currentWeigth == weight){
                 if(weights[possibleMoves.get(i).getTile().getRow()][possibleMoves.get(i).getTile().getCol()] > weight){
-                    move = possibleMoves.get(i).getTile();
+                    newMove = possibleMoves.get(i).getTile();
                 }
             }
         }
-        System.out.println(weight);
-        model.tryMove(move.getRow(), move.getCol());
+        return newMove;
     }
 
-    private int calculateWeight(Tile move, ArrayList<Tile> flips){
+    protected int calculateWeight(Tile move, ArrayList<Tile> flips){
         int weight = weights[move.getRow()][move.getCol()];
         for(int i = 0; i < flips.size(); i++){
             weight += weights[flips.get(i).getRow()][flips.get(i).getCol()];
