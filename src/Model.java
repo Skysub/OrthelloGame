@@ -366,6 +366,13 @@ class Checker extends BoardElement {
 		this.state = newPlayer;
 	}
 
+	Color getColor(){
+		if(isEmpty()){
+			return Color.TRANSPARENT;
+		}
+		return this.state.getPlayerColor();
+	}
+
 }
 
 
