@@ -49,9 +49,6 @@ public class GameView {
 
     public GameView(ViewManager manager) {
         this.manager = manager;
-    }
-
-    public void setupView() {
         model = new Model(this);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
@@ -83,6 +80,7 @@ public class GameView {
     }
     
     public void initializeBoard() {
+        //TODO clear board!
         //TODO Check if prefWidth and prefHeight is the same
         // Right now they are defined to in game.fxml, but if the layout is changed we need to make sure to calculate it correctly
         double boardWidth = grid.getPrefWidth();

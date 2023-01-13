@@ -17,10 +17,8 @@ public class ViewManager extends Application {
     public void start(Stage stage) {
         this.stage = stage;
 
+        // Setup views
         gameView = new GameView(this);
-        //TODO Move setupView into contructor;
-        gameView.setupView();
-
         menuView = new MenuView(this);
         settingsView = new SettingsView(this);
 
