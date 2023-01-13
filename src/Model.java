@@ -25,7 +25,7 @@ public class Model {
         this.view = view;
         random = new Random();
 		possibleMoves = new ArrayList<PossibleMove>();
-        ai = new WeightedAI(this);
+        ai = new ExtendedWeightedAI(this,3);
     }
 
     // Public getters used by View to retrieve the state of the game
@@ -128,6 +128,9 @@ public class Model {
 			calculatePossibleMoves();
 			view.updateBoard();
 			view.updateTurnText();
+            if(currentPlayer == AiPlayer){
+                ai.placePiece();
+            }
 		}
 		else {
 			endGame();
@@ -262,6 +265,35 @@ public class Model {
             view.showEndGame(TileType.Empty, whiteTiles, blackTiles);
         }
     }
+
+    //AI relevant things
+    public void setBoard(Tile[][] board) {
+        this.board = board.clone();
+    }
+
+    public void setNoOfMoves(int number){
+        noOfMoves = number;
+    }
+
+    public int getNoOfMoves(){return noOfMoves;}
+
+    public GameState getGameState(){return gameState;}
+
+    public void AIMove(Tile newMove){
+        Tile move = board[newMove.getRow()][newMove.getCol()];
+        move.setType(currentPlayer);
+        if(gameState == GameState.Main){
+            var flips = getPossibleMove(newMove.getRow(), newMove.getCol());
+            flips.flipTiles();
+        }
+        if (++noOfMoves >= boardSize * boardSize) {
+            endGame();
+            return;
+        }
+        expandEdge(move);
+        calculatePossibleMoves();
+    }
+
 }
 
 enum TileType {
