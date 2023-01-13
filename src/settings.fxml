@@ -24,8 +24,11 @@
                <font>
                   <Font size="28.0" />
                </font>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
             </Label>
-            <HBox alignment="CENTER" prefWidth="200.0" spacing="50.0">
+            <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="50.0">
                <children>
                   <RadioButton mnemonicParsing="false" onAction="#radio8" selected="true" text="8 x 8">
                      <toggleGroup>
@@ -40,29 +43,50 @@
                   </HBox>
                </children>
             </HBox>
-            <Label prefWidth="600.0" text="GameType" VBox.vgrow="ALWAYS">
+            <Label prefWidth="600.0" text="AI Type" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="28.0" />
                </font>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
             </Label>
-            <HBox alignment="CENTER" prefWidth="200.0" spacing="45.0">
+            <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="45.0">
                <children>
                   <RadioButton mnemonicParsing="false" onAction="#radio1v1" selected="true" text="1 v 1">
                      <toggleGroup>
+                        <ToggleGroup fx:id="AIType" />
+                     </toggleGroup></RadioButton>
+                  <RadioButton mnemonicParsing="false" onAction="#radioRandom" text="RandomAI">
+                     <toggleGroup>
                         <ToggleGroup fx:id="GameType" />
                      </toggleGroup></RadioButton>
-                  <RadioButton mnemonicParsing="false" onAction="#radioRandom" text="RandomAI" toggleGroup="$GameType" />
                   <RadioButton mnemonicParsing="false" onAction="#radioGreedy" text="GreedyAI" toggleGroup="$GameType" />
                   <RadioButton mnemonicParsing="false" onAction="#radioWeighted" text="WeightedAI" toggleGroup="$GameType" />
                   <RadioButton mnemonicParsing="false" onAction="#radioThinking" text="ThinkingAI" toggleGroup="$GameType" />
                </children>
             </HBox>
-            <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" text="Back" textAlignment="CENTER">
+            <Label prefWidth="600.0" text="Game Type">
+               <font>
+                  <Font size="28.0" />
+               </font>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </Label>
+            <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="45.0">
+               <children>
+                  <RadioButton mnemonicParsing="false" onAction="#setReversi" selected="true" text="Reversi" toggleGroup="$GameType" />
+                  <RadioButton mnemonicParsing="false" onAction="#setOthello" text="Othello" toggleGroup="$GameType" />
+                  <RadioButton mnemonicParsing="false" onAction="#setRolit" text="Rolit" toggleGroup="$GameType" />
+               </children>
+            </HBox>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" prefWidth="100.0" text="Back" textAlignment="CENTER">
                <VBox.margin>
                   <Insets top="50.0" />
                </VBox.margin>
                <font>
-                  <Font size="28.0" />
+                  <Font size="22.0" />
                </font>
             </Button>
          </children>

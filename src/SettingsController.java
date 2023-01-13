@@ -75,6 +75,18 @@ public class SettingsController {
     public void radioThinking(ActionEvent event) {
         System.out.println("Think");
     }
+
+    public void setReversi(ActionEvent event) {
+        settings.gameType = GameType.Reversi;
+    }
+
+    public void setOthello(ActionEvent event) {
+        settings.gameType = GameType.Othello;
+    }
+
+    public void setRolit(ActionEvent event) {
+        settings.gameType = GameType.Rolit;
+    }
 }
 
 class Settings {
