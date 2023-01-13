@@ -17,7 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-public class GameView extends Application {
+public class GameView {
 
     private static final Color TILE_COLOR = Color.BEIGE;
     private static final Color POSSIBLE_MOVE_COLOR = new Color(0.25, 0.25, 1, 0.25);
@@ -32,11 +32,12 @@ public class GameView extends Application {
     private static final Color EDGE_COLOR = Color.LIGHTPINK;
 
     // MCV
+    private ViewManager manager;
     private Model model;
     private GameController controller;
 
     // UI Elements
-    private Scene scene;
+    public Scene scene;
     private AnchorPane grid;
     private Label turnText;
     private HBox horizontalLabels;
@@ -47,20 +48,12 @@ public class GameView extends Application {
 
     private Move lastHighlightedMove;   // A reference to the last highlighted move, used to reset the colors once the move is no longer highlighted
 
-    public static void main(String[] args) {
-        launch(args);
+
+    public GameView(ViewManager manager) {
+        this.manager = manager;
     }
 
-    @Override
-    public void start(Stage stage) {
-        setupView();
-        
-        stage.setTitle("Reversi");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    private void setupView() {
+    public void setupView() {
         model = new Model(this);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
@@ -80,11 +73,12 @@ public class GameView extends Application {
         horizontalLabels = controller.getHorizontalLabels();
         verticalLabels = controller.getVerticalLabels();
         passButton = controller.getPassButton();
-    
+    }
+
+    public void onEnter() {
         // Setup Model and UI
         //TODO Get gametype from settings
-
-        model.newGame(GameType.Rolit);
+        model.newGame(GameType.Reversi);
         initializeBoard();
         updateBoard();
         updateTurnText();
