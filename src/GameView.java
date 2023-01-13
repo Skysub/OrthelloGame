@@ -75,8 +75,7 @@ public class GameView {
 
     public void onEnter() {
         // Setup Model and UI
-        //TODO Get gametype from settings
-        model.newGame(GameType.Reversi);
+        model.newGame();
         initializeBoard();
         updateBoard();
         updateTurnText();

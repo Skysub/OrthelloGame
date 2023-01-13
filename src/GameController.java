@@ -49,7 +49,8 @@ public class GameController {
     }
 
     public void playAgain(ActionEvent event) {
-        model.newGame(model.gameType);
+        // Create a new game with the same settings as the previous game
+        model.newGame();
         view.resetBoard();
         view.updateBoard();
         view.updateTurnText(); 

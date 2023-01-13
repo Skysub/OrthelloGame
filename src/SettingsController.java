@@ -4,30 +4,31 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 
 public class SettingsController {
-    
+
+    public static Settings settings = new Settings();
     private SettingsView view;
-    private Model model;        //TODO Create separate model to manage settings?
 
     @FXML TextField customSizeText;
     @FXML RadioButton customSizeRadioButton;
 
     public void setModelAndView(Model model, SettingsView view) {
-        this.model = model;
         this.view = view;
     }
 
+    public void back(ActionEvent event) {
+        view.toMenu();
+    }
+
     public void radio8(ActionEvent event) {
+        settings.boardSize = 8;
     }
 
     public void radio16(ActionEvent event) {
+        settings.boardSize = 16;
     }
 
     public void radioCustom(ActionEvent event) {
         parseCustomSize();
-    }
-    
-    public void back(ActionEvent event) {
-        view.toMenu();
     }
     
     public void boardSizeTextChanged(ActionEvent event) {
@@ -50,6 +51,7 @@ public class SettingsController {
         }
         
         //TODO Validate whether the value makes sense. Set a range eg. 4-26
+        settings.boardSize = newBoardSize;
         return true;
     }
 
@@ -73,4 +75,18 @@ public class SettingsController {
     public void radioThinking(ActionEvent event) {
         System.out.println("Think");
     }
+}
+
+class Settings {
+
+    int boardSize;
+    GameType gameType;
+
+    //TODO AI
+
+    public Settings() {
+        boardSize = 8;
+        gameType = GameType.Reversi;
+    }
+
 }

@@ -16,7 +16,7 @@ public class Model {
     private Random random;
    
     // Game specific variables
-    private int boardSize = 8;
+    private int boardSize;
     private Tile[][] board;
 	private ArrayList<Move> possibleMoves;  // List of possible moves to be performed by the current player
     private ArrayList<Move> moves;          // A list of all the moves performed in the game
@@ -38,9 +38,10 @@ public class Model {
         random = new Random();
     }
     
-    public void newGame(GameType gameType) {
+    public void newGame() {
 
-        this.gameType = gameType;
+        this.gameType = SettingsController.settings.gameType;
+        this.boardSize = SettingsController.settings.boardSize;
 
         board = new Tile[boardSize][boardSize];
         // Initialize all tiles as empty
