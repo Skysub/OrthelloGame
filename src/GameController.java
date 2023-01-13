@@ -41,19 +41,20 @@ public class GameController {
 
         Rectangle tile = (Rectangle) event.getTarget();
         int[] coords = Util.fromId(tile.getId());
-        model.tryMove(coords[0], coords[1]);
+        model.step(coords);
     }
 
     public void passButton(ActionEvent event) {
-        model.pass();
+        if(model.state == Constants.TURN_SKIPPED)
+        {model.skipTurn();}
     }
 
     public void playAgain(ActionEvent event) {
         // Create a new game with the same settings as the previous game
-        model.newGame();
+        //TODO: Tilføj newgame
         view.resetBoard();
-        view.updateBoard();
-        view.updateTurnText(); 
+        view.updateBoard(this.model.gameBoard);
+        view.updateTurnText(this.model.currentPlayer);
         gameEndScreen.setVisible(false);
     }
 

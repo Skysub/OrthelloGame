@@ -44,12 +44,20 @@ public class GameView {
     private Rectangle[][] tiles;
     private Circle[][] pieces;
 
-    private Move lastHighlightedMove;   // A reference to the last highlighted move, used to reset the colors once the move is no longer highlighted
+    private Path lastHighlightedMove;   // A reference to the last highlighted move, used to reset the colors once the move is no longer highlighted
 
 
     public GameView(ViewManager manager) {
         this.manager = manager;
-        model = new Model(this);
+        //TODO: REMOVE THIS
+        ArrayList<String> nameArrayList = new ArrayList<String>();
+        nameArrayList.add("ADOLF HITLER");
+        nameArrayList.add("BLACK");
+
+        ArrayList<Color> colorArrayList = new ArrayList<Color>();
+        colorArrayList.add(Color.PALETURQUOISE);
+        colorArrayList.add(Color.BLACK);
+        model = new Model(this,8,2,colorArrayList,nameArrayList);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
@@ -72,10 +80,9 @@ public class GameView {
 
     public void onEnter() {
         // Setup Model and UI
-        model.newGame();
         initializeBoard();
-        updateBoard();
-        updateTurnText();
+        updateBoard(this.model.gameBoard);
+        updateTurnText(this.model.currentPlayer);
         controller.getGameEndScreen().setVisible(false);
     }
 
@@ -161,13 +168,12 @@ public class GameView {
         }
     }
 
-    public void updateBoard() {
-        Tile[][] board = model.getBoard();
+    public void updateBoard(Board gameBoard) {
 
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[row].length; col++) {
+        for (int row = 0; row < gameBoard.gridSize; row++) {
+            for (int col = 0; col < gameBoard.gridSize; col++) {
                 Circle c = pieces[row][col];
-                Tile t = board[row][col];
+                Checker t = gameBoard.getElementAt(new int[] {row,col});
 
                 c.setVisible(!t.isEmpty());
 
@@ -184,14 +190,10 @@ public class GameView {
                     c.setFill(t.getColor());
                 }
 
-                if (SHOW_EDGE) {
-                    // Used for showin the edge, which is checked for possible moves
-                    tiles[row][col].setFill(board[row][col].isEdge ? EDGE_COLOR : TILE_COLOR);
-                }
             }
         }
 
-        var possibleMoves = model.getPossibleMoves();
+        var possibleMoves = model.gamePathGrid.getNonNullPaths();
         // Only show passButton when the current player has no possible moves
         passButton.setVisible(possibleMoves.size() == 0);
         
@@ -199,35 +201,35 @@ public class GameView {
             return;
         }
 
-        for (Move move : possibleMoves) {
-            var t = move.getMoveTile();
-            Circle c = pieces[t.getRow()][t.getCol()];
+        for (Path move : possibleMoves) {
+            var coords = move.coordinates;
+            Circle c = pieces[coords[0]][coords[1]];
             c.setFill(POSSIBLE_MOVE_COLOR);
             c.setStroke(Color.TRANSPARENT);
             c.setVisible(true);
         }
     }
 
-    public void updateTurnText() {
-        turnText.setText("Current Player: " + model.getCurrentPlayer().getName()); 
+    public void updateTurnText(Player currentPlayer) {
+        turnText.setText("Current Player: " + currentPlayer.getPlayerName());
     }
 
-    public void showEndGame(ArrayList<Player> winners, int[] scores) {
+    public void showEndGame(ArrayList<Player> winners) {
         turnText.setVisible(false);
         passButton.setVisible(false);
 
         if (winners.size() == 1) {
-            controller.getGameEndText().setText("Winner: " + winners.get(0).getName());
+            controller.getGameEndText().setText("Winner: " + winners.get(0).getPlayerName());
         }
         else {
             controller.getGameEndText().setText("Draw");
         }
 
-        ArrayList<Player> players = model.getPlayers();
-        String scoreText = players.get(0).getName() + ": " + scores[0];
+        ArrayList<Player> players = model.gamePlayerManager.playersArray;
+        String scoreText = players.get(0).getPlayerName() + ": " + players.get(0).getScore();
 
-        for (int i = 1; i < scores.length; i++) {
-            scoreText += " - " + players.get(i).getName() + ": " + scores[i]; 
+        for (int i = 1; i < players.size(); i++) {
+            scoreText += " - " + players.get(i).getPlayerName() + ": " + players.get(i).getScore();
         } 
 
         controller.getScoreText().setText(scoreText);
@@ -238,27 +240,28 @@ public class GameView {
         int[] coords = Util.fromId(rect.getId());
 
         if (lastHighlightedMove != null) {
-            for (Tile flipTile : lastHighlightedMove.getFlips()) {
-                pieces[flipTile.getRow()][flipTile.getCol()].setFill(flipTile.getColor());
+            for (Checker checkerToFlip : lastHighlightedMove.checkersInPath) {
+                pieces[checkerToFlip.coordinates[0]][checkerToFlip.coordinates[1]].setFill(checkerToFlip.getColor());
             }
-            var moveTile = lastHighlightedMove.getMoveTile();
-            if (moveTile.isEmpty()) {
-                pieces[moveTile.getRow()][moveTile.getCol()].setFill(POSSIBLE_MOVE_COLOR);
+            var moveStartingChecker = model.gameBoard.getElementAt(lastHighlightedMove.coordinates);
+
+            if (moveStartingChecker.isEmpty()) {
+                pieces[moveStartingChecker.coordinates[0]][moveStartingChecker.coordinates[1]].setFill(POSSIBLE_MOVE_COLOR);
             }
             lastHighlightedMove = null;
         }
 
-        Move move = model.getPossibleMove(coords[0], coords[1]);
+        Path move = model.gamePathGrid.getElementAt(coords);
 
         if (move != null) {
             lastHighlightedMove = move;
-            for (Tile t : move.getFlips()) {
+            for (Checker checkerFromPath : move.checkersInPath) {
                 //TODO Decide what colors tiles "to be flipped" should be
-                Color c = t.getColor();
+                Color c = checkerFromPath.getColor();
                 c = Color.rgb((int)c.getRed(), (int)c.getGreen(), (int)c.getBlue(), 0.5);
-                pieces[t.getRow()][t.getCol()].setFill(c);
+                pieces[checkerFromPath.coordinates[0]][checkerFromPath.coordinates[1]].setFill(c);
             }
-            pieces[move.getMoveTile().getRow()][move.getMoveTile().getCol()].setFill(POSSIBLE_MOVE_HIGHLIGHET_COLOR);
+            pieces[move.coordinates[0]][move.coordinates[1]].setFill(POSSIBLE_MOVE_HIGHLIGHET_COLOR);
         }
     }
 }

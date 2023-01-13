@@ -76,29 +76,15 @@ public class SettingsController {
         System.out.println("Think");
     }
 
-    public void setReversi(ActionEvent event) {
-        settings.gameType = GameType.Reversi;
-    }
 
-    public void setOthello(ActionEvent event) {
-        settings.gameType = GameType.Othello;
-    }
-
-    public void setRolit(ActionEvent event) {
-        settings.gameType = GameType.Rolit;
-    }
 }
 
 class Settings {
 
     int boardSize;
-    GameType gameType;
+    //TODO: Tilføj gametype
 
     //TODO AI
 
-    public Settings() {
-        boardSize = 8;
-        gameType = GameType.Reversi;
-    }
 
 }
