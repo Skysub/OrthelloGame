@@ -24,6 +24,7 @@ public class Model {
 
     private ArrayList<Player> players;
     private int currentPlayerIndex;
+    private int startedPreviousIndex = -1;  // The index of the player that started the previous game. Used in Reversi, to alternate who starts
 
     // Public getters used by View to retrieve the state of the game
     public int getBoardSize() {return boardSize;}
@@ -40,6 +41,8 @@ public class Model {
     
     public void newGame() {
 
+        boolean resetStartingPlayer = (this.gameType != SettingsController.settings.gameType);
+
         this.gameType = SettingsController.settings.gameType;
         this.boardSize = SettingsController.settings.boardSize;
 
@@ -54,13 +57,23 @@ public class Model {
         // Determine starting player
         players = Player.getDefaultPlayers(gameType);
 
-        if (gameType == GameType.Reversi || gameType == GameType.Rolit) {
+        if (gameType == GameType.Reversi) {
+            if (resetStartingPlayer || currentPlayerIndex == -1) {
+                currentPlayerIndex = random.nextInt(players.size());
+            }
+            else {
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            }
+        }
+        else if (gameType == GameType.Rolit) {
             currentPlayerIndex = random.nextInt(players.size());
         }
-        else {
+        else if (gameType == GameType.Othello) {
             currentPlayerIndex = 0;
         }
-        
+
+        startedPreviousIndex = currentPlayerIndex;
+
         setupInitialBoard();
 
         passedPreviousTurn = false;
