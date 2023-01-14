@@ -4,6 +4,7 @@ import javafx.stage.Stage;
 public class SettingsView extends ViewState {
 
     private SettingsController controller;
+    private Settings settings;
     
     public SettingsView(Model model, App view, Stage stage) {
 		super(model, view, stage);
@@ -16,7 +17,10 @@ public class SettingsView extends ViewState {
             e.printStackTrace();
             return;
         }
-        controller.setModelAndView(model, this);
+        settings = new Settings();
+        settings.setBaseSettings();
+        controller.setModelAndView(model, this, settings);
+
     }
 
 	@Override

@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Circle?>
 
 <Scene xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SettingsController">
    <root>
@@ -55,6 +56,29 @@
                   <RadioButton mnemonicParsing="false" onAction="#radioGreedy" text="GreedyAI" toggleGroup="$GameType" />
                   <RadioButton mnemonicParsing="false" onAction="#radioWeighted" text="WeightedAI" toggleGroup="$GameType" />
                   <RadioButton mnemonicParsing="false" onAction="#radioThinking" text="ThinkingAI" toggleGroup="$GameType" />
+               </children>
+            </HBox>
+            <Label prefWidth="600.0" text="Players" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" prefWidth="200.0" spacing="45.0">
+               <children>
+                  <VBox>
+                     <children>
+                        <Button onAction="#prevPlayer" text="Previous" />
+                        <Button onAction="#nextPlayer" text="Next" />
+                        <TextField fx:id="playerNameText" onAction="#playerNameChanged" promptText="Player name" />
+                        <HBox>
+                           <children>
+                              <Button onAction="#backColor" text="Previous" />
+                              <Circle fx:id="playerColor"/>
+                              <Button onAction="#nextColor" text="Next" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                </children>
             </HBox>
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" text="Back" textAlignment="CENTER">
