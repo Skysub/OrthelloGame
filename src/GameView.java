@@ -51,13 +51,13 @@ public class GameView {
         this.manager = manager;
         //TODO: REMOVE THIS
         ArrayList<String> nameArrayList = new ArrayList<String>();
-        nameArrayList.add("ADOLF HITLER");
+        nameArrayList.add("WHITE");
         nameArrayList.add("BLACK");
 
         ArrayList<Color> colorArrayList = new ArrayList<Color>();
         colorArrayList.add(Color.PALETURQUOISE);
         colorArrayList.add(Color.BLACK);
-        model = new Model(this,8,2,colorArrayList,nameArrayList);
+        model = new Model(this, 8, 2, colorArrayList, nameArrayList);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
