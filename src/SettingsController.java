@@ -76,6 +76,18 @@ public class SettingsController {
         System.out.println("Think");
     }
 
+    public void setReversi(ActionEvent event) {
+        System.out.println("Reversi");
+    }
+
+    public void setOthello(ActionEvent event) {
+        System.out.println("Othello");
+    }
+
+    public void setRolit(ActionEvent event) {
+        System.out.println("Rolit");
+    }
+
 
 }
 
