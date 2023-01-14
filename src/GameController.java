@@ -8,6 +8,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+
 public class GameController {
 
     private ReversiModel model;
@@ -42,6 +44,21 @@ public class GameController {
         Rectangle tile = (Rectangle) event.getTarget();
         int[] coords = Util.fromId(tile.getId());
         model.step(coords);
+        if(model.currentPlayer.isAI()){
+            ArrayList<Path> nonNullArray = model.getListOfNonNullPaths();
+
+            if(model.state == Constants.TURN_SKIPPED) {
+                model.skipTurn();
+            }else if(model.state == Constants.START){
+                model.step(new int[] {3,3});
+                model.step(new int[] {3,4});
+                model.step(new int[] {4,4});
+                model.step(new int[] {4,3});
+            } else{
+                model.step(model.currentPlayer.getAICalculatedCoords(nonNullArray));
+            }
+
+        }
     }
 
     public void passButton(ActionEvent event) {

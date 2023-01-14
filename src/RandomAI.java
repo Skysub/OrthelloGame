@@ -1,12 +1,10 @@
-public class RandomAI extends Ai{
+import java.util.ArrayList;
 
-    RandomAI(Model model) {
-        super(model);
-    }
+public class RandomAI implements Ai{
 
-    public void placePiece(){
-        int move = (int) (Math.random() * possibleMoves.size());
-        model.tryMove(possibleMoves.get(move).getTile().getRow(),possibleMoves.get(move).getTile().getCol());
+    public int[] AIGetSteppingCoords(ArrayList<Path> nonNullPaths){
+        int moveIndex = (int) (Math.random() * nonNullPaths.size());
+        return nonNullPaths.get(moveIndex).coordinates;
     }
     
 }

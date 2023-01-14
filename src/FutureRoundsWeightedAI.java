@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 
-
-public class ExtendedWeightedAI extends WeightedAI{
+/*
+public class FutureRoundsWeightedAI extends WeightedAI{
 
     private int roundsCalced;
 
-    ExtendedWeightedAI(Model model, int difficulty) {
+    FutureRoundsWeightedAI(ReversiModel model, int difficulty) {
         super(model);
         roundsCalced = difficulty;
         
@@ -20,7 +20,7 @@ public class ExtendedWeightedAI extends WeightedAI{
 
     private Tile calculateMove(){
         getMoves();
-        if(model.getGameState() == Model.GameState.Start){ //Random start positions
+        if(model.getGameState() == ReversiModel.GameState.Start){ //Random start positions
             return possibleMoves.get((int) (Math.random()*possibleMoves.size())).getTile();
         }
 
@@ -50,7 +50,7 @@ public class ExtendedWeightedAI extends WeightedAI{
 
         if(calcsDone < roundsCalced){ //checks if limit is reached
 
-            Model calcModel = new Model(null); //New model to do calculations on
+            ReversiModel calcModel = new ReversiModel(null); //New model to do calculations on
             setupCalcModel(move.getTile(), calcModel); //Sets up new model for calculations
             ArrayList<PossibleMove> nextMoves = calcModel.getPossibleMoves();
             int bestWeight = -1000;
@@ -72,9 +72,10 @@ public class ExtendedWeightedAI extends WeightedAI{
         return 0;
     }
 
-    private void setupCalcModel(Tile move, Model calcModel){
+    private void setupCalcModel(Tile move, ReversiModel calcModel){
         calcModel.setBoard(model.getBoard());
         calcModel.setNoOfMoves(model.getNoOfMoves());
         calcModel.AIMove(move);
     }
 }
+*/

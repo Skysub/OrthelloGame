@@ -1,28 +1,28 @@
 import java.util.ArrayList;
 
-public class GreedyAI extends Ai{
+public class GreedyAI implements Ai{
 
-    ArrayList<Integer> bestMoves;
-    GreedyAI(Model model) {
-        super(model);
-        bestMoves = new ArrayList<Integer>();
+    int getScoreOfPath(Path chosenPath){
+        return chosenPath.getSizeOfPath();
     }
 
-    
-    public void placePiece() {
-        bestMoves.clear();
-        int best = 0;
-        int move;
-        for(int i = 0; i < possibleMoves.size(); i++){
-            if (possibleMoves.get(i).toBeFlipped.size() > best){
-                best = possibleMoves.get(i).toBeFlipped.size();
-                bestMoves.clear();
-                bestMoves.add(i);
-            }
-            else if(possibleMoves.get(i).toBeFlipped.size() == best) bestMoves.add(i);
+    /*As this is a greedy algorithm, we calculate the best scores from the nonNullPaths,
+    we then randomly select the coords of one of these paths.
+    */
+    public int[] AIGetSteppingCoords(ArrayList<Path> nonNullPaths) {
+        ArrayList<Path> bestPaths = new ArrayList<Path>();
+        int bestScore = 0;
+        Path chosenPath;
+        for (Path currentPath : nonNullPaths) {
+            int scoreOfCurrentPath = getScoreOfPath(currentPath);
+            if (scoreOfCurrentPath > bestScore) {
+                bestScore = scoreOfCurrentPath;
+                bestPaths.clear();
+                bestPaths.add(currentPath);
+            } else if (scoreOfCurrentPath == bestScore) bestPaths.add(currentPath);
         }
-        move = bestMoves.get((int) (Math.random() * bestMoves.size()));
-        model.tryMove(possibleMoves.get(move).getTile().getRow(),possibleMoves.get(move).getTile().getCol());
+        chosenPath = bestPaths.get((int) (Math.random() * bestPaths.size()));
+        return chosenPath.coordinates;
     }
     
 }

@@ -38,7 +38,7 @@ public class ReversiModel {
         this.nrPlayers = Settings.nrPlayers;
         this.gameBoard = new Board(boardSize);
         this.gamePathGrid = new PathGrid(boardSize);
-        this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames);
+        this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames,Settings.playerAIModes);
 
         selectStartingPlayer();
     }
@@ -49,13 +49,16 @@ public class ReversiModel {
         this.state = Constants.START;
         this.isGameOver = false;
     }
-    //We essentially re-initalize the gameBoard
-    void resetGame(){
+
+    void reinstantiateBoardsAndGrids(){
         this.boardSize = Settings.boardSize;
         this.nrPlayers = Settings.nrPlayers;
         this.gameBoard = new Board(boardSize);
         this.gamePathGrid = new PathGrid(boardSize);
-        this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames);
+        this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames,Settings.playerAIModes);
+    }
+    //We essentially re-initalize the gameBoard
+    void resetGame(){
         resetVariables();
 
         this.GameView.resetBoard();
@@ -131,6 +134,7 @@ public class ReversiModel {
                     this.state = Constants.TURN_SKIPPED; // Skip
                 }
             }
+
         }
 
         GameView.updateBoard(this.gameBoard);

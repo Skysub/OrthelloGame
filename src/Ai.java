@@ -1,17 +1,7 @@
 import java.util.ArrayList;
 
-public abstract class Ai {
-    Model model;
-    public ArrayList<PossibleMove> possibleMoves;
+public interface Ai {
 
-    Ai(Model model){
-        this.model = model;
-    }
+     public int[] AIGetSteppingCoords(ArrayList<Path> nonNullPaths);
 
-    public abstract void placePiece();
-
-    public void getMoves(){
-        this.possibleMoves = model.getPossibleMoves();
-        if (possibleMoves.size() == 0) model.pass();
-    }
 }

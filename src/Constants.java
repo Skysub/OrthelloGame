@@ -12,3 +12,10 @@ public class Constants {
 
 
 }
+
+enum AIModes{
+    HumanPlayer,
+    AIRandom,
+    AIWeighted,
+    AIGreedy
+}
