@@ -2,6 +2,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SettingsController {
 
@@ -11,7 +15,7 @@ public class SettingsController {
     @FXML TextField customSizeText;
     @FXML RadioButton customSizeRadioButton;
 
-    public void setModelAndView(Model model, SettingsView view) {
+    public void setModelAndView(ReversiModel model, SettingsView view) {
         this.view = view;
     }
 
@@ -20,11 +24,11 @@ public class SettingsController {
     }
 
     public void radio8(ActionEvent event) {
-        settings.boardSize = 8;
+        Settings.boardSize = 8;
     }
 
     public void radio16(ActionEvent event) {
-        settings.boardSize = 16;
+        Settings.boardSize = 16;
     }
 
     public void radioCustom(ActionEvent event) {
@@ -77,15 +81,15 @@ public class SettingsController {
     }
 
     public void setReversi(ActionEvent event) {
-        System.out.println("Reversi");
+        Settings.gameMode = Constants.GAMEMODE_REVERSI;
     }
 
     public void setOthello(ActionEvent event) {
-        System.out.println("Othello");
+        Settings.gameMode = Constants.GAMEMODE_ORTHELLO;
     }
 
     public void setRolit(ActionEvent event) {
-        System.out.println("Rolit");
+        Settings.gameMode = Constants.GAMEMODE_ROLIT;
     }
 
 
@@ -93,7 +97,15 @@ public class SettingsController {
 
 class Settings {
 
-    int boardSize;
+    //All settings are initialized to the default 8x8 Reversi
+    static int boardSize = 8;
+    static int nrPlayers = 2;
+    static int gameMode = Constants.GAMEMODE_REVERSI;
+    static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.WHITE,Color.BLACK));
+    static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE","BLACK"));
+
+
+
     //TODO: Tilføj gametype
 
     //TODO AI

@@ -31,7 +31,7 @@ public class GameView {
 
     // MCV
     private ViewManager manager;
-    private Model model;
+    private ReversiModel model;
     private GameController controller;
 
     // UI Elements
@@ -57,7 +57,7 @@ public class GameView {
         ArrayList<Color> colorArrayList = new ArrayList<Color>();
         colorArrayList.add(Color.PALETURQUOISE);
         colorArrayList.add(Color.BLACK);
-        model = new Model(this, 8, 2, colorArrayList, nameArrayList);
+        model = new ReversiModel(this);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
@@ -195,7 +195,7 @@ public class GameView {
 
         var possibleMoves = model.gamePathGrid.getNonNullPaths();
         // Only show passButton when the current player has no possible moves
-        passButton.setVisible(possibleMoves.size() == 0);
+        passButton.setVisible(model.state == Constants.TURN_SKIPPED);
         
         if (!SHOW_MOVE_HINTS) {
             return;

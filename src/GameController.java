@@ -10,7 +10,7 @@ import javafx.scene.shape.Rectangle;
 
 public class GameController {
 
-    private Model model;
+    private ReversiModel model;
     private GameView view;
 
     @FXML private AnchorPane grid;
@@ -22,7 +22,7 @@ public class GameController {
     @FXML private Label gameEndText;
     @FXML private Label scoreText;
 
-    public void setModelAndView(Model model, GameView view) {
+    public void setModelAndView(ReversiModel model, GameView view) {
         this.model = model;
         this.view = view;
     }
@@ -51,14 +51,13 @@ public class GameController {
 
     public void playAgain(ActionEvent event) {
         // Create a new game with the same settings as the previous game
-        //TODO: Tilføj newgame
-        view.resetBoard();
-        view.updateBoard(this.model.gameBoard);
-        view.updateTurnText(this.model.currentPlayer);
+        model.resetGame();
         gameEndScreen.setVisible(false);
     }
 
     public void quitGame(ActionEvent event) {
         view.toMenu();
     }
+
+
 }
