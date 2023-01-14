@@ -67,8 +67,12 @@
                <children>
                   <VBox>
                      <children>
-                        <Button onAction="#prevPlayer" text="Previous" />
-                        <Button onAction="#nextPlayer" text="Next" />
+                        <HBox>
+                           <children>
+                              <Button onAction="#prevPlayer" text="Previous" />
+                              <Button onAction="#nextPlayer" text="Next" />
+                           </children>
+                        </HBox>
                         <TextField fx:id="playerNameText" onAction="#playerNameChanged" promptText="Player name" />
                         <HBox>
                            <children>
