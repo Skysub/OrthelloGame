@@ -36,6 +36,10 @@ public class GameController {
 	private Label gameEndText;
 	@FXML
 	private Label scoreText;
+	@FXML
+	private Button saveButton;
+	@FXML
+	private Button loadButton;
 
 	public void setModelAndView(ReversiModel model, GameView view) {
 		this.model = model;
@@ -72,6 +76,14 @@ public class GameController {
 
 	public VBox getVerticalLabels() {
 		return verticalLabels;
+	}
+
+	public Button getSaveButton() {
+		return saveButton;
+	}
+
+	public Button getLoadButton() {
+		return loadButton;
 	}
 
 	public void tilePress(MouseEvent event) {
@@ -122,26 +134,40 @@ public class GameController {
 		view.toMenu();
 	}
 
-	public boolean SaveGame() {
-
+	public void SaveGame(ActionEvent event) {
 		// Constructs a single arraylist of all turns taken, in order, from the Players' turnHistory
 		ArrayList<Turn> turns = new ArrayList<Turn>();
 		int first = model.gamePlayerManager.getFirstPlayerIndex(); // takes into account the starting player
-		int playerTurnIndex = 0;
+		int playerTurnIndex = -1;
 		for (int i = first; i < model.turnsTaken + first; i++) {
-			turns.add(model.gamePlayerManager.players.get(i % model.nrPlayers).getTurnHistory().get(playerTurnIndex));
-			if (i - first % model.nrPlayers == 0)
+			if ((i - first) % model.nrPlayers == 0) {
 				// increments playerTurnIndex when all players' turn of the current index has been recorded
 				playerTurnIndex++;
+			}
+			turns.add(model.gamePlayerManager.players.get(i % model.nrPlayers).getTurnHistory().get(playerTurnIndex));
 		}
-		
+
 		SaveGame save = new SaveGame(turns, new Settings());
 
-		//Calls the method that actually saves the file, returns true if all goes well
-		return LoadSave.SaveGame(save);
+		// Calls the method that actually saves the file, returns true if all goes well
+		LoadSave.SaveGame(save);
+
+		// TODO Make text pop up that shows if the saving was successful or not
 	}
 
-	public boolean LoadGame() {
-		return true;
+	public void LoadGame(ActionEvent event) {
+		SaveGame save = LoadSave.LoadGame();
+		if (save == null)
+			return;// TODO: make error text pop up
+		Settings.setSettings(save.getSettings()); // Makes the settings mirror the settings of the saved game
+		ArrayList<Turn> turns = save.getTurns();
+
+		view.MakeNewModel(); // Makes a new model to recreate the game from a fresh board with the correct new settings
+
+		// Plays the board up to the latest move from the turn list
+		for (int i = 0; i < turns.size(); i++) {
+			model.step(turns.get(i).coordinates);
+		}
+		// TODO make success text pop up
 	}
 }

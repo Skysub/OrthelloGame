@@ -30,6 +30,12 @@ public class ReversiModel{
         this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
         gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
     }
+    
+    void selectStartingPlayer(int index) {
+        this.currentPlayerIndex = index;
+        this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
+        gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
+    }
 
     ReversiModel(GameView view) {
         this.GameView = view;

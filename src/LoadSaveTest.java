@@ -33,8 +33,8 @@ class LoadSaveTest {
 	@Order(2)
 	void SaveTest() {
 		SaveGame saveGame = new SaveGame(null, new Settings());
-		assertTrue(LoadSave.SaveModel(saveGame)); // Tjekker om der bliver throwet exceptions
-		assertTrue(LoadSave.SaveModel(saveGame));
+		assertTrue(LoadSave.SaveGame(saveGame)); // Tjekker om der bliver throwet exceptions
+		assertTrue(LoadSave.SaveGame(saveGame));
 	}
 
 	@Test
@@ -45,9 +45,9 @@ class LoadSaveTest {
 		int[] c = { 3, 2 };
 		t.add(new Turn(c, Constants.PLACEMENT, 1));
 		SaveGame saveGame = new SaveGame(t, st);
-		LoadSave.SaveModel(saveGame);
+		LoadSave.SaveGame(saveGame);
 
-		SaveGame loadGame = LoadSave.LoadModel();
+		SaveGame loadGame = LoadSave.LoadGame();
 		assertTrue(loadGame.getSettings().playerColors.get(0).equals(Color.WHITE));
 		assertNotEquals(null, loadGame);
 	}
