@@ -191,9 +191,9 @@ public class GameView {
             }
         }
 
-        // Only show passButton when the current player has no possible moves
+        // Only show passButton when the current player has no possible moves and is a human
         var possibleMoves = model.gamePathGrid.getNonNullPaths();
-        passButton.setVisible(model.state == Constants.TURN_SKIPPED);
+        passButton.setVisible(model.state == Constants.TURN_SKIPPED && !model.currentPlayer.isAI());
         
         // Only show move hints when the current player is human, and move hints are enabled
         //TODO Make SHOW_MOVE_HINTS a settings
