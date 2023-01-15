@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 public class SettingsController {
 
-    public static Settings settings = new Settings();
     private SettingsView view;
 
     @FXML TextField customSizeText;
@@ -55,7 +54,7 @@ public class SettingsController {
         }
         
         //TODO Validate whether the value makes sense. Set a range eg. 4-26
-        settings.boardSize = newBoardSize;
+        Settings.boardSize = newBoardSize;
         return true;
     }
 
@@ -106,11 +105,6 @@ class Settings {
 
     static AIModes[] playerAIModes = new AIModes[] {AIModes.HumanPlayer,AIModes.AIGreedy,AIModes.HumanPlayer,AIModes.HumanPlayer};
 
-
-
     //TODO: Tilføj gametype
-
     //TODO AI
-
-
 }

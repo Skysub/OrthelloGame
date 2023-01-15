@@ -9,8 +9,6 @@ public class Constants {
     public static final int GAMEMODE_REVERSI = 0;
     public static final int GAMEMODE_ORTHELLO = 1;
     public static final int GAMEMODE_ROLIT = 2;
-
-
 }
 
 enum AIModes{

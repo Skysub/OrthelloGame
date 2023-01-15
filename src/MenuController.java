@@ -4,9 +4,7 @@ public class MenuController {
     
     private MenuView view;
 
-    //TODO
-    public void setModelAndView(ReversiModel model, MenuView view) {
-       //this.model = model;
+    public void setView(MenuView view) {
        this.view = view;
     }
 

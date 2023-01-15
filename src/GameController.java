@@ -84,6 +84,4 @@ public class GameController {
     public void quitGame(ActionEvent event) {
         view.toMenu();
     }
-
-
 }

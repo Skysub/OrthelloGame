@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+//TODO Determine whether to keep this file
 
 /*
 public class FutureRoundsWeightedAI extends WeightedAI{
@@ -8,7 +9,6 @@ public class FutureRoundsWeightedAI extends WeightedAI{
     FutureRoundsWeightedAI(ReversiModel model, int difficulty) {
         super(model);
         roundsCalced = difficulty;
-        
     }
     
     @Override
@@ -16,7 +16,6 @@ public class FutureRoundsWeightedAI extends WeightedAI{
         Tile move = calculateMove();
         model.tryMove(move.getRow(), move.getCol());
     }
-
 
     private Tile calculateMove(){
         getMoves();
@@ -44,7 +43,6 @@ public class FutureRoundsWeightedAI extends WeightedAI{
         System.out.println(weight);
         return newMove;
     }
-
 
     private int calculateWeigthsAhead(PossibleMove move, int calcsDone){
 

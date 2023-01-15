@@ -26,7 +26,7 @@ public class ReversiModel {
 
     boolean isGameOver = false;
 
-    void selectStartingPlayer(){
+    void selectStartingPlayer() {
         Random randomObject = new Random();
         this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
         this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
@@ -41,38 +41,40 @@ public class ReversiModel {
         this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames,Settings.playerAIModes);
 
         selectStartingPlayer();
+        //TODO Handle if the AI starts
     }
 
-    void resetVariables(){
+    void resetVariables() {
         this.turnsSkipped = 0;
         this.turnsTaken = 0;
         this.state = Constants.START;
         this.isGameOver = false;
     }
 
-    void reinstantiateBoardsAndGrids(){
+    void reinstantiateBoardsAndGrids() {
         this.boardSize = Settings.boardSize;
         this.nrPlayers = Settings.nrPlayers;
         this.gameBoard = new Board(boardSize);
         this.gamePathGrid = new PathGrid(boardSize);
         this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames,Settings.playerAIModes);
     }
+
     //We essentially re-initalize the gameBoard
-    void resetGame(){
+    void resetGame() {
         resetVariables();
 
         this.GameView.resetBoard();
         GameView.updateBoard(this.gameBoard);
         GameView.updateTurnText(this.currentPlayer);
     }
-    void endGame(){
+    void endGame() {
         System.out.println("GAME ENDED");
         //TODO: Play the most dramatic ending game music ever
         setEndingScreenForView();
         GameView.updateBoard(gameBoard);
     }
 
-    void skipTurn(){
+    void skipTurn() {
         // In order to get to this state, we need to skip a turn
         this.turnsSkipped += 1;
         System.out.println("TURN SKIPPED");
@@ -97,7 +99,7 @@ public class ReversiModel {
             state = Constants.TURN_SKIPPED;
             // The next player has possible moves
         } else {
-            state = Constants.PLACEMENT; // We can now place a brick
+            state = Constants.PLACEMENT; // We can now place a tile
             this.turnsSkipped = 0; // we reset the counter
         }
 
@@ -106,19 +108,15 @@ public class ReversiModel {
 
     void step(int[] coords) {
         Turn currentTurn = new Turn(coords,this.state);
-
         switch (this.state) {
-
             // Start
             case Constants.START -> {
                 boolean moveResult = startingMove(coords);
                 recordTurnTaken(moveResult,currentTurn);
-
                 // Each player gets to put 2 checkers on the board
                 if (this.turnsTaken % 2 == 0 && turnsTaken > 0 && moveResult) {
                     this.setNextTurn();
                 }
-
                 //After each player has taken 2 turns, we start the main part of the game
                 if (turnsTaken == nrPlayers * 2) {
                     this.state = Constants.PLACEMENT; // Now we place a brick
@@ -128,36 +126,27 @@ public class ReversiModel {
             // Place checkers
             case Constants.PLACEMENT -> {
                 recordTurnTaken(placementMove(coords),currentTurn);
-
                 // If there are no moves
                 if (getNrNonNullPaths() == 0) {
                     this.state = Constants.TURN_SKIPPED; // Skip
                 }
             }
-
         }
-
         GameView.updateBoard(this.gameBoard);
     }
 
     boolean startingMove(int[] coords) {
-
         // Can't place outside the center square, can only place where there is no
         // checker
         if (isLegalStartingMove(coords)) {
             Checker currentChecker = this.gameBoard.getElementAt(coords);
             currentChecker.flipChecker(currentPlayer);
-
             return true;
         }
-
         return false;
     }
 
-
-
     public boolean placementMove(int[] coords) {
-
         // We check if the coordinates correspond to the starting coordinates of any path
         //If it does, we flip all checkers (include the one in the starting coordinates) to the current player's colour
         if (this.gamePathGrid.pathExists(coords)) {
@@ -168,7 +157,6 @@ public class ReversiModel {
             this.calculatePossiblePaths();
             return true;
         }
-
         return false;
     }
 
@@ -234,7 +222,6 @@ public class ReversiModel {
         }
     }
 
-
     int[] getHorizontalCoords(int i, int j) {
         return new int[] { i, j };
     }
@@ -259,33 +246,25 @@ public class ReversiModel {
         return new int[] { j,  j+i };
     }
 
-
     Path iteratePathAlgorithm(int[] coords, Path currentPath) {
-
         Checker currentChecker = this.gameBoard.getElementAt(coords);
-
         // The checker is empty
         if (currentChecker.isEmpty()) {
             currentPath = foundEmptyChecker(currentPath, currentChecker);
         }
-
         // The checker is of the opponent's colour
         else if (isNotAlreadyFlipped(currentChecker)) {
             foundCheckerNotOurColour(currentPath, currentChecker);
         }
-
         // If checker isn't of opponent's colour or empty it is of our
         else {
             currentPath = foundCheckerOfSameColour(currentPath, currentChecker);
         }
-
         return currentPath;
     }
 
-    /*
-     * Used in the calculate possible paths algorithm. Used when we've observed a
-     * possible path for the player to select.
-     */
+    // Used in the calculate possible paths algorithm. Used when we've observed a
+    // possible path for the player to select.
     Path foundPossiblePath(Path chosenPath) {
         //We add the checker at the path's starting coordinate to the Path
         Checker startingCoordinatesChecker = this.gameBoard.getElementAt(chosenPath.coordinates);
@@ -310,14 +289,12 @@ public class ReversiModel {
         else {
             resetPath(currentPath);
         }
-
         // We set the starting coords of the path here regardless
         currentPath.setCoords(currentChecker.coordinates);
         return currentPath;
     }
 
     Path foundCheckerOfSameColour(Path currentPath, Checker currentChecker) {
-
         // HasCoords && !empty <=> Ø !C... C
         if (!currentPath.isEmpty() && currentPath.hasCoords()) {
             currentPath = foundPossiblePath(currentPath);
@@ -326,12 +303,9 @@ public class ReversiModel {
         } else {
             resetPath(currentPath);
         }
-
         currentPath.setStatusOfCurrentColourSeen(true);
         return currentPath;
-
     }
-
 
     void resetPath(Path chosenPath) {
         chosenPath.resetPath();
@@ -349,15 +323,11 @@ public class ReversiModel {
         return this.boardSize;
     }
 
-
     void setEndingScreenForView(){
         ArrayList<Player> winnersArrayList = this.gamePlayerManager.setHighScoreAndGetHighestScoringPlayers();
         GameView.showEndGame(winnersArrayList);
     }
-
 }
-
-
 
 abstract class BoardElement {
 
@@ -400,9 +370,7 @@ class Checker extends BoardElement {
         }
         return this.state.getPlayerColor();
     }
-
 }
-
 
 class TwoDimensionalGrid<E> {
     int gridSize;
@@ -449,7 +417,6 @@ class TwoDimensionalGrid<E> {
     E[] getState() {
         return this.gridArray;
     }
-
 }
 
 class Board extends TwoDimensionalGrid<Checker> {
@@ -469,9 +436,7 @@ class Board extends TwoDimensionalGrid<Checker> {
                 int position = getPositionFromCoords(x_0, y_0);
                 this.gridArray[position] = new Checker(x_0, y_0);
             }
-
         }
-
     }
 
     public boolean isWithinBoard(int[] coords) {
@@ -531,7 +496,6 @@ class PathGrid extends TwoDimensionalGrid<Path> {
             this.nonNullPaths.add(0, newPath);
             this.nrNonNullPaths += 1;
         }
-
     }
 
     boolean pathExists(Path chosenPath) {
@@ -550,12 +514,12 @@ class PathGrid extends TwoDimensionalGrid<Path> {
     int getNrNonNullPaths() {
         return nrNonNullPaths;
     }
-
 }
 
 class Path extends BoardElement {
     ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
     boolean currentPlayerColourSeen;
+    //TODO Is this used anywhere?
     int sizeOfPath = 0; // For the AI later on
 
     // Appends the checkersInPath of another path to this' - used for when multiple

@@ -18,8 +18,7 @@ public class MenuView {
             e.printStackTrace();
             return;
         }
-		//TODO
-        controller.setModelAndView(null, this);
+        controller.setView(this);
 	}
 
 	public void toGame() {

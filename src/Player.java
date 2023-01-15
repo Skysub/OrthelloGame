@@ -7,7 +7,7 @@ import java.util.Random;
 class Turn{
 
     int[] coordinates;
-    int timeTaken;
+    int timeTaken; //TODO Unit?
     int gameStateAtTurnTaken = Constants.UNDEFINED;
 
     Turn(int[] coordinates,int gameStateAtTurnTaken){
@@ -30,7 +30,7 @@ class Player{
         this.decideAIMode(aiMode);
 
         if(isAI()){
-            this.playerName += "(AI)";
+            this.playerName += " (AI)";
         }
     }
 
