@@ -136,7 +136,6 @@ public class ReversiModel {
                 }
             }
         }
-        this.gamePathGrid.printNonNullPaths();
         GameView.updateBoard(this.gameBoard);
     }
 
@@ -520,11 +519,8 @@ class PathGrid extends TwoDimensionalGrid<Path> {
         return nrNonNullPaths;
     }
 
-    void printNonNullPaths(){
-        for(int i = 0; i<nonNullPaths.size();i++){
-            System.out.println(""+nonNullPaths.get(i).coordinates[0] + "," + nonNullPaths.get(i).coordinates[1]);
-        }
-    }
+
+
 }
 
 class Path extends BoardElement {
