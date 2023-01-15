@@ -5,148 +5,177 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
-class Turn{
+class Turn implements Serializable {
 
-    int[] coordinates;
-    int timeTaken; //TODO Unit?
-    int gameStateAtTurnTaken = Constants.UNDEFINED;
-    int playerIndex;
+	private static final long serialVersionUID = 514006825282299253L;
+	int[] coordinates;
+	int timeTaken; // TODO Unit?
+	int gameStateAtTurnTaken = Constants.UNDEFINED;
+	int playerIndex;
 
-    Turn(int[] coordinates,int gameStateAtTurnTaken){
-        this.coordinates = coordinates;
-        this.gameStateAtTurnTaken = gameStateAtTurnTaken;
-    }
+	Turn(int[] coordinates, int gameStateAtTurnTaken, int playerIndex) {
+		this.coordinates = coordinates;
+		this.gameStateAtTurnTaken = gameStateAtTurnTaken;
+	}
 }
 
-class Player implements Serializable{
-    private String playerName;
-    private int score;
-    private ArrayList<Turn> turnHistory = new ArrayList<Turn>();
-    private Color playerColor;
-    private int nrCheckers;
-    private Ai AIObject;
+class Player {
+	private String playerName;
+	private int score;
+	private ArrayList<Turn> turnHistory = new ArrayList<Turn>();
+	private Color playerColor;
+	private int nrCheckers;
+	private Ai AIObject;
 
-    Player(String name,Color playerColor,AIModes aiMode){
-        this.playerName = name;
-        this.playerColor = playerColor;
-        this.decideAIMode(aiMode);
+	Player(String name, Color playerColor, AIModes aiMode) {
+		this.playerName = name;
+		this.playerColor = playerColor;
+		this.decideAIMode(aiMode);
 
-        if(isAI()){
-            this.playerName += " (AI)";
-        }
-    }
+		if (isAI()) {
+			this.playerName += " (AI)";
+		}
+	}
 
-    // Public Getters
-    Color getPlayerColor(){return this.playerColor;}
-    int getScore(){return this.score;}
-    int getNrCheckers(){ return this.nrCheckers;}
-    String getPlayerName(){ return this.playerName;}
+	// Public Getters
+	Color getPlayerColor() {
+		return this.playerColor;
+	}
 
-    int[] getAICalculatedCoords(ArrayList<Path> nonNullPaths){
-        return this.AIObject.AIGetSteppingCoords(nonNullPaths);
-    }
+	int getScore() {
+		return this.score;
+	}
+	
+	ArrayList<Turn> getTurnHistory() {
+		return this.turnHistory;
+	}
 
-    void decideAIMode(AIModes aiMode){
-        switch (aiMode){
-            case HumanPlayer -> {
-                break;
-            }
-            case AIGreedy -> {
-                this.AIObject = new GreedyAI();
-                break;
-            }
-            case AIRandom -> {
-                this.AIObject = new RandomAI();
-                break;
-            }
-            case AIWeighted -> {
-                this.AIObject = new WeightedAI();
-                break;
-            }
-        }
-    }
+	int getNrCheckers() {
+		return this.nrCheckers;
+	}
 
-    void recordTurn(Turn newTurn){
-        turnHistory.add(newTurn);
-    }
+	String getPlayerName() {
+		return this.playerName;
+	}
 
-    void decreaseNumberOfCheckers(){
-        this.nrCheckers -= 1;
-    }
+	int[] getAICalculatedCoords(ArrayList<Path> nonNullPaths) {
+		return this.AIObject.AIGetSteppingCoords(nonNullPaths);
+	}
 
-    void increaseNumberOfCheckers(){
-        this.nrCheckers += 1;
-    }
+	void decideAIMode(AIModes aiMode) {
+		switch (aiMode) {
+		case HumanPlayer -> {
+			break;
+		}
+		case AIGreedy -> {
+			this.AIObject = new GreedyAI();
+			break;
+		}
+		case AIRandom -> {
+			this.AIObject = new RandomAI();
+			break;
+		}
+		case AIWeighted -> {
+			this.AIObject = new WeightedAI();
+			break;
+		}
+		}
+	}
 
-    //Calculates and updates the score
-    int calculateScore(){
-        this.score = this.getNrCheckers();
-        return this.score;
-    }
+	void recordTurn(Turn newTurn) {
+		turnHistory.add(newTurn);
+	}
 
-    boolean isAI(){
-        return Objects.nonNull(this.AIObject);
-    }
+	void decreaseNumberOfCheckers() {
+		this.nrCheckers -= 1;
+	}
+
+	void increaseNumberOfCheckers() {
+		this.nrCheckers += 1;
+	}
+
+	// Calculates and updates the score
+	int calculateScore() {
+		this.score = this.getNrCheckers();
+		return this.score;
+	}
+
+	boolean isAI() {
+		return Objects.nonNull(this.AIObject);
+	}
 }
 
 class PlayerManager {
-    ArrayList<Player> players = new ArrayList<Player>();
-    int highScore = Constants.UNDEFINED;
-    int currentPlayerIndex;
-    int nrPlayers;
-    int nrTurnsTaken;
+	ArrayList<Player> players = new ArrayList<Player>();
+	int highScore = Constants.UNDEFINED;
+	int currentPlayerIndex;
+	int nrPlayers;
+	int nrTurnsTaken;
+	int firstPlayerIndex;
 
-    PlayerManager(int nrPlayers, ArrayList<javafx.scene.paint.Color> playerColors, ArrayList<String> playerNames,AIModes[] playerAIModes){
-        this.nrPlayers = nrPlayers;
-        for(int i = 0; i<nrPlayers; i++){
-            Color currentColor = playerColors.get(i);
-            String currentName = playerNames.get(i);
-            AIModes currentAIMode = playerAIModes[i];
-            Player newPlayer = new Player(currentName,currentColor,currentAIMode);
-            this.addPlayer(newPlayer);
-        }
+	PlayerManager(int nrPlayers, ArrayList<javafx.scene.paint.Color> playerColors, ArrayList<String> playerNames,
+			AIModes[] playerAIModes) {
+		this.nrPlayers = nrPlayers;
+		for (int i = 0; i < nrPlayers; i++) {
+			Color currentColor = playerColors.get(i);
+			String currentName = playerNames.get(i);
+			AIModes currentAIMode = playerAIModes[i];
+			Player newPlayer = new Player(currentName, currentColor, currentAIMode);
+			this.addPlayer(newPlayer);
+		}
 
-        Random randomObject = new Random();
-        this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
+		Random randomObject = new Random();
+		this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
 
-    }
-    void addPlayer(Player newPlayer){
-        players.add(newPlayer);
-    }
+	}
 
-    /*
-    Sets the class variable highScore and gets an arrayList, where:
-    For all elements in the calculated arrayList, there exists no element in the playersArray, that has a higher score.
-    For all elements in the calculated arrayList, all elements in the playersArray have the same or lower score.
-     */
-    ArrayList<Player> setHighScoreAndGetHighestScoringPlayers(){
-        ArrayList<Player> highestScoringPlayersArray = new ArrayList<Player>();
+	void addPlayer(Player newPlayer) {
+		players.add(newPlayer);
+	}
 
-        for (Player currentPlayer : this.players) {
+	/*
+	 * Sets the class variable highScore and gets an arrayList, where: For all
+	 * elements in the calculated arrayList, there exists no element in the
+	 * playersArray, that has a higher score. For all elements in the calculated
+	 * arrayList, all elements in the playersArray have the same or lower score.
+	 */
+	ArrayList<Player> setHighScoreAndGetHighestScoringPlayers() {
+		ArrayList<Player> highestScoringPlayersArray = new ArrayList<Player>();
 
-            currentPlayer.calculateScore();
-            int currentScore = currentPlayer.getScore();
+		for (Player currentPlayer : this.players) {
 
-            //Hvis playeren har samme score som highscoren tilføjer vi det til arrayet
-            if (currentScore == this.highScore) {
-                highestScoringPlayersArray.add(currentPlayer);
-            }
-			//Hvis denne playeren har højere score end den nuværende highscore, betyder det, at alle andre i arrayet har lavere score end denne player,
-			//og vi genstarter derfor arrayet.
-            else if (currentScore > this.highScore) {
-                highestScoringPlayersArray = new ArrayList<Player>();
-                highestScoringPlayersArray.add(currentPlayer);
-                this.highScore = currentPlayer.getScore();
-            }
-        }
-        return highestScoringPlayersArray;
-    }
+			currentPlayer.calculateScore();
+			int currentScore = currentPlayer.getScore();
 
-    Player getPlayerAtIndex(int i){
-        return players.get(i);
-    }
+			// Hvis playeren har samme score som highscoren tilføjer vi det til arrayet
+			if (currentScore == this.highScore) {
+				highestScoringPlayersArray.add(currentPlayer);
+			}
+			// Hvis denne playeren har højere score end den nuværende highscore, betyder
+			// det, at alle andre i arrayet har lavere score end denne player,
+			// og vi genstarter derfor arrayet.
+			else if (currentScore > this.highScore) {
+				highestScoringPlayersArray = new ArrayList<Player>();
+				highestScoringPlayersArray.add(currentPlayer);
+				this.highScore = currentPlayer.getScore();
+			}
+		}
+		return highestScoringPlayersArray;
+	}
 
-    ArrayList<Player> getPlayers(){
-        return players;
-    }
+	Player getPlayerAtIndex(int i) {
+		return players.get(i);
+	}
+
+	ArrayList<Player> getPlayers() {
+		return players;
+	}
+
+	void setFirstPlayerIndex(int index) {
+		firstPlayerIndex = index;
+	}
+	
+	int getFirstPlayerIndex() {
+		return firstPlayerIndex;
+	}
 }

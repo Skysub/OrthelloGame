@@ -4,6 +4,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -94,9 +95,11 @@ public class SettingsController {
 
 }
 
-class Settings {
+class Settings implements Serializable {
 
-    //All settings are initialized to the default 8x8 Reversi
+	private static final long serialVersionUID = 8390467629592650422L;
+
+	//All settings are initialized to the default 8x8 Reversi
     static int boardSize = 8;
     static int nrPlayers = 2;
     static int gameMode = Constants.GAMEMODE_REVERSI;
