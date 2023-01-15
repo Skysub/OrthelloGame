@@ -20,6 +20,9 @@ public class GreedyAI implements Ai{
                 bestPaths.add(currentPath);
             } else if (scoreOfCurrentPath == bestScore) bestPaths.add(currentPath);
         }
+        if(bestPaths.size() == 0){
+            return new int[] {Constants.UNDEFINED,Constants.UNDEFINED};
+        }
         chosenPath = bestPaths.get((int) (Math.random() * bestPaths.size()));
         return chosenPath.coordinates;
     }

@@ -41,51 +41,39 @@ public class ReversiModel {
         this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames,Settings.playerAIModes);
 
         selectStartingPlayer();
-        //TODO Handle if the AI starts
     }
-
-    void resetVariables() {
-        this.turnsSkipped = 0;
-        this.turnsTaken = 0;
-        this.state = Constants.START;
-        this.isGameOver = false;
-    }
-
-    void reinstantiateBoardsAndGrids() {
-        this.boardSize = Settings.boardSize;
-        this.nrPlayers = Settings.nrPlayers;
-        this.gameBoard = new Board(boardSize);
-        this.gamePathGrid = new PathGrid(boardSize);
-        this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames,Settings.playerAIModes);
-    }
-
-    //We essentially re-initalize the gameBoard
-    void reinstantiateGame() {
-        resetVariables();
-
-        this.GameView.resetBoard();
-        updateView();
-    }
-
     void updateView(){
         GameView.updateBoard(this.gameBoard);
         GameView.updateTurnText(this.currentPlayer);
     }
     void endGame() {
         System.out.println("GAME ENDED");
-        //TODO: Play the most dramatic ending game music ever
         setEndingScreenForView();
         GameView.updateBoard(gameBoard);
     }
 
-    void skipTurn() {
+    //Calculates the starting moves for the AI
+    int[] AIStartingMove(){
+        int center_coord = this.boardSize / 2;
+        for(int x = center_coord; x<= center_coord+1;x++){
+            for(int y = center_coord; y<= center_coord+1;y++){
+
+                int[] possibleCoords = new int[] {x,y};
+
+                if(isLegalStartingMove(possibleCoords)){
+                    return possibleCoords;
+                }
+            }
+        }
+        return new int[] {Constants.UNDEFINED,Constants.UNDEFINED};
+    }
+    void skipTurn(Turn turntaken) {
         // In order to get to this state, we need to skip a turn
         this.turnsSkipped += 1;
         System.out.println("TURN SKIPPED");
 
-        //We create a dummy turn and record it
-        int[] dummyCoords = new int[] {Constants.UNDEFINED,Constants.UNDEFINED};
-        recordTurnTaken(true,new Turn(dummyCoords,this.state,this.currentPlayerIndex));
+        //If this function has been called, we know that we've taken a legal skipTurn move
+        recordTurnTaken(true,turntaken);
 
         // See if the next person can play their turn
         setNextTurn();
@@ -106,8 +94,6 @@ public class ReversiModel {
             state = Constants.PLACEMENT; // We can now place a tile
             this.turnsSkipped = 0; // we reset the counter
         }
-
-        GameView.updateBoard(this.gameBoard);
     }
 
     void step(int[] coords) {
@@ -117,15 +103,18 @@ public class ReversiModel {
             case Constants.START -> {
                 boolean moveResult = startingMove(coords);
                 recordTurnTaken(moveResult,currentTurn);
+
                 // Each player gets to put 2 checkers on the board
                 if (this.turnsTaken % 2 == 0 && turnsTaken > 0 && moveResult) {
                     this.setNextTurn();
                 }
+
                 //After each player has taken 2 turns, we start the main part of the game
                 if (turnsTaken == nrPlayers * 2) {
                     this.state = Constants.PLACEMENT; // Now we place a brick
                     this.calculatePossiblePaths();
                 }
+                break;
             }
             // Place checkers
             case Constants.PLACEMENT -> {
@@ -134,9 +123,19 @@ public class ReversiModel {
                 if (getNrNonNullPaths() == 0) {
                     this.state = Constants.TURN_SKIPPED; // Skip
                 }
+                break;
+            }
+
+            case Constants.TURN_SKIPPED -> {
+                // In order to get to this state, we need to skip a turn
+                    this.turnsSkipped += 1;
+                    skipTurn(currentTurn);
+                    break;
             }
         }
         GameView.updateBoard(this.gameBoard);
+
+
     }
 
     boolean startingMove(int[] coords) {
@@ -333,6 +332,53 @@ public class ReversiModel {
     }
 }
 
+class OrthelloModel extends ReversiModel{
+
+    OrthelloModel(GameView view){
+        super(view);
+
+        //We don't have a starting state in Orthello, so we simply skip this
+        this.state = Constants.PLACEMENT;
+
+        startingMoves();
+
+    }
+
+    @Override
+    void selectStartingPlayer() {
+        this.currentPlayerIndex = 0;
+        this.currentPlayer = this.gamePlayerManager.getPlayerAtIndex(0);
+    }
+
+    void startingMoves(){
+        int[][] startingCoords = getCenterCoords();
+        for(int i= 0; i<startingCoords.length;i++){
+            Checker currentChecker = this.gameBoard.getElementAt(startingCoords[i]);
+            if(i%2 == 0){
+                currentChecker.flipChecker(currentPlayer);
+            } else{
+                currentChecker.flipChecker(gamePlayerManager.getPlayerAtIndex(1));
+            }
+        }
+    }
+
+    int[][] getCenterCoords(){
+        int[][] centerCoords = new int[4][2];
+        int halfOfSize = this.boardSize/2;
+        int incrementer = 0;
+
+        for(int i = halfOfSize-1; i<=halfOfSize;i++){
+            for(int j = halfOfSize-1;j<=halfOfSize;j++){
+                centerCoords[incrementer] = new int[] {i,j};
+                incrementer += 1;
+            }
+        }
+
+        return centerCoords;
+    }
+
+}
+
 abstract class BoardElement {
 
     int emptyValue = Constants.EMPTY;
@@ -457,6 +503,7 @@ class Board extends TwoDimensionalGrid<Checker> {
         int y = coords[1];
         return (x >= lower && x < upper && y >= lower && y < upper);
     }
+
 
     void flipCheckerAtCoords(int[] coords, Player newPlayer){
         Checker chosenChecker = getElementAt(coords);
