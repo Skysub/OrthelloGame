@@ -197,7 +197,7 @@ public class GameView {
         // Only show passButton when the current player has no possible moves
         passButton.setVisible(model.state == Constants.TURN_SKIPPED);
         
-        if (!SHOW_MOVE_HINTS) {
+        if (!SHOW_MOVE_HINTS || model.currentPlayer.isAI()) {
             return;
         }
 
@@ -225,7 +225,7 @@ public class GameView {
             controller.getGameEndText().setText("Draw");
         }
 
-        ArrayList<Player> players = model.gamePlayerManager.playersArray;
+        ArrayList<Player> players = model.gamePlayerManager.players;
         String scoreText = players.get(0).getPlayerName() + ": " + players.get(0).getScore();
 
         for (int i = 1; i < players.size(); i++) {
