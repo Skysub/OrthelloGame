@@ -141,6 +141,7 @@ public class GameController {
 		int playerTurnIndex = -1;
 
 		// Tilføjer startmoves
+		if(model.turnsTaken < 4) return; //TODO fejlbesked
 		if (model.nrPlayers == 2) {
 			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
 			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(1));
@@ -162,7 +163,6 @@ public class GameController {
 			}
 			turns.add(model.gamePlayerManager.players.get(i % model.nrPlayers).getTurnHistory().get(playerTurnIndex));
 		}
-
 		SaveGame save = new SaveGame(turns, new Settings());
 
 		// Calls the method that actually saves the file, returns true if all goes well
