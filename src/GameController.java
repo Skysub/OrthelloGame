@@ -185,6 +185,7 @@ public class GameController {
 		for (int i = 0; i < turns.size(); i++) {
 			model.step(turns.get(i).coordinates);
 		}
+		view.onEnter();
 		// TODO make success text pop up
 	}
 }
