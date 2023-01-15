@@ -18,6 +18,8 @@ public class GameController {
     private ReversiModel model;
     private GameView view;
 
+    private boolean aiIsMoving = false;
+
     @FXML private AnchorPane grid;
     @FXML private Label turnText;
     @FXML private HBox horizontalLabels;
@@ -42,7 +44,7 @@ public class GameController {
     public VBox getVerticalLabels() {return verticalLabels;}
 
     public void tilePress (MouseEvent event) {
-        if(Animation.isAnimating()) return;
+        if(Animation.isAnimating() || aiIsMoving) return;
 
         Rectangle tile = (Rectangle) event.getTarget();
         int[] coords = Util.fromId(tile.getId());
@@ -50,7 +52,7 @@ public class GameController {
 
         if(model.currentPlayer.isAI()){
             // Play AI move after 1 second
-            var timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            var timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
                 //TODO Should this be done elsewhere?
                 ArrayList<Path> nonNullArray = model.getListOfNonNullPaths();
     
@@ -64,8 +66,10 @@ public class GameController {
                 } else{
                     model.step(model.currentPlayer.getAICalculatedCoords(nonNullArray));
                 }
+                aiIsMoving = false;
             }));
 
+            aiIsMoving = true;
             timeline.play();
         }
     }

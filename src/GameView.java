@@ -185,6 +185,7 @@ public class GameView {
                 }
                 else {
                     c.setFill(t.getColor());
+                    c.setStroke(STROKE_COLOR);
                 }
 
             }
