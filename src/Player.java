@@ -1,5 +1,6 @@
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -11,13 +12,13 @@ class Turn{
     int gameStateAtTurnTaken = Constants.UNDEFINED;
     int playerIndex;
 
-    Turn(int[] coordinates,int gameStateAtTurnTaken, int playerIndex){
+    Turn(int[] coordinates,int gameStateAtTurnTaken){
         this.coordinates = coordinates;
         this.gameStateAtTurnTaken = gameStateAtTurnTaken;
     }
 }
 
-class Player{
+class Player implements Serializable{
     private String playerName;
     private int score;
     private ArrayList<Turn> turnHistory = new ArrayList<Turn>();
