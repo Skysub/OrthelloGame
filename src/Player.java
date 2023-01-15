@@ -9,8 +9,9 @@ class Turn{
     int[] coordinates;
     int timeTaken;
     int gameStateAtTurnTaken = Constants.UNDEFINED;
+    int playerIndex;
 
-    Turn(int[] coordinates,int gameStateAtTurnTaken){
+    Turn(int[] coordinates,int gameStateAtTurnTaken, int playerIndex){
         this.coordinates = coordinates;
         this.gameStateAtTurnTaken = gameStateAtTurnTaken;
     }
