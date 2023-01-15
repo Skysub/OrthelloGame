@@ -60,10 +60,14 @@ public class ReversiModel {
     }
 
     //We essentially re-initalize the gameBoard
-    void resetGame() {
+    void reinstantiateGame() {
         resetVariables();
 
         this.GameView.resetBoard();
+        updateView();
+    }
+
+    void updateView(){
         GameView.updateBoard(this.gameBoard);
         GameView.updateTurnText(this.currentPlayer);
     }
@@ -81,7 +85,7 @@ public class ReversiModel {
 
         //We create a dummy turn and record it
         int[] dummyCoords = new int[] {Constants.UNDEFINED,Constants.UNDEFINED};
-        recordTurnTaken(true,new Turn(dummyCoords,this.state));
+        recordTurnTaken(true,new Turn(dummyCoords,this.state,this.currentPlayerIndex));
 
         // See if the next person can play their turn
         setNextTurn();
@@ -107,7 +111,7 @@ public class ReversiModel {
     }
 
     void step(int[] coords) {
-        Turn currentTurn = new Turn(coords,this.state);
+        Turn currentTurn = new Turn(coords,this.state,this.currentPlayerIndex);
         switch (this.state) {
             // Start
             case Constants.START -> {
@@ -132,6 +136,7 @@ public class ReversiModel {
                 }
             }
         }
+        this.gamePathGrid.printNonNullPaths();
         GameView.updateBoard(this.gameBoard);
     }
 
@@ -513,6 +518,12 @@ class PathGrid extends TwoDimensionalGrid<Path> {
 
     int getNrNonNullPaths() {
         return nrNonNullPaths;
+    }
+
+    void printNonNullPaths(){
+        for(int i = 0; i<nonNullPaths.size();i++){
+            System.out.println(""+nonNullPaths.get(i).coordinates[0] + "," + nonNullPaths.get(i).coordinates[1]);
+        }
     }
 }
 

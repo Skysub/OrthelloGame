@@ -239,6 +239,7 @@ public class GameView {
     private void onHover(Rectangle rect) {
         int[] coords = Util.fromId(rect.getId());
 
+
         if (lastHighlightedMove != null) {
             for (Checker checkerToFlip : lastHighlightedMove.checkersInPath) {
                 pieces[checkerToFlip.coordinates[0]][checkerToFlip.coordinates[1]].setFill(checkerToFlip.getColor());
@@ -263,5 +264,9 @@ public class GameView {
             }
             pieces[move.coordinates[0]][move.coordinates[1]].setFill(POSSIBLE_MOVE_HIGHLIGHET_COLOR);
         }
+    }
+
+    public void setModel(ReversiModel newModel){
+        this.model = newModel;
     }
 }

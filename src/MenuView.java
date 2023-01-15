@@ -28,4 +28,5 @@ public class MenuView {
 	public void toSettings() {
 		manager.toSettings();
 	}
+
 }

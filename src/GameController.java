@@ -53,7 +53,7 @@ public class GameController {
         if(model.currentPlayer.isAI()){
             // Play AI move after 1 second
             var timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
-                //TODO Should this be done elsewhere?
+
                 ArrayList<Path> nonNullArray = model.getListOfNonNullPaths();
     
                 if(model.state == Constants.TURN_SKIPPED) {
@@ -81,11 +81,24 @@ public class GameController {
 
     public void playAgain(ActionEvent event) {
         // Create a new game with the same settings as the previous game
-        model.resetGame();
+        resetGame();
         gameEndScreen.setVisible(false);
     }
 
     public void quitGame(ActionEvent event) {
         view.toMenu();
+        resetGame();
     }
+
+    public void resetGame(){
+        this.model = new ReversiModel(this.view);
+        view.setModel(model);
+        view.resetBoard();
+        view.updateBoard(model.gameBoard);
+    }
+
+
+
 }
+
+
