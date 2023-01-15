@@ -112,7 +112,7 @@ public class ReversiModel{
     }
 
     void step(int[] coords) {
-        Turn currentTurn = new Turn(coords,this.state, currentPlayerIndex);
+        Turn currentTurn = new Turn(coords, this.state, currentPlayerIndex);
         switch (this.state) {
             // Start
             case Constants.START -> {
@@ -181,7 +181,7 @@ public class ReversiModel{
     void recordTurnTaken(Boolean moveValue,Turn turnTaken) {
         if (moveValue) {
             this.turnsTaken += 1;
-            this.currentPlayer.recordTurn(turnTaken);
+            gamePlayerManager.players.get(turnTaken.playerIndex).recordTurn(turnTaken);
         }
     }
 

@@ -16,6 +16,7 @@ class Turn implements Serializable {
 	Turn(int[] coordinates, int gameStateAtTurnTaken, int playerIndex) {
 		this.coordinates = coordinates;
 		this.gameStateAtTurnTaken = gameStateAtTurnTaken;
+		this.playerIndex = playerIndex;
 	}
 }
 
