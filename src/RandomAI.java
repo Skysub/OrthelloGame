@@ -6,5 +6,4 @@ public class RandomAI implements Ai{
         int moveIndex = (int) (Math.random() * nonNullPaths.size());
         return nonNullPaths.get(moveIndex).coordinates;
     }
-    
 }

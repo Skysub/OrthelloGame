@@ -1,3 +1,5 @@
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -14,6 +17,8 @@ public class GameController {
 
     private ReversiModel model;
     private GameView view;
+
+    private boolean aiIsMoving = false;
 
     @FXML private AnchorPane grid;
     @FXML private Label turnText;
@@ -39,25 +44,33 @@ public class GameController {
     public VBox getVerticalLabels() {return verticalLabels;}
 
     public void tilePress (MouseEvent event) {
-        if(Animation.isAnimating()) return;
+        if(Animation.isAnimating() || aiIsMoving) return;
 
         Rectangle tile = (Rectangle) event.getTarget();
         int[] coords = Util.fromId(tile.getId());
         model.step(coords);
+
         if(model.currentPlayer.isAI()){
-            ArrayList<Path> nonNullArray = model.getListOfNonNullPaths();
+            // Play AI move after 1 second
+            var timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
+                //TODO Should this be done elsewhere?
+                ArrayList<Path> nonNullArray = model.getListOfNonNullPaths();
+    
+                if(model.state == Constants.TURN_SKIPPED) {
+                    model.skipTurn();
+                }else if(model.state == Constants.START){
+                    model.step(new int[] {3,3});
+                    model.step(new int[] {3,4});
+                    model.step(new int[] {4,4});
+                    model.step(new int[] {4,3});
+                } else{
+                    model.step(model.currentPlayer.getAICalculatedCoords(nonNullArray));
+                }
+                aiIsMoving = false;
+            }));
 
-            if(model.state == Constants.TURN_SKIPPED) {
-                model.skipTurn();
-            }else if(model.state == Constants.START){
-                model.step(new int[] {3,3});
-                model.step(new int[] {3,4});
-                model.step(new int[] {4,4});
-                model.step(new int[] {4,3});
-            } else{
-                model.step(model.currentPlayer.getAICalculatedCoords(nonNullArray));
-            }
-
+            aiIsMoving = true;
+            timeline.play();
         }
     }
 
@@ -75,6 +88,4 @@ public class GameController {
     public void quitGame(ActionEvent event) {
         view.toMenu();
     }
-
-
 }

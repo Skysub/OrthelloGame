@@ -46,7 +46,6 @@ public class GameView {
 
     private Path lastHighlightedMove;   // A reference to the last highlighted move, used to reset the colors once the move is no longer highlighted
 
-
     public GameView(ViewManager manager) {
         this.manager = manager;
         //TODO: REMOVE THIS
@@ -147,7 +146,6 @@ public class GameView {
             hLabel.setPrefSize(tileSize + STROKE_WIDTH, horizontalLabels.getPrefHeight());
             horizontalLabels.getChildren().add(hLabel);
         }
-
     }
     
     private Label createAxisLabel(String text) {
@@ -169,7 +167,6 @@ public class GameView {
     }
 
     public void updateBoard(Board gameBoard) {
-
         for (int row = 0; row < gameBoard.gridSize; row++) {
             for (int col = 0; col < gameBoard.gridSize; col++) {
                 Circle c = pieces[row][col];
@@ -188,16 +185,19 @@ public class GameView {
                 }
                 else {
                     c.setFill(t.getColor());
+                    c.setStroke(STROKE_COLOR);
                 }
 
             }
         }
 
+        // Only show passButton when the current player has no possible moves and is a human
         var possibleMoves = model.gamePathGrid.getNonNullPaths();
-        // Only show passButton when the current player has no possible moves
-        passButton.setVisible(model.state == Constants.TURN_SKIPPED);
+        passButton.setVisible(model.state == Constants.TURN_SKIPPED && !model.currentPlayer.isAI());
         
-        if (!SHOW_MOVE_HINTS) {
+        // Only show move hints when the current player is human, and move hints are enabled
+        //TODO Make SHOW_MOVE_HINTS a settings
+        if (!SHOW_MOVE_HINTS || model.currentPlayer.isAI()) {
             return;
         }
 
@@ -225,7 +225,7 @@ public class GameView {
             controller.getGameEndText().setText("Draw");
         }
 
-        ArrayList<Player> players = model.gamePlayerManager.playersArray;
+        ArrayList<Player> players = model.gamePlayerManager.players;
         String scoreText = players.get(0).getPlayerName() + ": " + players.get(0).getScore();
 
         for (int i = 1; i < players.size(); i++) {

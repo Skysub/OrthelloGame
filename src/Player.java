@@ -7,7 +7,7 @@ import java.util.Random;
 class Turn{
 
     int[] coordinates;
-    int timeTaken;
+    int timeTaken; //TODO Unit?
     int gameStateAtTurnTaken = Constants.UNDEFINED;
     int playerIndex;
 
@@ -25,21 +25,26 @@ class Player{
     private int nrCheckers;
     private Ai AIObject;
 
-
     Player(String name,Color playerColor,AIModes aiMode){
         this.playerName = name;
         this.playerColor = playerColor;
         this.decideAIMode(aiMode);
 
         if(isAI()){
-            this.playerName += "(AI)";
+            this.playerName += " (AI)";
         }
-
     }
+
+    // Public Getters
+    Color getPlayerColor(){return this.playerColor;}
+    int getScore(){return this.score;}
+    int getNrCheckers(){ return this.nrCheckers;}
+    String getPlayerName(){ return this.playerName;}
 
     int[] getAICalculatedCoords(ArrayList<Path> nonNullPaths){
         return this.AIObject.AIGetSteppingCoords(nonNullPaths);
     }
+
     void decideAIMode(AIModes aiMode){
         switch (aiMode){
             case HumanPlayer -> {
@@ -58,8 +63,8 @@ class Player{
                 break;
             }
         }
-
     }
+
     void recordTurn(Turn newTurn){
         turnHistory.add(newTurn);
     }
@@ -72,18 +77,6 @@ class Player{
         this.nrCheckers += 1;
     }
 
-    Color getPlayerColor(){
-        return this.playerColor;
-    }
-
-    int getScore(){
-        return this.score;
-    }
-
-    int getNrCheckers(){ return this.nrCheckers;}
-
-    String getPlayerName(){ return this.playerName;}
-
     //Calculates and updates the score
     int calculateScore(){
         this.score = this.getNrCheckers();
@@ -93,11 +86,10 @@ class Player{
     boolean isAI(){
         return Objects.nonNull(this.AIObject);
     }
-
 }
 
 class PlayerManager {
-    ArrayList<Player> playersArray = new ArrayList<Player>();
+    ArrayList<Player> players = new ArrayList<Player>();
     int highScore = Constants.UNDEFINED;
     int currentPlayerIndex;
     int nrPlayers;
@@ -118,7 +110,7 @@ class PlayerManager {
 
     }
     void addPlayer(Player newPlayer){
-        playersArray.add(newPlayer);
+        players.add(newPlayer);
     }
 
     /*
@@ -129,7 +121,7 @@ class PlayerManager {
     ArrayList<Player> setHighScoreAndGetHighestScoringPlayers(){
         ArrayList<Player> highestScoringPlayersArray = new ArrayList<Player>();
 
-        for (Player currentPlayer : this.playersArray) {
+        for (Player currentPlayer : this.players) {
 
             currentPlayer.calculateScore();
             int currentScore = currentPlayer.getScore();
@@ -137,35 +129,23 @@ class PlayerManager {
             //Hvis playeren har samme score som highscoren tilføjer vi det til arrayet
             if (currentScore == this.highScore) {
                 highestScoringPlayersArray.add(currentPlayer);
-
-
             }
-
-			/*
-				Hvis denne playeren har højere score end den nuværende highscore, betyder det, at alle andre i arrayet har lavere score end denne player,
-				og vi genstarter derfor arrayet.
-				 */
+			//Hvis denne playeren har højere score end den nuværende highscore, betyder det, at alle andre i arrayet har lavere score end denne player,
+			//og vi genstarter derfor arrayet.
             else if (currentScore > this.highScore) {
                 highestScoringPlayersArray = new ArrayList<Player>();
                 highestScoringPlayersArray.add(currentPlayer);
                 this.highScore = currentPlayer.getScore();
             }
-
         }
         return highestScoringPlayersArray;
     }
 
     Player getPlayerAtIndex(int i){
-        return this.playersArray.get(i);
+        return players.get(i);
     }
 
-    ArrayList<Player> getPlayersArray(){ return this.playersArray;
+    ArrayList<Player> getPlayers(){
+        return players;
     }
-
-
-
-
-
-
-
 }
