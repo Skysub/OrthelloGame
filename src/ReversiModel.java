@@ -81,7 +81,7 @@ public class ReversiModel {
 
         //We create a dummy turn and record it
         int[] dummyCoords = new int[] {Constants.UNDEFINED,Constants.UNDEFINED};
-        recordTurnTaken(true,new Turn(dummyCoords,this.state));
+        recordTurnTaken(true, new Turn(dummyCoords, this.state, currentPlayerIndex));
 
         // See if the next person can play their turn
         setNextTurn();
@@ -107,7 +107,7 @@ public class ReversiModel {
     }
 
     void step(int[] coords) {
-        Turn currentTurn = new Turn(coords,this.state);
+        Turn currentTurn = new Turn(coords, this.state, currentPlayerIndex);
         switch (this.state) {
             // Start
             case Constants.START -> {
