@@ -393,6 +393,29 @@ class OthelloModel extends ReversiModel{
     }
 }
 
+
+class RolitModel extends OthelloModel{
+
+    RolitModel(GameView view){
+        super(view);
+    }
+
+    @Override
+    void startingMoves() {
+            int[][] centerCoords = getCenterCoords();
+            for(int i = 0;i<centerCoords.length;i++){
+                Player currentPlayer = this.gamePlayerManager.getPlayerAtIndex(i);
+                Checker currentChecker = this.gameBoard.getElementAt(centerCoords[i]);
+                currentChecker.flipChecker(currentPlayer);
+            }
+        }
+
+        //In Rolit, we only end if the board is filled
+    @Override
+    boolean gameOverBeforeSkip() {
+        return isBoardFilled();
+    }
+}
 abstract class BoardElement {
 
     int emptyValue = Constants.EMPTY;
