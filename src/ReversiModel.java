@@ -57,9 +57,7 @@ public class ReversiModel {
         int center_coord = this.boardSize / 2;
         for(int x = center_coord; x<= center_coord+1;x++){
             for(int y = center_coord; y<= center_coord+1;y++){
-
                 int[] possibleCoords = new int[] {x,y};
-
                 if(isLegalStartingMove(possibleCoords)){
                     return possibleCoords;
                 }

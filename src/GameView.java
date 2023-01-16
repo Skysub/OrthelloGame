@@ -85,6 +85,9 @@ public class GameView {
         updateBoard(this.model.gameBoard);
         updateTurnText(this.model.currentPlayer);
         controller.getGameEndScreen().setVisible(false);
+        if(this.model.currentPlayer.isAI()){
+            controller.AIPress();
+        }
     }
 
     public void toMenu() {

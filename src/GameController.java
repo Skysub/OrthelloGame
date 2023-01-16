@@ -53,26 +53,24 @@ public class GameController {
 
     }
 
-    public void innerLoopAIPress(){
-        System.out.println(""+model.currentPlayer.isAI() + "," + model.currentPlayer.getPlayerName());
-        ArrayList<Path> nonNullArray = model.getListOfNonNullPaths();
 
-        // Play AI move after 1 second
-
-        //var timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
-            if(model.state == Constants.START){
-                model.step(model.AIStartingMove());
-            } else{
-                model.step(model.currentPlayer.getAICalculatedCoords(nonNullArray));
-            }
-        //}));
-        //timeline.play();
-
-    }
 
     public void AIPress(){
         if (model.currentPlayer.isAI()){
-            innerLoopAIPress();
+            System.out.println(""+model.currentPlayer.isAI() + "," + model.currentPlayer.getPlayerName());
+            ArrayList<Path> nonNullArray = model.getListOfNonNullPaths();
+
+            // Play AI move after 1 second
+
+            var timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
+                if(model.state == Constants.START){
+                    model.step(model.AIStartingMove());
+                    model.step(model.AIStartingMove());
+                } else{
+                    model.step(model.currentPlayer.getAICalculatedCoords(nonNullArray));
+                }
+            }));
+            timeline.play();
 
 
             System.out.println(""+model.currentPlayer.isAI() + "," + model.currentPlayer.getPlayerName());
