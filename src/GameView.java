@@ -196,8 +196,7 @@ public class GameView {
         passButton.setVisible(model.state == Constants.TURN_SKIPPED && !model.currentPlayer.isAI());
         
         // Only show move hints when the current player is human, and move hints are enabled
-        //TODO Make SHOW_MOVE_HINTS a settings
-        if (!SHOW_MOVE_HINTS || model.currentPlayer.isAI()) {
+        if (!Settings.showMoveHints || model.currentPlayer.isAI()) {
             return;
         }
 

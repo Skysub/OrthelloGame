@@ -1,11 +1,13 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -27,11 +29,18 @@ public class SettingsController {
     @FXML RadioButton randomRadio;
     @FXML RadioButton greedyRadio;
     @FXML RadioButton weightedRadio;
+    
+    @FXML CheckBox showMoveHints;
 
     public void setModelAndView(ReversiModel model, SettingsView view) {
         this.view = view;
+        //TODO Should this be done here?
         playerColor.setRadius(25);
         loadPlayer();
+    }
+    
+    public void onMoveHintsChanged(ActionEvent event) {
+        Settings.showMoveHints = showMoveHints.isSelected();
     }
 
     public void back(ActionEvent event) {
@@ -164,16 +173,27 @@ public class SettingsController {
 
 }
 
-class Settings {
+class Settings implements Serializable {
+
+    private static final long serialVersionUID = 8390467629592650422L;
+
     //All settings are initialized to the default 8x8 Reversi
     static int boardSize = 8;
     static int nrPlayers = 2;
     static int gameMode = Constants.GAMEMODE_REVERSI;
     static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.WHITE,Color.BLACK,Color.RED,Color.GREEN));
     static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE","BLACK", "RED", "GREEN"));
+    static boolean showMoveHints = true;
 
     static AIModes[] playerAIModes = new AIModes[] {AIModes.AIGreedy,AIModes.HumanPlayer,AIModes.HumanPlayer,AIModes.HumanPlayer};
 
-    //TODO: Tilføj gametype
-    //TODO AI
+    static void setSettings(Settings s) {
+		    boardSize = s.boardSize;
+		    nrPlayers = s.nrPlayers;
+		    gameMode = s.gameMode;
+		    playerColors = s.playerColors;
+		    playerNames = s.playerNames;
+		    playerAIModes = s.playerAIModes;
+		    showMoveHints = s.showMoveHints;
+    }
 }

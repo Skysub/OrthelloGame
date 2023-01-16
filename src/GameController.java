@@ -108,8 +108,58 @@ public class GameController {
         view.updateBoard(model.gameBoard);
     }
 
+    public void SaveGame(ActionEvent event) {
+		// Constructs a single arraylist of all turns taken, in order, from the Players' turnHistory
+		ArrayList<Turn> turns = new ArrayList<Turn>();
+		int first = model.gamePlayerManager.getFirstPlayerIndex(); // takes into account the starting player
+		int playerTurnIndex = -1;
 
+		// Tilføjer startmoves
+		if(model.turnsTaken < 4) return; //TODO fejlbesked
+		if (model.nrPlayers == 2) {
+			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
+			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(1));
+			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(0));
+			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(1));
+			playerTurnIndex += 2;
+		} else {
+			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
+			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(0));
+			turns.add(model.gamePlayerManager.players.get((first + 2) % model.nrPlayers).getTurnHistory().get(0));
+			turns.add(model.gamePlayerManager.players.get((first + 3) % model.nrPlayers).getTurnHistory().get(0));
+			playerTurnIndex ++;
+		}
 
+		for (int i = first + 4; i < model.turnsTaken + first; i++) {
+			if ((i - first) % model.nrPlayers == 0) {
+				// increments playerTurnIndex when all players' turn of the current index has been recorded
+				playerTurnIndex++;
+			}
+			turns.add(model.gamePlayerManager.players.get(i % model.nrPlayers).getTurnHistory().get(playerTurnIndex));
+		}
+		SaveGame save = new SaveGame(turns, new Settings());
+
+		// Calls the method that actually saves the file, returns true if all goes well
+		LoadSave.SaveGame(save);
+
+		// TODO Make text pop up that shows if the saving was successful or not
+	}
+
+	public void LoadGame(ActionEvent event) {
+		SaveGame save = LoadSave.LoadGame();
+		if (save == null)
+			return;// TODO: make error text pop up
+		Settings.setSettings(save.getSettings()); // Makes the settings mirror the settings of the saved game
+		ArrayList<Turn> turns = save.getTurns();
+
+		view.MakeNewModel(); // Makes a new model to recreate the game from a fresh board with the correct new settings
+		model.selectStartingPlayer(turns.get(0).playerIndex);
+		
+		// Plays the board up to the latest move from the turn list
+		for (int i = 0; i < turns.size(); i++) {
+			model.step(turns.get(i).coordinates);
+		}
+		view.onEnter();
+		// TODO make success text pop up
+	}
 }
-
-

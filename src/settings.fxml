@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Scene?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
@@ -114,6 +115,26 @@
                   <RadioButton fx:id="randomRadio" mnemonicParsing="false" onAction="#radioRandom" text="RandomAI" toggleGroup="$AIType" />
                   <RadioButton fx:id="greedyRadio" mnemonicParsing="false" onAction="#radioGreedy" text="GreedyAI" toggleGroup="$AIType" />
                   <RadioButton fx:id="weightedRadio" mnemonicParsing="false" onAction="#radioWeighted" text="WeightedAI" toggleGroup="$AIType" />
+               </children>
+            </HBox>
+            <Label prefWidth="600.0" text="Show Move Hints">
+               <font>
+                  <Font size="28.0" />
+               </font>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </Label>
+            <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="45.0">
+               <children>
+                  <CheckBox fx:id="showMoveHints" alignment="CENTER_RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#onMoveHintsChanged" selected="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </CheckBox>
                </children>
             </HBox>
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" prefWidth="100.0" text="Back" textAlignment="CENTER">

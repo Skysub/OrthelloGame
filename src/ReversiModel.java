@@ -1,14 +1,12 @@
 import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 
 
-public class ReversiModel {
-
-    GameView GameView;
+public class ReversiModel{
+	GameView GameView;
     int state = Constants.START;
 
     int boardSize;
@@ -30,6 +28,13 @@ public class ReversiModel {
         Random randomObject = new Random();
         this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
         this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
+        gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
+    }
+    
+    void selectStartingPlayer(int index) {
+        this.currentPlayerIndex = index;
+        this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
+        gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
     }
 
     ReversiModel(GameView view) {
@@ -95,7 +100,9 @@ public class ReversiModel {
     }
 
     void step(int[] coords) {
-        Turn currentTurn = new Turn(coords,this.state,this.currentPlayerIndex);
+
+        Turn currentTurn = new Turn(coords, state, currentPlayerIndex);
+
         switch (this.state) {
             // Start
             case Constants.START -> {
@@ -176,7 +183,7 @@ public class ReversiModel {
     void recordTurnTaken(Boolean moveValue,Turn turnTaken) {
         if (moveValue) {
             this.turnsTaken += 1;
-            this.currentPlayer.recordTurn(turnTaken);
+            gamePlayerManager.players.get(turnTaken.playerIndex).recordTurn(turnTaken);
         }
     }
 
