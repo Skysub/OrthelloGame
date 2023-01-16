@@ -21,6 +21,9 @@ public class ViewManager extends Application {
         gameView = new GameView(this);
         menuView = new MenuView(this);
         settingsView = new SettingsView(this);
+        
+        //Create folder structure to allow game saving
+        LoadSave.CreateFolderStructure();
 
         // Default view
         toMenu();

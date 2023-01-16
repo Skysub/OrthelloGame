@@ -207,7 +207,7 @@ class saveSettings implements Serializable {
 	int boardSize;
 	int nrPlayers;
 	int gameMode;
-	transient ArrayList<Color> playerColors;
+	transient ArrayList<Color> playerColors; //Color er ikke serializable, og vi bruger istedet for, default farver
 	ArrayList<String> playerNames;
 	boolean showMoveHints;
 	AIModes[] playerAIModes;

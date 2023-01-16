@@ -138,8 +138,6 @@ public class ReversiModel{
             }
         }
         GameView.updateBoard(this.gameBoard);
-
-
     }
 
     boolean startingMove(int[] coords) {

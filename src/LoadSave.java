@@ -17,18 +17,18 @@ public class LoadSave {
 	public static String path = System.getenv("APPDATA") + "\\OthelloGame\\data";
 
 	public static boolean SaveGame(SaveGame save) {
-		File saveFile = new File(path + "\\save.sav");
-		return SaveObjectToFile(save, saveFile);
+		File saveFile = new File(path + "\\save.sav"); //Makes a File object with the default save path
+		return SaveObjectToFile(save, saveFile); //returns the satus message of the method that saves the file
 	}
 
 	public static SaveGame LoadGame() {
-		File loadFile = new File(path + "\\save.sav");
-		if (!loadFile.exists()) {
+		File loadFile = new File(path + "\\save.sav"); //Makes a File object with the default save path
+		if (!loadFile.exists()) { //Makes sure that the file actually exists before trying to load it
 			System.out.println("No save file present");
 			return null;
 		}
-		Object out = LoadObjectFromFile(loadFile);
-		if (out instanceof SaveGame)
+		Object out = LoadObjectFromFile(loadFile); //Loads the file by passing the File object holding the identity of the file
+		if (out instanceof SaveGame) //Checks if the loaded file is of the correct type
 			return (SaveGame) out;
 		else {
 			System.out.println("Loaded file is not of type SaveGame");
@@ -36,11 +36,12 @@ public class LoadSave {
 		}
 	}
 
+	//Takes a file object that holds the location and a name for the file, as well as the Java object to save (SaveGame)
 	public static boolean SaveObjectToFile(Object object, File saveFile) {
 		try {
-			FileOutputStream fileOut = new FileOutputStream(saveFile);
+			FileOutputStream fileOut = new FileOutputStream(saveFile); //Makes the output stream to read to the file
 			ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-			objectOut.writeObject(object);
+			objectOut.writeObject(object); //Actually write the object to the file
 			objectOut.close();
 		} catch (IOException e) {
 			System.out.println("Exception: " + e);
@@ -51,13 +52,14 @@ public class LoadSave {
 		return true;
 	}
 
+	//Takes a file object that holds the location and a name for the file
 	public static Object LoadObjectFromFile(File loadFile) {
 		try {
-			FileInputStream fileIn = new FileInputStream(loadFile);
+			FileInputStream fileIn = new FileInputStream(loadFile); //Makes the stream to be able to read the file
 			ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-			Object object = objectIn.readObject();
+			Object object = objectIn.readObject(); //actually reads the file
 			objectIn.close();
-			return object;
+			return object; //returning the loaded object
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);
 			System.out.println("Error while loading the file");
@@ -66,47 +68,53 @@ public class LoadSave {
 		}
 	}
 	
+	//Takes the object to export (SaveGame), and the stage object to be able to open a new window
 	public static boolean ExportFile(Object object, Stage primaryStage) {
 		FileChooser fileChooser = new FileChooser();
 
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Save file (*.sav)", "*.sav");
+		//We set the settings fileChooser window wer're about to open
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Save file (*.sav)", "*.sav"); //filters for the savegame extension
 		fileChooser.getExtensionFilters().add(extFilter);
 		fileChooser.setTitle("Export Othello Save File");
 		fileChooser.setInitialFileName("Othello Save");
-		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop")); //A very reasonable place to the export the save file
 
+		//We open the dialog window and the resulting File object is used later
 		File exportFile = fileChooser.showSaveDialog(primaryStage);
 
-		if (exportFile == null)
+		if (exportFile == null) //If the dialog window was closed or the cancel button was pressed
 			return false;
-
+		
+		//We save the object at the location and with the name that the dialog gave us
 		return SaveObjectToFile(object, exportFile);
 	}
 	
+	//Needs the stage object to be able to open a new window
 	public static Object ImportFile(Stage primaryStage) {
 		FileChooser fileChooser = new FileChooser();
 
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Save file (*.sav)", "*.sav");
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Save file (*.sav)", "*.sav"); //filters for the savegame extension
 		fileChooser.getExtensionFilters().add(extFilter);
 		fileChooser.setTitle("Import Othello Save File");
-		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop")); //The same place we default to when exporting
 
+		//We open the dialog window and the resulting File object is used later
 		File importFile = fileChooser.showOpenDialog(primaryStage);
 
-		if (importFile == null)
+		if (importFile == null) //If the dialog window was closed or the cancel button was pressed
 			return null;
 
+		//We load the object at the location and with the name that the dialog gave us
 		return LoadObjectFromFile(importFile);
 	}
 
+	//We create the folder structure we need to store the game when saved, and for any possible future needs
 	public static boolean CreateFolderStructure() {
-		// sørger for at de forskellige foldere og filer, som spillet skal bruge,
-		// eksisterer
 		try {
 			// Makes data folder in appdata
 			File directory = new File(path);
-			if (!directory.exists()) {
-				if (!directory.mkdirs())
+			if (!directory.exists()) { //If the folder structure exists already we don't bother
+				if (!directory.mkdirs()) //Returns true when successful
 					System.out.println("Folder structure not created");
 			}
 		} catch (Exception e) {
@@ -118,91 +126,15 @@ public class LoadSave {
 		return true;
 	}
 
-	/*
-	 * public static boolean SaveGame(ArrayList<String> moveList) { File saveFile =
-	 * new File(path + "\\save.txt"); return SaveToFile(moveList, saveFile); }
-	 * 
-	 * public static ArrayList<String> LoadGame() { File loadFile = new File(path +
-	 * "\\save.txt"); return LoadFromFile(loadFile); }
-	 */
-
-	public static boolean ExportReplayFile(ArrayList<String> moveList, Stage primaryStage) {
-		FileChooser fileChooser = new FileChooser();
-
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-		fileChooser.getExtensionFilters().add(extFilter);
-		fileChooser.setTitle("Export Othello Replay File");
-		fileChooser.setInitialFileName("Othello Replay");
-		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
-
-		File exportFile = fileChooser.showSaveDialog(primaryStage);
-
-		if (exportFile == null)
-			return false;
-
-		return SaveToFile(moveList, exportFile);
-	}
-
-	public static ArrayList<String> ImportReplayFile(Stage primaryStage) {
-		FileChooser fileChooser = new FileChooser();
-
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-		fileChooser.getExtensionFilters().add(extFilter);
-		fileChooser.setTitle("Import Othello Replay File");
-		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
-
-		File importFile = fileChooser.showOpenDialog(primaryStage);
-
-		if (importFile == null)
-			return null;
-
-		return LoadFromFile(importFile);
-	}
-
-	//unused
-	public static boolean SaveToFile(ArrayList<String> moveList, File saveFile) {
-		try {
-			FileWriter myWriter = new FileWriter(saveFile);
-			for (int i = 0; i < moveList.size(); i++) {
-				myWriter.write(moveList.get(i) + "\n");
-			}
-			myWriter.close();
-		} catch (IOException e) {
-			System.out.println("Exception: " + e);
-			System.out.println("Error while saving the moveList");
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	//Unused
-	public static ArrayList<String> LoadFromFile(File loadFile) {
-		ArrayList<String> moveList = new ArrayList<String>();
-		try {
-			File saveFile = new File(path + "\\save.txt");
-			Scanner myReader = new Scanner(saveFile);
-			while (myReader.hasNextLine()) {
-				moveList.add(myReader.nextLine());
-			}
-			myReader.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Exception: " + e);
-			System.out.println("Error while loading the moveList");
-			e.printStackTrace();
-			return null;
-		}
-		return moveList;
-	}
-
 	public static String getPath() {
 		return path;
 	}
 }
 
-//A structure for holding ontu all the informtion needed to load and save the game
+//A structure for holding onto all the information needed to load and save the game
 class SaveGame implements Serializable{
-	private static final long serialVersionUID = 4788495559812482875L;
+	private static final long serialVersionUID = 4788495559812482875L; //Long required for serialization
+	
 	ArrayList<Turn> turns;
 	saveSettings settings;
 
