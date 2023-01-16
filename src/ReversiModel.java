@@ -53,6 +53,8 @@ public class ReversiModel{
     }
     void endGame() {
         System.out.println("GAME ENDED");
+        state = Constants.GAME_ENDED; // End the game
+        isGameOver = true;
         setEndingScreenForView();
         GameView.updateBoard(gameBoard);
     }
@@ -85,8 +87,6 @@ public class ReversiModel{
 
         // No one has been able to play
         if (this.turnsSkipped == nrPlayers) {
-            state = Constants.GAME_ENDED; // End the game
-            isGameOver = true;
             this.endGame();
             // The next player also has no possible moves
         } else if (nrPossiblePaths == 0) {
@@ -109,6 +109,7 @@ public class ReversiModel{
                 boolean moveResult = startingMove(coords);
                 recordTurnTaken(moveResult,currentTurn);
 
+
                 // Each player gets to put 2 checkers on the board
                 if (this.turnsTaken % 2 == 0 && turnsTaken > 0 && moveResult) {
                     this.setNextTurn();
@@ -119,7 +120,6 @@ public class ReversiModel{
                     this.state = Constants.PLACEMENT; // Now we place a brick
                     this.calculatePossiblePaths();
                 }
-                break;
             }
             // Place checkers
             case Constants.PLACEMENT -> {
@@ -138,6 +138,9 @@ public class ReversiModel{
             }
         }
         GameView.updateBoard(this.gameBoard);
+        if(gameOverBeforeSkip() && this.state != Constants.GAME_ENDED){
+            endGame();
+        }
     }
 
     boolean startingMove(int[] coords) {
@@ -168,6 +171,17 @@ public class ReversiModel{
     // Checks if a player has the same colour as the checker he/she wishes to flip
     boolean isNotAlreadyFlipped(Checker chosenChecker) {
         return (this.currentPlayer != chosenChecker.getState());
+    }
+
+    boolean gameOverBeforeSkip(){
+        return isBoardFilled() || playerHasNoMoreCheckers();
+    }
+
+    boolean playerHasNoMoreCheckers(){
+        return this.currentPlayer.getNrCheckers() == 0 && this.state != Constants.START;
+    }
+    boolean isBoardFilled(){
+        return gamePlayerManager.getSumOfCheckersPlaced() == this.boardSize * this.boardSize;
     }
 
     // In other Othello games, which are 1-indexed, the "center" contains the

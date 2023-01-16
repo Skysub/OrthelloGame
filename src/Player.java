@@ -107,6 +107,8 @@ class Player {
 }
 
 class PlayerManager {
+
+	//A list of size nrPlayers
 	ArrayList<Player> players = new ArrayList<Player>();
 	int highScore = Constants.UNDEFINED;
 	int currentPlayerIndex;
@@ -178,5 +180,13 @@ class PlayerManager {
 	
 	int getFirstPlayerIndex() {
 		return firstPlayerIndex;
+	}
+
+	int getSumOfCheckersPlaced(){
+		int sum = 0;
+		for(int i = 0; i<players.size();i++){
+			sum += getPlayerAtIndex(i).getNrCheckers();
+		}
+		return sum;
 	}
 }
