@@ -60,9 +60,22 @@
             </VBox>
             <VBox alignment="BOTTOM_RIGHT" pickOnBounds="false" prefHeight="84.0" prefWidth="99.0" spacing="10.0">
                <children>
-                  <Label fx:id="saveLoadText" text="Save Load Text" visible="false" />
-                  <Button fx:id="saveButton" mnemonicParsing="false" onAction="#SaveGame" prefHeight="24.0" prefWidth="83.0" text="Save Game" />
-                  <Button fx:id="loadButton" mnemonicParsing="false" onAction="#LoadGame" prefHeight="24.0" prefWidth="83.0" text="Load Game" />
+                  <Label fx:id="saveLoadText" text="Save Load Text" textFill="#d74f4f" visible="false">
+                     <font>
+                        <Font size="15.0" />
+                     </font></Label>
+                  <HBox alignment="BOTTOM_RIGHT" pickOnBounds="false" prefHeight="10.0" prefWidth="560.0">
+                     <children>
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#SaveGamePressed" prefHeight="25.0" prefWidth="95.0" text="Save Game" />
+                        <Button fx:id="loadButton" mnemonicParsing="false" onAction="#LoadGamePressed" prefHeight="25.0" prefWidth="95.0" text="Load Game" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="BOTTOM_RIGHT" pickOnBounds="false" prefHeight="5.0" prefWidth="560.0">
+                     <children>
+                        <Button fx:id="loadButton1" mnemonicParsing="false" onAction="#ExportGamePressed" prefHeight="25.0" prefWidth="95.0" text="Export Game" />
+                        <Button fx:id="loadButton2" mnemonicParsing="false" onAction="#ImportGamePressed" prefHeight="25.0" prefWidth="95.0" text="Import Game" />
+                     </children>
+                  </HBox>
                </children>
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

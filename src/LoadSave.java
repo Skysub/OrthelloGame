@@ -44,7 +44,7 @@ public class LoadSave {
 			objectOut.close();
 		} catch (IOException e) {
 			System.out.println("Exception: " + e);
-			System.out.println("Error while saving the model");
+			System.out.println("Error while saving the file");
 			e.printStackTrace();
 			return false;
 		}
@@ -60,10 +60,43 @@ public class LoadSave {
 			return object;
 		} catch (Exception e) {
 			System.out.println("Exception: " + e);
-			System.out.println("Error while loading the model");
+			System.out.println("Error while loading the file");
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static boolean ExportFile(Object object, Stage primaryStage) {
+		FileChooser fileChooser = new FileChooser();
+
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Save file (*.sav)", "*.sav");
+		fileChooser.getExtensionFilters().add(extFilter);
+		fileChooser.setTitle("Export Othello Save File");
+		fileChooser.setInitialFileName("Othello Save");
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
+
+		File exportFile = fileChooser.showSaveDialog(primaryStage);
+
+		if (exportFile == null)
+			return false;
+
+		return SaveObjectToFile(object, exportFile);
+	}
+	
+	public static Object ImportFile(Stage primaryStage) {
+		FileChooser fileChooser = new FileChooser();
+
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Save file (*.sav)", "*.sav");
+		fileChooser.getExtensionFilters().add(extFilter);
+		fileChooser.setTitle("Import Othello Save File");
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + "\\Desktop"));
+
+		File importFile = fileChooser.showOpenDialog(primaryStage);
+
+		if (importFile == null)
+			return null;
+
+		return LoadObjectFromFile(importFile);
 	}
 
 	public static boolean CreateFolderStructure() {
@@ -126,6 +159,7 @@ public class LoadSave {
 		return LoadFromFile(importFile);
 	}
 
+	//unused
 	public static boolean SaveToFile(ArrayList<String> moveList, File saveFile) {
 		try {
 			FileWriter myWriter = new FileWriter(saveFile);
@@ -142,6 +176,7 @@ public class LoadSave {
 		return true;
 	}
 
+	//Unused
 	public static ArrayList<String> LoadFromFile(File loadFile) {
 		ArrayList<String> moveList = new ArrayList<String>();
 		try {
@@ -165,6 +200,7 @@ public class LoadSave {
 	}
 }
 
+//A structure for holding ontu all the informtion needed to load and save the game
 class SaveGame implements Serializable{
 	private static final long serialVersionUID = 4788495559812482875L;
 	ArrayList<Turn> turns;

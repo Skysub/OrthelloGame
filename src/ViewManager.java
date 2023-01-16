@@ -3,7 +3,7 @@ import javafx.stage.Stage;
 
 public class ViewManager extends Application {
 
-    private Stage stage;
+    Stage stage;
 
     private GameView gameView;
     private MenuView menuView;

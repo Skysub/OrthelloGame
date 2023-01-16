@@ -31,7 +31,7 @@ public class GameView {
 	public static final int ANIMATION_DURATION_MS = 500;
 
 	// MCV
-	private ViewManager manager;
+	ViewManager manager;
 	private ReversiModel model;
 	private GameController controller;
 
