@@ -53,7 +53,6 @@ public class GameView {
     public GameView(ViewManager manager) {
         this.manager = manager;
 
-        model = new ReversiModel(this);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
@@ -64,8 +63,9 @@ public class GameView {
             e.printStackTrace();
             return;
         }
-        controller.setModelAndView(model, this);
-    
+
+        controller.setView(this);
+
         // Retrieve objects from Controller FXML
         grid = controller.getGrid();
         turnText = controller.getTurnText();
@@ -76,6 +76,8 @@ public class GameView {
 
     public void onEnter() {
         // Setup Model and UI
+        model = new ReversiModel(this);
+        controller.setModel(model);
         initializeBoard();
         updateBoard(this.model.gameBoard);
         updateTurnText(this.model.currentPlayer);
