@@ -126,9 +126,8 @@ public class ReversiModel {
 
             case Constants.TURN_SKIPPED -> {
                 // In order to get to this state, we need to skip a turn
-                    this.turnsSkipped += 1;
-                    skipTurn(currentTurn);
-                    break;
+                skipTurn(currentTurn);
+                break;
             }
         }
         GameView.updateBoard(this.gameBoard);
