@@ -11,6 +11,8 @@ public class WeightedAI extends GreedyAI {
         {99, -8, 8, 6, 6, 8, -8,99}
     };
 
+    int startingScore = super.startingScore;
+
     @Override
     int getScoreOfPath(Path chosenPath) {
         int[] coordsOfPath = chosenPath.coordinates;

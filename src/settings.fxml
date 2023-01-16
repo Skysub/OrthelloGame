@@ -80,7 +80,12 @@
                               <Button onAction="#nextPlayer" text="Next" />
                            </children>
                         </HBox>
-                        <TextField fx:id="playerNameText" onAction="#playerNameChanged" promptText="Player name" />
+                        <VBox>
+                           <children>
+                              <TextField fx:id="playerNameText" promptText="Player name" />
+                              <Button onAction="#playerNameChanged" text="Confirm name" />
+                           </children>
+                        </VBox>
                         <HBox spacing="20.0">
                            <children>
                               <Button onAction="#prevColor" text="Previous" />
