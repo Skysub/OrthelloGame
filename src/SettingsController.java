@@ -107,10 +107,10 @@ class Settings implements Serializable {
 
 	// All settings are initialized to the default 8x8 Reversi
 	static int boardSize = 8;
-	static int nrPlayers = 2;
+	static int nrPlayers = 4;
 	static int gameMode = Constants.GAMEMODE_REVERSI;
-	static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.WHITE, Color.BLACK));
-	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE", "BLACK"));
+	static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.WHITE, Color.BLACK, Color.ROYALBLUE, Color.ORANGE));
+	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE", "BLACK", "Blue", "Orange"));
 	static boolean showMoveHints = true;
 
 	static AIModes[] playerAIModes = new AIModes[] { AIModes.HumanPlayer, AIModes.HumanPlayer, AIModes.HumanPlayer,

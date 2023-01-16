@@ -183,7 +183,8 @@ public class GameController {
 		
 		// Plays the board up to the latest move from the turn list
 		for (int i = 0; i < turns.size(); i++) {
-			model.step(turns.get(i).coordinates);
+			if(turns.get(i).coordinates[0] == -1) model.skipTurn();
+			else model.step(turns.get(i).coordinates);
 		}
 		view.onEnter();
 		// TODO make success text pop up
