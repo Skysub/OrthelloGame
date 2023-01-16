@@ -337,10 +337,13 @@ class OrthelloModel extends ReversiModel{
     OrthelloModel(GameView view){
         super(view);
 
-        //We don't have a starting state in Orthello, so we simply skip this
-        this.state = Constants.PLACEMENT;
 
         startingMoves();
+
+        //We don't have a starting state in Orthello, so we simply skip this
+        this.state = Constants.PLACEMENT;
+        this.calculatePossiblePaths();
+
 
     }
 

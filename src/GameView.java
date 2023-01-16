@@ -56,7 +56,7 @@ public class GameView {
         ArrayList<Color> colorArrayList = new ArrayList<Color>();
         colorArrayList.add(Color.PALETURQUOISE);
         colorArrayList.add(Color.BLACK);
-        model = new OrthelloModel(this);
+        model = new ReversiModel(this);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
@@ -83,9 +83,6 @@ public class GameView {
         updateBoard(this.model.gameBoard);
         updateTurnText(this.model.currentPlayer);
         controller.getGameEndScreen().setVisible(false);
-        if(this.model.currentPlayer.isAI()){
-            controller.AIPress();
-        }
     }
 
     public void toMenu() {

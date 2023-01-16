@@ -59,15 +59,14 @@ public class GameController {
 
         // Play AI move after 1 second
 
-        var timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
+        //var timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), e -> {
             if(model.state == Constants.START){
-                model.step(model.AIStartingMove());
                 model.step(model.AIStartingMove());
             } else{
                 model.step(model.currentPlayer.getAICalculatedCoords(nonNullArray));
             }
-        }));
-        timeline.play();
+        //}));
+        //timeline.play();
 
     }
 
