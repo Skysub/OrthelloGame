@@ -11,8 +11,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-
 public class GameController {
 
     private ReversiModel model;
@@ -31,9 +29,12 @@ public class GameController {
     @FXML private Label gameEndText;
     @FXML private Label scoreText;
 
-    public void setModelAndView(ReversiModel model, GameView view) {
-        this.model = model;
+    public void setView(GameView view) {
         this.view = view;
+    }
+
+    public void setModel(ReversiModel model) {
+        this.model = model;
     }
 
     public AnchorPane getGrid() {return grid;}
@@ -61,7 +62,7 @@ public class GameController {
     public void AIPress() {
         // Play AI move after 1 second
         tl = new Timeline(new KeyFrame(Duration.seconds((GameView.ANIMATION_DURATION_MS / 1000) + 0.5), e -> {
-            if(model.state == Constants.START){
+            if(model != null && model.state == Constants.START){
                 model.step(model.AIStartingMove());
                 model.step(model.AIStartingMove());
             } else{
