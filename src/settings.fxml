@@ -10,12 +10,12 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
 <Scene xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SettingsController">
    <root>
-      <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="600.0" snapToPixel="false" spacing="10.0">
+      <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="817.0" prefWidth="600.0" snapToPixel="false" spacing="10.0">
          <children>
             <Label alignment="CENTER" prefWidth="600.0" text="Settings" VBox.vgrow="ALWAYS">
                <font>
@@ -56,7 +56,10 @@
             </Label>
             <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="45.0">
                <children>
-                  <RadioButton mnemonicParsing="false" onAction="#setReversi" selected="true" text="Reversi" toggleGroup="$GameType" />
+                  <RadioButton mnemonicParsing="false" onAction="#setReversi" selected="true" text="Reversi">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="GameType" />
+                     </toggleGroup></RadioButton>
                   <RadioButton mnemonicParsing="false" onAction="#setOthello" text="Othello" toggleGroup="$GameType" />
                   <RadioButton mnemonicParsing="false" onAction="#setRolit" text="Rolit" toggleGroup="$GameType" />
                </children>
@@ -90,7 +93,7 @@
                         <HBox spacing="20.0">
                            <children>
                               <Button onAction="#prevColor" text="Previous" />
-                              <Circle fx:id="playerColor"/>
+                              <Circle fx:id="playerColor" />
                               <Button onAction="#nextColor" text="Next" />
                            </children>
                         </HBox>
