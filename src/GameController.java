@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -30,6 +32,8 @@ public class GameController {
     @FXML private VBox gameEndScreen;
     @FXML private Label gameEndText;
     @FXML private Label scoreText;
+    @FXML private Label saveLoadText;
+
 
     public void setView(GameView view) {
         this.view = view;
@@ -47,6 +51,7 @@ public class GameController {
     public VBox getGameEndScreen() {return gameEndScreen;}
     public HBox getHorizontalLabels() {return horizontalLabels;}
     public VBox getVerticalLabels() {return verticalLabels;}
+    public Label getsaveLoadText() {return saveLoadText;}
 
     public void tilePress (MouseEvent event) {
         if(Animation.isAnimating() || aiIsMoving || model.state == Constants.TURN_SKIPPED || model.state == Constants.GAME_ENDED) return;
@@ -117,7 +122,13 @@ public class GameController {
 		int playerTurnIndex = -1;
 
 		// Tilføjer startmoves
-		if(model.turnsTaken < 4) return; //TODO fejlbesked
+		if(model.turnsTaken < 4) {
+			saveLoadText.setText("Can't save game under 4 turns");
+			FadeTransition fader = createFader(saveLoadText);
+			saveLoadText.setVisible(true);
+			fader.play();
+			return;
+		}
 		if (model.nrPlayers == 2) {
 			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
 			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(1));
@@ -144,13 +155,21 @@ public class GameController {
 		// Calls the method that actually saves the file, returns true if all goes well
 		LoadSave.SaveGame(save);
 
-		// TODO Make text pop up that shows if the saving was successful or not
+		saveLoadText.setText("Game Successfully saved");
+		FadeTransition fader = createFader(saveLoadText);
+		saveLoadText.setVisible(true);
+		fader.play();
 	}
 
 	public void LoadGame(ActionEvent event) {
 		SaveGame save = LoadSave.LoadGame();
-		if (save == null)
-			return;// TODO: make error text pop up
+		if (save == null) {
+			saveLoadText.setText("Error while loading the game");
+			FadeTransition fader = createFader(saveLoadText);
+			saveLoadText.setVisible(true);
+			fader.play();
+			return;
+		}
 		Settings.setSettings(save.getSettings()); // Makes the settings mirror the settings of the saved game
 		ArrayList<Turn> turns = save.getTurns();
 
@@ -169,6 +188,12 @@ public class GameController {
         if (model.currentPlayer.isAI()) {
             AIPress();
         }
-		// TODO make success text pop up
 	}
+	
+	private FadeTransition createFader(Label label) {
+        FadeTransition fade = new FadeTransition(Duration.seconds(4), label);
+        fade.setFromValue(1);
+        fade.setToValue(0);
+        return fade;
+    }
 }

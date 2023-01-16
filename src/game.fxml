@@ -60,6 +60,7 @@
             </VBox>
             <VBox alignment="BOTTOM_RIGHT" pickOnBounds="false" prefHeight="84.0" prefWidth="99.0" spacing="10.0">
                <children>
+                  <Label fx:id="saveLoadText" text="Save Load Text" visible="false" />
                   <Button fx:id="saveButton" mnemonicParsing="false" onAction="#SaveGame" prefHeight="24.0" prefWidth="83.0" text="Save Game" />
                   <Button fx:id="loadButton" mnemonicParsing="false" onAction="#LoadGame" prefHeight="24.0" prefWidth="83.0" text="Load Game" />
                </children>
