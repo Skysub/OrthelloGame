@@ -55,11 +55,9 @@ public class ReversiModel {
     //Calculates the starting moves for the AI
     int[] AIStartingMove(){
         int center_coord = this.boardSize / 2;
-        for(int x = center_coord; x<= center_coord+1;x++){
-            for(int y = center_coord; y<= center_coord+1;y++){
-
+        for(int x = center_coord; x >= center_coord - 1; x--){
+            for(int y = center_coord; y >= center_coord - 1 ; y--){
                 int[] possibleCoords = new int[] {x,y};
-
                 if(isLegalStartingMove(possibleCoords)){
                     return possibleCoords;
                 }
@@ -128,9 +126,8 @@ public class ReversiModel {
 
             case Constants.TURN_SKIPPED -> {
                 // In order to get to this state, we need to skip a turn
-                    this.turnsSkipped += 1;
-                    skipTurn(currentTurn);
-                    break;
+                skipTurn(currentTurn);
+                break;
             }
         }
         GameView.updateBoard(this.gameBoard);
@@ -168,7 +165,7 @@ public class ReversiModel {
         return (this.currentPlayer != chosenChecker.getState());
     }
 
-    // In other Orthello games, which are 1-indexed, the "center" contains the
+    // In other Othello games, which are 1-indexed, the "center" contains the
     // indices 4 and 5
     boolean isLegalStartingMove(int[] coords) {
         int center_coord = this.boardSize / 2;
@@ -332,16 +329,16 @@ public class ReversiModel {
     }
 }
 
-class OrthelloModel extends ReversiModel{
+class OthelloModel extends ReversiModel{
 
-    OrthelloModel(GameView view){
+    OthelloModel(GameView view){
         super(view);
-
-        //We don't have a starting state in Orthello, so we simply skip this
-        this.state = Constants.PLACEMENT;
 
         startingMoves();
 
+        //We don't have a starting state in Othello, so we simply skip this
+        this.state = Constants.PLACEMENT;
+        this.calculatePossiblePaths();
     }
 
     @Override
@@ -373,10 +370,8 @@ class OrthelloModel extends ReversiModel{
                 incrementer += 1;
             }
         }
-
         return centerCoords;
     }
-
 }
 
 abstract class BoardElement {

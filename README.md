@@ -1,2 +1,2 @@
-# OrthelloGame
+# OthelloGame
 DTU softwareprojekt

@@ -29,6 +29,10 @@ public class GameView {
     private static final boolean SHOW_EDGE = false;             // Whether to show the edge where possible moves are possible. For debugging purposes
     private static final Color EDGE_COLOR = Color.LIGHTPINK;
 
+    private static final boolean SHOW_ANIMATIONS = true;
+
+    public static final int ANIMATION_DURATION_MS = 500; // Seconds
+
     // MCV
     private ViewManager manager;
     private ReversiModel model;
@@ -48,15 +52,8 @@ public class GameView {
 
     public GameView(ViewManager manager) {
         this.manager = manager;
-        //TODO: REMOVE THIS
-        ArrayList<String> nameArrayList = new ArrayList<String>();
-        nameArrayList.add("WHITE");
-        nameArrayList.add("BLACK");
 
-        ArrayList<Color> colorArrayList = new ArrayList<Color>();
-        colorArrayList.add(Color.PALETURQUOISE);
-        colorArrayList.add(Color.BLACK);
-        model = new OrthelloModel(this);
+        model = new ReversiModel(this);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));
@@ -83,7 +80,8 @@ public class GameView {
         updateBoard(this.model.gameBoard);
         updateTurnText(this.model.currentPlayer);
         controller.getGameEndScreen().setVisible(false);
-        if(this.model.currentPlayer.isAI()){
+
+        if (model.currentPlayer.isAI()) {
             controller.AIPress();
         }
     }
@@ -177,13 +175,13 @@ public class GameView {
 
                 c.setVisible(!t.isEmpty());
 
-                if (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR) {
+                if (SHOW_ANIMATIONS && (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR)) {
                     if (c.getFill() == Color.TRANSPARENT || c.getFill() == POSSIBLE_MOVE_HIGHLIGHET_COLOR) {
                         Animation.playSound();
-                        Animation.halfFlip(c, 250, t.getColor()); 
+                        Animation.halfFlip(c, ANIMATION_DURATION_MS / 2, t.getColor()); 
                     }
                     else {
-                        Animation.flipPiece(c, 500, (Color)c.getFill(), t.getColor());
+                        Animation.flipPiece(c, ANIMATION_DURATION_MS, (Color)c.getFill(), t.getColor());
                     }
                 }
                 else {
@@ -240,6 +238,9 @@ public class GameView {
     }
 
     private void onHover(Rectangle rect) {
+        if (Animation.isAnimating() || controller.aiIsMoving) {
+            return;
+        }
         int[] coords = Util.fromId(rect.getId());
 
 
