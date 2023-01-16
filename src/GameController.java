@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -152,14 +154,21 @@ public class GameController {
 		Settings.setSettings(save.getSettings()); // Makes the settings mirror the settings of the saved game
 		ArrayList<Turn> turns = save.getTurns();
 
-		view.MakeNewModel(); // Makes a new model to recreate the game from a fresh board with the correct new settings
+		view.LoadInitialization(); // Makes a new model to recreate the game from a fresh board with the correct new settings
 		model.selectStartingPlayer(turns.get(0).playerIndex);
 		
 		// Plays the board up to the latest move from the turn list
 		for (int i = 0; i < turns.size(); i++) {
 			model.step(turns.get(i).coordinates);
 		}
-		view.onEnter();
+		view.initializeBoard();
+		view.updateBoard(this.model.gameBoard);
+		view.updateTurnText(this.model.currentPlayer);
+		getGameEndScreen().setVisible(false);
+		
+        if (model.currentPlayer.isAI()) {
+            AIPress();
+        }
 		// TODO make success text pop up
 	}
 }
