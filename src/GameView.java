@@ -72,7 +72,7 @@ public class GameView {
 
 	public void onEnter() {
 		// Setup Model and UI
-		model = new ReversiModel(this);
+		model = Settings.createModel(this);
 		controller.setModel(model);
 		initializeBoard();
 		updateBoard(this.model.gameBoard);

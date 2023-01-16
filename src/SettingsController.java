@@ -199,6 +199,24 @@ class Settings {
 		playerAIModes = s.playerAIModes;
 		showMoveHints = s.showMoveHints;
 	}
+
+	static ReversiModel createModel(GameView view){
+		switch (Settings.gameMode){
+			case Constants.GAMEMODE_REVERSI -> {
+				return new ReversiModel(view);
+			}
+
+			case Constants.GAMEMODE_OTHELLO -> {
+				return new OthelloModel(view);
+			}
+
+			case Constants.GAMEMODE_ROLIT -> {
+				System.out.println("Haven't implemented ROLIT yet");
+			}
+
+		}
+		return new ReversiModel(view);
+	}
 }
 
 //There were problems when we saved a static settings objects

@@ -111,7 +111,7 @@ public class GameController {
 	}
 
 	public void resetGame() {
-		this.model = new ReversiModel(this.view);
+		this.model = Settings.createModel(this.view);
 		view.setModel(model);
 		view.resetBoard();
 		view.updateBoard(model.gameBoard);
@@ -252,4 +252,5 @@ public class GameController {
 		fade.setToValue(0);
 		return fade;
 	}
+
 }
