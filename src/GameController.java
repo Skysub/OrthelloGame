@@ -150,7 +150,7 @@ public class GameController {
 			}
 			turns.add(model.gamePlayerManager.players.get(i % model.nrPlayers).getTurnHistory().get(playerTurnIndex));
 		}
-		SaveGame save = new SaveGame(turns, new Settings());
+		SaveGame save = new SaveGame(turns, new saveSettings());
 
 		// Calls the method that actually saves the file, returns true if all goes well
 		LoadSave.SaveGame(save);
@@ -178,7 +178,24 @@ public class GameController {
 		
 		// Plays the board up to the latest move from the turn list
 		for (int i = 0; i < turns.size(); i++) {
-			model.step(turns.get(i).coordinates);
+			try{
+				model.step(turns.get(i).coordinates);
+			}
+			catch(Exception e) {
+				System.out.println("Exception: " + e);
+				System.out.println("Error while replaying the game");
+				e.printStackTrace();
+				
+				saveLoadText.setText("Error while loading, save file might be corrupted");
+				FadeTransition fader = createFader(saveLoadText);
+				saveLoadText.setVisible(true);
+				fader.play();
+				
+				//Makes fresh board
+				view.LoadInitialization();
+				model.selectStartingPlayer(turns.get(0).playerIndex);
+				break;
+			}
 		}
 		view.initializeBoard();
 		view.updateBoard(this.model.gameBoard);
@@ -191,7 +208,7 @@ public class GameController {
 	}
 	
 	private FadeTransition createFader(Label label) {
-        FadeTransition fade = new FadeTransition(Duration.seconds(4), label);
+        FadeTransition fade = new FadeTransition(Duration.seconds(5), label);
         fade.setFromValue(1);
         fade.setToValue(0);
         return fade;

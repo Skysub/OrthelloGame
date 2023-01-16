@@ -168,9 +168,9 @@ public class LoadSave {
 class SaveGame implements Serializable{
 	private static final long serialVersionUID = 4788495559812482875L;
 	ArrayList<Turn> turns;
-	Settings settings;
+	saveSettings settings;
 
-	public SaveGame(ArrayList<Turn> turns, Settings settings) {
+	public SaveGame(ArrayList<Turn> turns, saveSettings settings) {
 		this.turns = turns;
 		this.settings = settings;
 	}
@@ -179,7 +179,7 @@ class SaveGame implements Serializable{
 		return turns;
 	}
 
-	public Settings getSettings() {
+	public saveSettings getSettings() {
 		return settings;
 	}
 
@@ -187,7 +187,7 @@ class SaveGame implements Serializable{
 		turns = t;
 	}
 
-	public void setTurns(Settings s) {
+	public void setSettings(saveSettings s) {
 		settings = s;
 	}
 

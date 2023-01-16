@@ -32,7 +32,7 @@ class LoadSaveTest {
 	@Test
 	@Order(2)
 	void SaveTest() {
-		SaveGame saveGame = new SaveGame(null, new Settings());
+		SaveGame saveGame = new SaveGame(null, new saveSettings());
 		assertTrue(LoadSave.SaveGame(saveGame)); // Tjekker om der bliver throwet exceptions
 		assertTrue(LoadSave.SaveGame(saveGame));
 	}
@@ -40,7 +40,7 @@ class LoadSaveTest {
 	@Test
 	@Order(3)
 	void LoadTest() {
-		Settings st = new Settings();
+		saveSettings st = new saveSettings();
 		ArrayList<Turn> t = new ArrayList<Turn>();
 		int[] c = { 3, 2 };
 		t.add(new Turn(c, Constants.PLACEMENT, 1));

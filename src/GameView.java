@@ -91,6 +91,7 @@ public class GameView {
 	public void LoadInitialization() {
 		model = new ReversiModel(this);
 		controller.setModel(model);
+		initializeBoard();
 	}
 
 	public void initializeBoard() {
