@@ -1,5 +1,6 @@
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
@@ -16,6 +17,8 @@ public class SettingsController {
 	TextField customSizeText;
 	@FXML
 	RadioButton customSizeRadioButton;
+	@FXML
+	CheckBox showMoveHints;
 
 	public void setModelAndView(ReversiModel model, SettingsView view) {
 		this.view = view;
@@ -93,6 +96,9 @@ public class SettingsController {
 		Settings.gameMode = Constants.GAMEMODE_ROLIT;
 	}
 
+	public void onMoveHintsChanged(ActionEvent event) {
+		Settings.showMoveHints = showMoveHints.isSelected();
+	} 
 }
 
 class Settings implements Serializable {
@@ -105,6 +111,7 @@ class Settings implements Serializable {
 	static int gameMode = Constants.GAMEMODE_REVERSI;
 	static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.WHITE, Color.BLACK));
 	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE", "BLACK"));
+	static boolean showMoveHints = true;
 
 	static AIModes[] playerAIModes = new AIModes[] { AIModes.HumanPlayer, AIModes.HumanPlayer, AIModes.HumanPlayer,
 			AIModes.HumanPlayer };
@@ -116,6 +123,7 @@ class Settings implements Serializable {
 		playerColors = s.playerColors;
 		playerNames = s.playerNames;
 		playerAIModes = s.playerAIModes;
+		showMoveHints = s.showMoveHints;
 	}
 
 	// TODO: Tilføj gametype

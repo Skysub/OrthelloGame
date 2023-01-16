@@ -25,10 +25,6 @@ public class GameView {
 	private static final double PIECE_RATIO = 0.85; // How big a percentage the piece takes up on the tile
 	private static final Color STROKE_COLOR = Color.BLACK;
 
-	private static final boolean SHOW_MOVE_HINTS = true; // Whether possible moves are shown to the player
-	private static final boolean SHOW_EDGE = false; // Whether to show the edge where possible moves are possible. For debugging purposes
-	private static final Color EDGE_COLOR = Color.LIGHTPINK;
-
 	// MCV
 	private ViewManager manager;
 	private ReversiModel model;
@@ -48,7 +44,7 @@ public class GameView {
 
 	public GameView(ViewManager manager) {
 		this.manager = manager;
-		// TODO: REMOVE THIS
+		// TODO: REMOVE THIS. It shouldn't be the viewer that creates the players!
 		ArrayList<String> nameArrayList = new ArrayList<String>();
 		nameArrayList.add("WHITE");
 		nameArrayList.add("BLACK");
@@ -56,6 +52,7 @@ public class GameView {
 		ArrayList<Color> colorArrayList = new ArrayList<Color>();
 		colorArrayList.add(Color.PALETURQUOISE);
 		colorArrayList.add(Color.BLACK);
+
 		model = new ReversiModel(this);
 		try {
 			// Load UI from FXML and create an instance of the corresponding controller class "Controller"
@@ -116,7 +113,7 @@ public class GameView {
 				tile.setStrokeWidth(STROKE_WIDTH);
 				tile.setStrokeType(StrokeType.OUTSIDE);
 				tile.setOnMousePressed(controller::tilePress);
-				if (SHOW_MOVE_HINTS) {
+				if (Settings.showMoveHints) {
 					tile.setOnMouseEntered(event -> onHover(tile));
 				}
 				tile.setId(Util.toId(row, col));
@@ -201,8 +198,7 @@ public class GameView {
 		passButton.setVisible(model.state == Constants.TURN_SKIPPED && !model.currentPlayer.isAI());
 
 		// Only show move hints when the current player is human, and move hints are enabled
-		// TODO Make SHOW_MOVE_HINTS a settings
-		if (!SHOW_MOVE_HINTS || model.currentPlayer.isAI()) {
+		if (!Settings.showMoveHints || model.currentPlayer.isAI()) {
 			return;
 		}
 
