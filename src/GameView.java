@@ -22,16 +22,13 @@ public class GameView {
     private static final Color POSSIBLE_MOVE_HIGHLIGHET_COLOR = new Color(0.25, 0.25, 1, 0.5);
     
     private static final double STROKE_WIDTH = 2;
-    private static final double PIECE_RATIO = 0.85;             // How big a percentage the piece takes up on the tile
+    private static final double PIECE_RATIO = 0.85; // How big a percentage the piece takes up on the tile
     private static final Color STROKE_COLOR = Color.BLACK;
 
-    private static final boolean SHOW_MOVE_HINTS = true;        // Whether possible moves are shown to the player
-    private static final boolean SHOW_EDGE = false;             // Whether to show the edge where possible moves are possible. For debugging purposes
-    private static final Color EDGE_COLOR = Color.LIGHTPINK;
-
+    private static final boolean SHOW_MOVE_HINTS = true; // Whether possible moves are shown to the player
     private static final boolean SHOW_ANIMATIONS = true;
 
-    public static final int ANIMATION_DURATION_MS = 500; // Seconds
+    public static final int ANIMATION_DURATION_MS = 500; 
 
     // MCV
     private ViewManager manager;
@@ -48,7 +45,7 @@ public class GameView {
     private Rectangle[][] tiles;
     private Circle[][] pieces;
 
-    private Path lastHighlightedMove;   // A reference to the last highlighted move, used to reset the colors once the move is no longer highlighted
+    private Path lastHighlightedMove; // A reference to the last highlighted move, used to reset the colors once the move is no longer highlighted
 
     public GameView(ViewManager manager) {
         this.manager = manager;
@@ -245,7 +242,6 @@ public class GameView {
         }
         int[] coords = Util.fromId(rect.getId());
 
-
         if (lastHighlightedMove != null) {
             for (Checker checkerToFlip : lastHighlightedMove.checkersInPath) {
                 pieces[checkerToFlip.coordinates[0]][checkerToFlip.coordinates[1]].setFill(checkerToFlip.getColor());
@@ -263,7 +259,6 @@ public class GameView {
         if (move != null) {
             lastHighlightedMove = move;
             for (Checker checkerFromPath : move.checkersInPath) {
-                //TODO Decide what colors tiles "to be flipped" should be
                 Color c = checkerFromPath.getColor();
                 c = Color.rgb((int)c.getRed(), (int)c.getGreen(), (int)c.getBlue(), 0.5);
                 pieces[checkerFromPath.coordinates[0]][checkerFromPath.coordinates[1]].setFill(c);
