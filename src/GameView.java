@@ -29,7 +29,9 @@ public class GameView {
     private static final boolean SHOW_EDGE = false;             // Whether to show the edge where possible moves are possible. For debugging purposes
     private static final Color EDGE_COLOR = Color.LIGHTPINK;
 
-    private static final boolean SHOW_ANIMATIONS = false;
+    private static final boolean SHOW_ANIMATIONS = true;
+
+    public static final int ANIMATION_DURATION_MS = 500; // Seconds
 
     // MCV
     private ViewManager manager;
@@ -85,6 +87,10 @@ public class GameView {
         updateBoard(this.model.gameBoard);
         updateTurnText(this.model.currentPlayer);
         controller.getGameEndScreen().setVisible(false);
+
+        if (model.currentPlayer.isAI()) {
+            controller.AIPress();
+        }
     }
 
     public void toMenu() {
@@ -179,10 +185,10 @@ public class GameView {
                 if (SHOW_ANIMATIONS && (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR)) {
                     if (c.getFill() == Color.TRANSPARENT || c.getFill() == POSSIBLE_MOVE_HIGHLIGHET_COLOR) {
                         Animation.playSound();
-                        Animation.halfFlip(c, 250, t.getColor()); 
+                        Animation.halfFlip(c, ANIMATION_DURATION_MS / 2, t.getColor()); 
                     }
                     else {
-                        Animation.flipPiece(c, 500, (Color)c.getFill(), t.getColor());
+                        Animation.flipPiece(c, ANIMATION_DURATION_MS, (Color)c.getFill(), t.getColor());
                     }
                 }
                 else {
@@ -239,6 +245,9 @@ public class GameView {
     }
 
     private void onHover(Rectangle rect) {
+        if (Animation.isAnimating() || controller.aiIsMoving) {
+            return;
+        }
         int[] coords = Util.fromId(rect.getId());
 
 
