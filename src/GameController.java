@@ -146,8 +146,9 @@ public class GameController {
 		// Constructs a single arraylist of all turns taken, in order, from the Players' turnHistory
 		ArrayList<Turn> turns = new ArrayList<Turn>();
 		int first = model.gamePlayerManager.getFirstPlayerIndex(); // takes into account the starting player
-		int playerTurnIndex = 0; //Used to keep track of what turnindex to use with the individual turnHistories
-
+		int playerTurnIndex = -1; //Used to keep track of what turnindex to use with the individual turnHistories
+		int extra = 0;
+		
 		if (model.turnsTaken < 4) {
 			saveLoadText.setText("Can't save game under 4 turns");
 			FadeTransition fader = createFader(saveLoadText); //Fading error message
@@ -155,22 +156,26 @@ public class GameController {
 			fader.play();
 			return;
 		}
-		//adds the first 4 startingmoves
-		if (model.nrPlayers == 2) {
-			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
-			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(1));
-			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(0));
-			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(1));
+		if(Settings.gameMode == Constants.GAMEMODE_REVERSI) {
+			//adds the first 4 startingmoves
+			if (model.nrPlayers == 2) {
+				turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
+				turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(1));
+				turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(0));
+				turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(1));
+				playerTurnIndex++;
+			} else {
+				turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
+				turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(0));
+				turns.add(model.gamePlayerManager.players.get((first + 2) % model.nrPlayers).getTurnHistory().get(0));
+				turns.add(model.gamePlayerManager.players.get((first + 3) % model.nrPlayers).getTurnHistory().get(0));
+			}
+			extra = 4;
 			playerTurnIndex++;
-		} else {
-			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
-			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(0));
-			turns.add(model.gamePlayerManager.players.get((first + 2) % model.nrPlayers).getTurnHistory().get(0));
-			turns.add(model.gamePlayerManager.players.get((first + 3) % model.nrPlayers).getTurnHistory().get(0));
 		}
-
+		
 		//Loops through once for each turn. Used i and the playerTurnIndex to get the correct turn of the correct player
-		for (int i = first + 4; i < model.turnsTaken + first; i++) {
+		for (int i = first + extra; i < model.turnsTaken + first; i++) {
 			if ((i - first) % model.nrPlayers == 0) {
 				// increments playerTurnIndex when all players' turn of the current index has been recorded
 				playerTurnIndex++;
@@ -213,6 +218,10 @@ public class GameController {
 		view.LoadInitialization(); // Makes a new model to recreate the game from a fresh board with the correct new settings
 		model.selectStartingPlayer(turns.get(0).playerIndex); //Tells the model of the correct startingplayer
 
+		if(Settings.gameMode == Constants.GAMEMODE_OTHELLO) {
+			var m = (OthelloModel) model;
+			m.startingMoves();
+		}
 		
 		for (int i = 0; i < turns.size(); i++) {
 			try {
