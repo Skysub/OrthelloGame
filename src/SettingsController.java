@@ -84,7 +84,7 @@ public class SettingsController {
     }
 
     public void setOthello(ActionEvent event) {
-        Settings.gameMode = Constants.GAMEMODE_ORTHELLO;
+        Settings.gameMode = Constants.GAMEMODE_OTHELLO;
     }
 
     public void setRolit(ActionEvent event) {

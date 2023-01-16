@@ -165,7 +165,7 @@ public class ReversiModel {
         return (this.currentPlayer != chosenChecker.getState());
     }
 
-    // In other Orthello games, which are 1-indexed, the "center" contains the
+    // In other Othello games, which are 1-indexed, the "center" contains the
     // indices 4 and 5
     boolean isLegalStartingMove(int[] coords) {
         int center_coord = this.boardSize / 2;
@@ -329,19 +329,16 @@ public class ReversiModel {
     }
 }
 
-class OrthelloModel extends ReversiModel{
+class OthelloModel extends ReversiModel{
 
-    OrthelloModel(GameView view){
+    OthelloModel(GameView view){
         super(view);
-
 
         startingMoves();
 
-        //We don't have a starting state in Orthello, so we simply skip this
+        //We don't have a starting state in Othello, so we simply skip this
         this.state = Constants.PLACEMENT;
         this.calculatePossiblePaths();
-
-
     }
 
     @Override
@@ -373,10 +370,8 @@ class OrthelloModel extends ReversiModel{
                 incrementer += 1;
             }
         }
-
         return centerCoords;
     }
-
 }
 
 abstract class BoardElement {
