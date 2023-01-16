@@ -12,8 +12,8 @@ import javafx.util.Duration;
 
 public class Animation {
     
-    private static String soundfile = "PiecePlace.mp3";
-    private static AudioClip sound = new AudioClip(new File(soundfile).toURI().toString());
+    private static String soundfile = "resources/PiecePlace.mp3";
+    private static AudioClip sound = new AudioClip(ClassLoader.getSystemResource(soundfile).toString());
 
     private static ArrayList<Integer> activeAnimations = new ArrayList<Integer>();
     private static int nextId = 0;

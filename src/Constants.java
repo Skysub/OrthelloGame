@@ -7,7 +7,7 @@ public class Constants {
     public static final int GAME_ENDED = 3;
 
     public static final int GAMEMODE_REVERSI = 0;
-    public static final int GAMEMODE_ORTHELLO = 1;
+    public static final int GAMEMODE_OTHELLO = 1;
     public static final int GAMEMODE_ROLIT = 2;
 }
 

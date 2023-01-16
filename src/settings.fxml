@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Circle?>
 
 <Scene xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SettingsController">
    <root>
@@ -44,29 +45,7 @@
                   </HBox>
                </children>
             </HBox>
-            <Label prefWidth="600.0" text="AI Type" VBox.vgrow="ALWAYS">
-               <font>
-                  <Font size="28.0" />
-               </font>
-               <padding>
-                  <Insets top="20.0" />
-               </padding>
-            </Label>
-            <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="45.0">
-               <children>
-                  <RadioButton mnemonicParsing="false" onAction="#radio1v1" selected="true" text="1 v 1">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="AIType" />
-                     </toggleGroup></RadioButton>
-                  <RadioButton mnemonicParsing="false" onAction="#radioRandom" text="RandomAI">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="GameType" />
-                     </toggleGroup></RadioButton>
-                  <RadioButton mnemonicParsing="false" onAction="#radioGreedy" text="GreedyAI" toggleGroup="$GameType" />
-                  <RadioButton mnemonicParsing="false" onAction="#radioWeighted" text="WeightedAI" toggleGroup="$GameType" />
-                  <RadioButton mnemonicParsing="false" onAction="#radioThinking" text="ThinkingAI" toggleGroup="$GameType" />
-               </children>
-            </HBox>
+            
             <Label prefWidth="600.0" text="Game Type">
                <font>
                   <Font size="28.0" />
@@ -80,6 +59,62 @@
                   <RadioButton mnemonicParsing="false" onAction="#setReversi" selected="true" text="Reversi" toggleGroup="$GameType" />
                   <RadioButton mnemonicParsing="false" onAction="#setOthello" text="Othello" toggleGroup="$GameType" />
                   <RadioButton mnemonicParsing="false" onAction="#setRolit" text="Rolit" toggleGroup="$GameType" />
+               </children>
+            </HBox>
+            <Label prefWidth="600.0" text="Players" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" prefWidth="400.0" spacing="45.0">
+               <children>
+                  <VBox>
+                     <children>
+                        <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0">
+                           <children>
+                              <Button onAction="#prevPlayer" text="Previous" />
+                              <Label fx:id="playerNumber" VBox.vgrow="ALWAYS">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <Button onAction="#nextPlayer" text="Next" />
+                           </children>
+                        </HBox>
+                        <VBox>
+                           <children>
+                              <TextField fx:id="playerNameText" promptText="Player name" />
+                              <Button onAction="#playerNameChanged" text="Confirm name" />
+                           </children>
+                        </VBox>
+                        <HBox spacing="20.0">
+                           <children>
+                              <Button onAction="#prevColor" text="Previous" />
+                              <Circle fx:id="playerColor"/>
+                              <Button onAction="#nextColor" text="Next" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Label prefWidth="600.0" text="Player Type" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </Label>
+            <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="45.0">
+               <children>
+                  <RadioButton fx:id="humanRadio" mnemonicParsing="false" onAction="#radioHuman" selected="true" text="Human">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="AIType" />
+                     </toggleGroup></RadioButton>
+                  <RadioButton fx:id="randomRadio" mnemonicParsing="false" onAction="#radioRandom" text="RandomAI" toggleGroup="$AIType" />
+                  <RadioButton fx:id="greedyRadio" mnemonicParsing="false" onAction="#radioGreedy" text="GreedyAI" toggleGroup="$AIType" />
+                  <RadioButton fx:id="weightedRadio" mnemonicParsing="false" onAction="#radioWeighted" text="WeightedAI" toggleGroup="$AIType" />
                </children>
             </HBox>
             <Label prefWidth="600.0" text="Show Move Hints">
