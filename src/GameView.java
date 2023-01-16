@@ -52,14 +52,7 @@ public class GameView {
 
     public GameView(ViewManager manager) {
         this.manager = manager;
-        //TODO: REMOVE THIS
-        ArrayList<String> nameArrayList = new ArrayList<String>();
-        nameArrayList.add("WHITE");
-        nameArrayList.add("BLACK");
 
-        ArrayList<Color> colorArrayList = new ArrayList<Color>();
-        colorArrayList.add(Color.PALETURQUOISE);
-        colorArrayList.add(Color.BLACK);
         model = new ReversiModel(this);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
