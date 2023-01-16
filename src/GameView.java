@@ -53,7 +53,7 @@ public class GameView {
     public GameView(ViewManager manager) {
         this.manager = manager;
 
-        model = new ReversiModel(this);
+        model = new OrthelloModel(this);
         try {
             // Load UI from FXML and create an instance of the corresponding controller class "Controller"
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("game.fxml"));

@@ -172,7 +172,7 @@ class Settings {
     static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.WHITE,Color.BLACK,Color.RED,Color.GREEN));
     static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE","BLACK", "RED", "GREEN"));
 
-    static AIModes[] playerAIModes = new AIModes[] {AIModes.AIGreedy,AIModes.HumanPlayer,AIModes.HumanPlayer,AIModes.HumanPlayer};
+    static AIModes[] playerAIModes = new AIModes[] {AIModes.AIWeighted,AIModes.AIGreedy,AIModes.HumanPlayer,AIModes.HumanPlayer};
 
     //TODO: Tilføj gametype
     //TODO AI
