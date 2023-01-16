@@ -29,6 +29,8 @@ public class GameView {
     private static final boolean SHOW_EDGE = false;             // Whether to show the edge where possible moves are possible. For debugging purposes
     private static final Color EDGE_COLOR = Color.LIGHTPINK;
 
+    private static final boolean SHOW_ANIMATIONS = false;
+
     // MCV
     private ViewManager manager;
     private ReversiModel model;
@@ -174,7 +176,7 @@ public class GameView {
 
                 c.setVisible(!t.isEmpty());
 
-                if (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR) {
+                if (SHOW_ANIMATIONS && (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR)) {
                     if (c.getFill() == Color.TRANSPARENT || c.getFill() == POSSIBLE_MOVE_HIGHLIGHET_COLOR) {
                         Animation.playSound();
                         Animation.halfFlip(c, 250, t.getColor()); 
