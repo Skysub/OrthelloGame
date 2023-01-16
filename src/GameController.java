@@ -118,25 +118,25 @@ public class GameController {
 	}
 
 	public void SaveGamePressed(ActionEvent event) {
-		SaveGame(false);
+		SaveGame(false); //The false flag makes it save in appdata
 	}
 
 	public void ExportGamePressed(ActionEvent event) {
-		SaveGame(true);
+		SaveGame(true); //The true flag makes it expport the game
 	}
 
 	public void LoadGamePressed(ActionEvent event) {
-		LoadGame(LoadSave.LoadGame());
+		LoadGame(LoadSave.LoadGame()); //Loads the game and passes the result of the method that loads the save file
 	}
 
 	public void ImportGamePressed(ActionEvent event) {
-		Object o = LoadSave.ImportFile(view.manager.stage);
+		Object o = LoadSave.ImportFile(view.manager.stage); //The method for opening the dialog and loading the file
 		if (o instanceof SaveGame)
-			LoadGame((SaveGame) o);
+			LoadGame((SaveGame) o); //We load the game if the object is of the correct type
 		else {
 			System.out.println("Loaded file is not of type SaveGame");
 			saveLoadText.setText("No file / Wrong file");
-			FadeTransition fader = createFader(saveLoadText);
+			FadeTransition fader = createFader(saveLoadText); //Show the error message and fade it out
 			saveLoadText.setVisible(true);
 			fader.play();
 		}
@@ -146,82 +146,84 @@ public class GameController {
 		// Constructs a single arraylist of all turns taken, in order, from the Players' turnHistory
 		ArrayList<Turn> turns = new ArrayList<Turn>();
 		int first = model.gamePlayerManager.getFirstPlayerIndex(); // takes into account the starting player
-		int playerTurnIndex = -1;
+		int playerTurnIndex = 0; //Used to keep track of what turnindex to use with the individual turnHistories
 
-		// Tilføjer startmoves
 		if (model.turnsTaken < 4) {
 			saveLoadText.setText("Can't save game under 4 turns");
-			FadeTransition fader = createFader(saveLoadText);
+			FadeTransition fader = createFader(saveLoadText); //Fading error message
 			saveLoadText.setVisible(true);
 			fader.play();
 			return;
 		}
+		//adds the first 4 startingmoves
 		if (model.nrPlayers == 2) {
 			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
 			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(1));
 			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(0));
 			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(1));
-			playerTurnIndex += 2;
+			playerTurnIndex++;
 		} else {
 			turns.add(model.gamePlayerManager.players.get(first % model.nrPlayers).getTurnHistory().get(0));
 			turns.add(model.gamePlayerManager.players.get((first + 1) % model.nrPlayers).getTurnHistory().get(0));
 			turns.add(model.gamePlayerManager.players.get((first + 2) % model.nrPlayers).getTurnHistory().get(0));
 			turns.add(model.gamePlayerManager.players.get((first + 3) % model.nrPlayers).getTurnHistory().get(0));
-			playerTurnIndex++;
 		}
 
+		//Loops through once for each turn. Used i and the playerTurnIndex to get the correct turn of the correct player
 		for (int i = first + 4; i < model.turnsTaken + first; i++) {
 			if ((i - first) % model.nrPlayers == 0) {
 				// increments playerTurnIndex when all players' turn of the current index has been recorded
 				playerTurnIndex++;
 			}
+			//adds the correct turn to the single list
 			turns.add(model.gamePlayerManager.players.get(i % model.nrPlayers).getTurnHistory().get(playerTurnIndex));
 		}
-		SaveGame save = new SaveGame(turns, new saveSettings());
+		SaveGame save = new SaveGame(turns, new saveSettings()); //Makes a SaveGame object from the collected data
 
-		// Calls the method that actually saves the file, returns true if all goes well
+		
 		if (!export)
-			LoadSave.SaveGame(save);
+			LoadSave.SaveGame(save); // Calls the method that saves the file
 		else {
-			if (!LoadSave.ExportFile(save, view.manager.stage)) {
+			if (!LoadSave.ExportFile(save, view.manager.stage)) { // Calls the method that actually saves the file, returns true if all goes well
 				saveLoadText.setText("Game not saved");
-				FadeTransition fader = createFader(saveLoadText);
+				FadeTransition fader = createFader(saveLoadText); //Fading error message
 				saveLoadText.setVisible(true);
 				fader.play();
-				return;
+				return; 
 			}
 		}
 		saveLoadText.setText("Game Successfully saved");
-		FadeTransition fader = createFader(saveLoadText);
+		FadeTransition fader = createFader(saveLoadText); //Message conveying the success of the saving
 		saveLoadText.setVisible(true);
 		fader.play();
 	}
 
+	//Loads the game from a SaveGame object
 	void LoadGame(SaveGame save) {
-		if (save == null) {
+		if (save == null) { //error message and returns if theres no save
 			saveLoadText.setText("Error while loading the game");
 			FadeTransition fader = createFader(saveLoadText);
 			saveLoadText.setVisible(true);
 			fader.play();
 			return;
 		}
-		Settings.setSettings(save.getSettings()); // Makes the settings mirror the settings of the saved game
+		Settings.setSettings(save.getSettings()); // Makes Settings mirror the settings of the saved game
 		ArrayList<Turn> turns = save.getTurns();
 
 		view.LoadInitialization(); // Makes a new model to recreate the game from a fresh board with the correct new settings
-		model.selectStartingPlayer(turns.get(0).playerIndex);
+		model.selectStartingPlayer(turns.get(0).playerIndex); //Tells the model of the correct startingplayer
 
-		// Plays the board up to the latest move from the turn list
+		
 		for (int i = 0; i < turns.size(); i++) {
 			try {
-				model.step(turns.get(i).coordinates);
+				model.step(turns.get(i).coordinates); // Plays the board up to the latest move from the turn list
 			} catch (Exception e) {
 				System.out.println("Exception: " + e);
 				System.out.println("Error while replaying the game");
 				e.printStackTrace();
 
 				saveLoadText.setText("Error while loading, save file might be corrupted");
-				FadeTransition fader = createFader(saveLoadText);
+				FadeTransition fader = createFader(saveLoadText); //fading error message
 				saveLoadText.setVisible(true);
 				fader.play();
 
@@ -231,16 +233,19 @@ public class GameController {
 				break;
 			}
 		}
+		//Makes a visual bug dissappear
 		view.initializeBoard();
 		view.updateBoard(this.model.gameBoard);
 		view.updateTurnText(this.model.currentPlayer);
 		getGameEndScreen().setVisible(false);
 
+		//If it's the AI's turn this makes it move
 		if (model.currentPlayer.isAI()) {
 			AIPress();
 		}
 	}
 
+	//Makes the animation of the error text
 	private FadeTransition createFader(Label label) {
 		FadeTransition fade = new FadeTransition(Duration.seconds(5), label);
 		fade.setFromValue(1);

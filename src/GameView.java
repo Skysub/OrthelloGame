@@ -88,9 +88,10 @@ public class GameView {
 		manager.toMenu();
 	}
 
+	//Needed in order to load a previous game
 	public void LoadInitialization() {
-		model = new ReversiModel(this);
-		controller.setModel(model);
+		model = new ReversiModel(this); //makes a new model
+		controller.setModel(model); //Updates the controllers reference
 		initializeBoard();
 	}
 
