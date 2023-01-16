@@ -129,6 +129,9 @@ public class ReversiModel {
 			// After each player has taken 2 turns, we start the main part of the game
 			if (turnsTaken == 4) {
 				this.state = Constants.PLACEMENT; // Now we place a brick
+				if (nrPlayers == 4) {
+					FourPlayerBonus();
+				}
 				this.calculatePossiblePaths();
 			}
 		}
@@ -142,6 +145,10 @@ public class ReversiModel {
 		}
 		}
 		GameView.updateBoard(this.gameBoard);
+	}
+
+	void FourPlayerBonus() {
+		
 	}
 
 	boolean startingMove(int[] coords) {
