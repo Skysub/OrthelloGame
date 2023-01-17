@@ -45,6 +45,7 @@ public class SettingsController {
 	}
 
 	public void back(ActionEvent event) {
+		playerNameChanged();
 		view.toMenu();
 	}
 
@@ -106,6 +107,7 @@ public class SettingsController {
 	}
 
 	public void nextPlayer() {
+		playerNameChanged();
 		currentPlayer++;
 		if (currentPlayer > Settings.nrPlayers - 1)
 			currentPlayer = 0;
@@ -113,6 +115,7 @@ public class SettingsController {
 	}
 
 	public void prevPlayer() {
+		playerNameChanged();
 		currentPlayer--;
 		if (currentPlayer < 0)
 			currentPlayer = Settings.nrPlayers - 1;
