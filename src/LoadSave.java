@@ -1,3 +1,11 @@
+/*
+
+Skrevet af: Benjamin Mirad Gurini
+Studienummer: S214590
+
+
+ */
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;

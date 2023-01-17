@@ -1,3 +1,11 @@
+/*
+
+Skrevet af: Benjamin Mirad Gurini
+Studienummer: S214590
+
+
+ */
+
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
