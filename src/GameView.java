@@ -59,6 +59,7 @@ public class GameView {
 		}
 
 		controller.setView(this);
+		controller.setSaveLoad(new SaveLoad(this));
 
 		scene.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.R) {
