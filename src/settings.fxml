@@ -30,7 +30,7 @@
                   <Insets top="20.0" />
                </padding>
             </Label>
-            <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="50.0">
+            <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
                <children>
                   <RadioButton mnemonicParsing="false" onAction="#setSize4" text=" 4 x 4">
                      <toggleGroup>
@@ -39,6 +39,8 @@
                   </RadioButton>
                   <RadioButton mnemonicParsing="false" onAction="#setSize8" selected="true" text=" 8 x 8" toggleGroup="$boardSize" />
                   <RadioButton mnemonicParsing="false" onAction="#setSize12" text=" 12 x 12" toggleGroup="$boardSize" />
+                  <RadioButton mnemonicParsing="false" onAction="#setSize64" selected="true" text="64 x 64 (DEBUG)" toggleGroup="$boardSize" />
+                  <RadioButton mnemonicParsing="false" onAction="#setSize128" text="128 x 128 (DEBUG)" toggleGroup="$boardSize" />
                </children>
             </HBox>
             
@@ -131,12 +133,12 @@
             </Label>
             <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
-                  <CheckBox fx:id="showMoveHints" alignment="CENTER_RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#onMoveHintsChanged" selected="true" text="Show Move Hints">
+                  <CheckBox fx:id="showMoveHints" alignment="CENTER_RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#onMoveHintsChanged" text="Show Move Hints">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="showAnimations" alignment="CENTER_RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#onShowAnimationsChanged" selected="true" text="Show Animations">
+                  <CheckBox fx:id="showAnimations" alignment="CENTER_RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#onShowAnimationsChanged" text="Show Animations">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -159,7 +161,7 @@
                      </toggleGroup>
                   </RadioButton>
                   <RadioButton mnemonicParsing="false" onAction="#aiWaitHalfSecond" text="Fast (500 ms)" toggleGroup="$aiWaitDelay" />
-                  <RadioButton mnemonicParsing="false" onAction="#aiWaitSecond" selected="true" text="Normal (1000 ms)" toggleGroup="$aiWaitDelay" />
+                  <RadioButton mnemonicParsing="false" onAction="#aiWaitSecond" text="Normal (1000 ms)" toggleGroup="$aiWaitDelay" />
                </children>
             </HBox>
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" prefWidth="100.0" text="Back" textAlignment="CENTER">

@@ -22,7 +22,7 @@ public class GameView {
 	private static final Color POSSIBLE_MOVE_COLOR = new Color(0.25, 0.25, 1, 0.25);
 	private static final Color POSSIBLE_MOVE_HIGHLIGHET_COLOR = new Color(0.25, 0.25, 1, 0.5);
 
-	private static final double STROKE_WIDTH = 2;
+	private static final double STROKE_WIDTH = 0.25;
 	private static final double PIECE_RATIO = 0.85; // How big a percentage the piece takes up on the tile
 	private static final Color STROKE_COLOR = Color.BLACK;
 
@@ -148,16 +148,16 @@ public class GameView {
 			}
 		}
 
-		// Create axislabels
-		for (int i = 0; i < model.getBoardSize(); i++) {
-			var vLabel = createAxisLabel(model.getBoardSize() - i + "");
-			vLabel.setPrefSize(verticalLabels.getPrefWidth(), tileSize + STROKE_WIDTH);
-			verticalLabels.getChildren().add(vLabel);
+		// // Create axislabels
+		// for (int i = 0; i < model.getBoardSize(); i++) {
+		// 	var vLabel = createAxisLabel(model.getBoardSize() - i + "");
+		// 	vLabel.setPrefSize(verticalLabels.getPrefWidth(), tileSize + STROKE_WIDTH);
+		// 	verticalLabels.getChildren().add(vLabel);
 
-			var hLabel = createAxisLabel((char) (i + 97) + "");
-			hLabel.setPrefSize(tileSize + STROKE_WIDTH, horizontalLabels.getPrefHeight());
-			horizontalLabels.getChildren().add(hLabel);
-		}
+		// 	var hLabel = createAxisLabel((char) (i + 97) + "");
+		// 	hLabel.setPrefSize(tileSize + STROKE_WIDTH, horizontalLabels.getPrefHeight());
+		// 	horizontalLabels.getChildren().add(hLabel);
+		// }
 	}
 
 	private Label createAxisLabel(String text) {

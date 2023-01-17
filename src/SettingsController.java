@@ -86,6 +86,14 @@ public class SettingsController {
 		Settings.boardSize = 12;
 	}
 
+	public void setSize64(ActionEvent event) {
+		Settings.boardSize = 64;
+	}
+	
+	public void setSize128(ActionEvent event) {
+		Settings.boardSize = 128;
+	}
+
 	// AI Type
 	public void radioHuman(ActionEvent event) {
 		Settings.playerAIModes[currentPlayer] = AIModes.HumanPlayer;
@@ -221,20 +229,18 @@ class Settings {
 	private static final long serialVersionUID = 8390467629592650422L;
 
 	// All settings are initialized to the default 8x8 Reversi
-	static int boardSize = 8;
+	static int boardSize = 64;
 	static int nrPlayers = 2;
 	static int gameMode = Constants.GAMEMODE_REVERSI;
-	static ArrayList<Color> playerColors = new ArrayList<Color>(
-			Arrays.asList(Color.BLACK, Color.WHITE, Color.RED, Color.GREEN));
-	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("BLACK", "WHITE", "RED", "GREEN"));
-	static boolean showMoveHints = true;
-	static boolean showAnimations = true; // TODO Should this be added to saveSettings?
-	static int aiWaitMs = 1000;
+	static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN));
+	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("Greedy_RED", "Greedy_BLUE", "Greedy_YELLOW", "Greedy_Green"));
+	static boolean showMoveHints = false;
+	static boolean showAnimations = false;
+	static int aiWaitMs = 1;
 
 	static int previousStartingIndex = Constants.UNDEFINED;
 
-	static AIModes[] playerAIModes = new AIModes[] { AIModes.AIGreedy, AIModes.HumanPlayer, AIModes.HumanPlayer,
-			AIModes.HumanPlayer };
+	static AIModes[] playerAIModes = new AIModes[] { AIModes.AIGreedy, AIModes.AIGreedy, AIModes.AIGreedy,AIModes.AIGreedy };
 
 	static void setSettings(saveSettings s) {
 		boardSize = s.boardSize;
