@@ -32,21 +32,23 @@ public class ViewManager extends Application {
         // Default view
         toMenu();
         stage.setResizable(false);
-        stage.setTitle("Reversi");
         stage.show();
     }
 
     public void toGame() {
         gameView.onEnter();
         stage.setScene(gameView.scene);
+        stage.setTitle("Game");
     }
 
     public void toMenu() {
         stage.setScene(menuView.scene);
+        stage.setTitle("Menu");
     }
 
     public void toSettings() {
         stage.setScene(settingsView.scene);
+        stage.setTitle("Settings");
     }
 
     public void quitGame() {
