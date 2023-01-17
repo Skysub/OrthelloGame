@@ -389,7 +389,6 @@ class OthelloModel extends ReversiModel{
 
     OthelloModel(GameView view){
         super(view);
-
         startingMoves();
 
         //We don't have a starting state in Othello, so we simply skip this
@@ -405,11 +404,12 @@ class OthelloModel extends ReversiModel{
 
     void startingMoves(){
         int[][] startingCoords = getCenterCoords();
-        for(int i= 0; i<startingCoords.length;i++){
+        for(int i = 0; i < startingCoords.length; i++){
             Checker currentChecker = this.gameBoard.getElementAt(startingCoords[i]);
-            if(i%2 == 0){
+            if (startingCoords[i][0] == startingCoords[i][1]) {
                 currentChecker.flipChecker(currentPlayer);
-            } else{
+            }
+            else {
                 currentChecker.flipChecker(gamePlayerManager.getPlayerAtIndex(1));
             }
         }
@@ -418,12 +418,12 @@ class OthelloModel extends ReversiModel{
     int[][] getCenterCoords(){
         int[][] centerCoords = new int[4][2];
         int halfOfSize = this.boardSize/2;
-        int incrementer = 0;
+        int coordIndex = 0;
 
-        for(int i = halfOfSize-1; i<=halfOfSize;i++){
-            for(int j = halfOfSize-1;j<=halfOfSize;j++){
-                centerCoords[incrementer] = new int[] {i,j};
-                incrementer += 1;
+        for(int row = halfOfSize - 1; row <= halfOfSize; row++){
+            for(int col = halfOfSize - 1; col <= halfOfSize; col++){
+                centerCoords[coordIndex] = new int[] {row,col};
+                coordIndex += 1;
             }
         }
         return centerCoords;
