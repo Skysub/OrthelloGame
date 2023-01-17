@@ -17,25 +17,35 @@ public class SettingsController {
 	private int currentPlayer = 0;
 	private int currentColor = 0;
 	private int maxNameLength = 32;
-	private Color[] possibleColors = new Color[] { Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW };
+	private Color[] possibleColors = new Color[] { Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE,
+			Color.YELLOW };
 
-	@FXML Circle playerColor;
-	@FXML TextField playerNameText;
-	@FXML Label playerNumber;
+	@FXML
+	Circle playerColor;
+	@FXML
+	TextField playerNameText;
+	@FXML
+	Label playerNumber;
 
-	@FXML RadioButton humanRadio;
-	@FXML RadioButton randomRadio;
-	@FXML RadioButton greedyRadio;
-	@FXML RadioButton weightedRadio;
-	
-	@FXML CheckBox showMoveHints;
-	@FXML CheckBox showAnimations;
+	@FXML
+	RadioButton humanRadio;
+	@FXML
+	RadioButton randomRadio;
+	@FXML
+	RadioButton greedyRadio;
+	@FXML
+	RadioButton weightedRadio;
+
+	@FXML
+	CheckBox showMoveHints;
+	@FXML
+	CheckBox showAnimations;
 
 	public void setModelAndView(ReversiModel model, SettingsView view) {
 		this.view = view;
 		loadPlayer();
 	}
-	
+
 	public void back(ActionEvent event) {
 		playerNameChanged();
 		view.toMenu();
@@ -71,12 +81,12 @@ public class SettingsController {
 	public void setSize8(ActionEvent event) {
 		Settings.boardSize = 8;
 	}
-	
+
 	public void setSize12(ActionEvent event) {
 		Settings.boardSize = 12;
 	}
 
-	// AI Type 
+	// AI Type
 	public void radioHuman(ActionEvent event) {
 		Settings.playerAIModes[currentPlayer] = AIModes.HumanPlayer;
 	}
@@ -180,10 +190,11 @@ class Settings {
 	static int boardSize = 8;
 	static int nrPlayers = 2;
 	static int gameMode = Constants.GAMEMODE_REVERSI;
-	static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.WHITE, Color.BLACK, Color.RED, Color.GREEN));
+	static ArrayList<Color> playerColors = new ArrayList<Color>(
+			Arrays.asList(Color.WHITE, Color.BLACK, Color.RED, Color.GREEN));
 	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE", "BLACK", "RED", "GREEN"));
 	static boolean showMoveHints = true;
-	static boolean showAnimations = true; //TODO Should this be added to saveSettings?
+	static boolean showAnimations = true; // TODO Should this be added to saveSettings?
 	static int aiWaitMs = 1000;
 
 	static AIModes[] playerAIModes = new AIModes[] { AIModes.AIGreedy, AIModes.HumanPlayer, AIModes.HumanPlayer,
@@ -193,26 +204,25 @@ class Settings {
 		boardSize = s.boardSize;
 		nrPlayers = s.nrPlayers;
 		gameMode = s.gameMode;
-		//TODO Why is this commented out?
-		//playerColors = s.playerColors;
+		playerColors = s.GenerateColorList();
 		playerNames = s.playerNames;
 		playerAIModes = s.playerAIModes;
 		showMoveHints = s.showMoveHints;
 	}
 
-	static ReversiModel createModel(GameView view){
-		switch (Settings.gameMode){
-			case Constants.GAMEMODE_REVERSI -> {
-				return new ReversiModel(view);
-			}
+	static ReversiModel createModel(GameView view) {
+		switch (Settings.gameMode) {
+		case Constants.GAMEMODE_REVERSI -> {
+			return new ReversiModel(view);
+		}
 
-			case Constants.GAMEMODE_OTHELLO -> {
-				return new OthelloModel(view);
-			}
+		case Constants.GAMEMODE_OTHELLO -> {
+			return new OthelloModel(view);
+		}
 
-			case Constants.GAMEMODE_ROLIT -> {
-				return new RolitModel(view);
-			}
+		case Constants.GAMEMODE_ROLIT -> {
+			return new RolitModel(view);
+		}
 
 		}
 		return new ReversiModel(view);
@@ -225,7 +235,7 @@ class saveSettings implements Serializable {
 	int boardSize;
 	int nrPlayers;
 	int gameMode;
-	transient ArrayList<Color> playerColors; //Color er ikke serializable, og vi bruger istedet for, default farver
+	ArrayList<Double[]> playerColorData;
 	ArrayList<String> playerNames;
 	boolean showMoveHints;
 	AIModes[] playerAIModes;
@@ -234,9 +244,29 @@ class saveSettings implements Serializable {
 		boardSize = Settings.boardSize;
 		nrPlayers = Settings.nrPlayers;
 		gameMode = Settings.gameMode;
-		//playerColors = Settings.playerColors;
+		SaveColor();
 		playerNames = Settings.playerNames;
 		playerAIModes = Settings.playerAIModes;
 		showMoveHints = Settings.showMoveHints;
+	}
+
+	void SaveColor() {
+		ArrayList<Color> colors = Settings.playerColors;
+		for (int i = 0; i < colors.size(); i++) {
+			Double[] t = new Double[4];
+			t[0] = colors.get(i).getHue();
+			t[1] = colors.get(i).getSaturation();
+			t[2] = colors.get(i).getBrightness();
+			t[3] = colors.get(i).getOpacity();
+			playerColorData.add(t);
+		}
+	}
+
+	ArrayList<Color> GenerateColorList() {
+		ArrayList<Color> colors = new ArrayList<Color>();
+		for (int i = 0; i < playerColorData.size(); i++) {
+			colors.add(new Color(playerColorData.get(i)[0], playerColorData.get(i)[1], playerColorData.get(i)[2], playerColorData.get(i)[3]));
+		}
+		return colors;
 	}
 }
