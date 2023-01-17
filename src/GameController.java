@@ -1,7 +1,7 @@
 /*
 
-Skrevet af: Frederik Cayré Hede-Andersen
-Studienummer: s224807
+Skrevet af: Mads
+Studienummer: TODO: Find på mads' studienummer og identitet
 
 
  */

@@ -1,3 +1,11 @@
+/*
+
+Skrevet af: Frederik Cayré Hede-Andersen
+Studienummer: s224807
+
+
+ */
+
 import java.util.ArrayList;
 import javafx.animation.FadeTransition;
 import javafx.scene.control.Label;
