@@ -1,10 +1,7 @@
 /*
-
 Skrevet af: Benjamin Mirad Gurini
 Studienummer: S214590
-
-
- */
+*/
 
 import javafx.scene.paint.Color;
 
@@ -206,15 +203,12 @@ class PathGrid extends TwoDimensionalGrid<Path> {
 class Path extends BoardElement {
     ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
     boolean currentPlayerColourSeen;
-    //TODO Is this used anywhere?
-    int sizeOfPath = 0; // For the AI later on
 
     // Appends the checkersInPath of another path to this' - used for when multiple
     // paths for the same placement of a checker
     void concatCheckersInPaths(Path otherPath) {
         this.checkersInPath.addAll(otherPath.checkersInPath); // None of the checkers will overlap and count twice, so
         // we can append all
-        this.updateSizeOfPath();
     }
 
     // Checks if a checker is in this path
@@ -224,7 +218,6 @@ class Path extends BoardElement {
 
     void addCheckerToPath(Checker chosenChecker) {
         this.checkersInPath.add(chosenChecker);
-        this.updateSizeOfPath();
     }
 
     boolean getStatusOfCurrentColourSeen() {
@@ -250,13 +243,8 @@ class Path extends BoardElement {
         return getSizeOfPath() == 0;
     }
 
-    void updateSizeOfPath() {
-        this.sizeOfPath = this.checkersInPath.size();
-    }
-
     void resetCheckersInPath() {
         this.checkersInPath = new ArrayList<Checker>();
-        updateSizeOfPath();
     }
 
     void resetCoords() {

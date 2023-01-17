@@ -1,17 +1,10 @@
 /*
-
 Skrevet af: Benjamin Mirad Gurini
 Studienummer: S214590
+*/
 
-
- */
-
-import javafx.scene.paint.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Random;
-
 
 public class ReversiModel{
 	GameView GameView;
@@ -62,7 +55,7 @@ public class ReversiModel{
         this.nrPlayers = Settings.nrPlayers;
         this.gameBoard = new Board(boardSize);
         this.gamePathGrid = new PathGrid(boardSize);
-        this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames,Settings.playerAIModes);
+        this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames);
 
         selectStartingPlayer();
     }
@@ -71,7 +64,6 @@ public class ReversiModel{
         GameView.updateTurnText(this.currentPlayer);
     }
     void endGame() {
-        System.out.println("GAME ENDED");
         state = Constants.GAME_ENDED; // End the game
         isGameOver = true;
         setEndingScreenForView();
@@ -94,7 +86,6 @@ public class ReversiModel{
     void skipTurn(Turn turntaken) {
         // In order to get to this state, we need to skip a turn
         this.turnsSkipped += 1;
-        System.out.println("TURN SKIPPED");
 
         //If this function has been called, we know that we've taken a legal skipTurn move
         recordTurnTaken(true,turntaken);
@@ -402,123 +393,4 @@ public class ReversiModel{
         ArrayList<Player> winnersArrayList = this.gamePlayerManager.setHighScoreAndGetHighestScoringPlayers();
         GameView.showEndGame(winnersArrayList);
     }
-}
-
-class OthelloModel extends ReversiModel{
-
-    OthelloModel(GameView view){
-        super(view);
-        startingMoves();
-
-        //We don't have a starting state in Othello, so we simply skip this
-        this.state = Constants.PLACEMENT;
-        this.calculatePossiblePaths();
-    }
-
-    @Override
-    void selectStartingPlayer() {
-        this.currentPlayerIndex = 0;
-        this.currentPlayer = this.gamePlayerManager.getPlayerAtIndex(0);
-    }
-
-    void startingMoves(){
-        int[][] startingCoords = getCenterCoords();
-        for(int i = 0; i < startingCoords.length; i++){
-            Checker currentChecker = this.gameBoard.getElementAt(startingCoords[i]);
-            if (startingCoords[i][0] == startingCoords[i][1]) {
-                currentChecker.flipChecker(currentPlayer);
-            }
-            else {
-                currentChecker.flipChecker(gamePlayerManager.getPlayerAtIndex(1));
-            }
-        }
-    }
-
-    int[][] getCenterCoords(){
-        int[][] centerCoords = new int[4][2];
-        int halfOfSize = this.boardSize/2;
-        int coordIndex = 0;
-
-        for(int row = halfOfSize - 1; row <= halfOfSize; row++){
-            for(int col = halfOfSize - 1; col <= halfOfSize; col++){
-                centerCoords[coordIndex] = new int[] {row,col};
-                coordIndex += 1;
-            }
-        }
-        return centerCoords;
-    }
-}
-
-
-class RolitModel extends OthelloModel{
-
-    RolitModel(GameView view){
-        super(view);
-    }
-
-    @Override
-    void startingMoves() {
-            int[][] centerCoords = getCenterCoords();
-            for(int i = 0;i<centerCoords.length;i++){
-                Player currentPlayer = this.gamePlayerManager.getPlayerAtIndex(i);
-                Checker currentChecker = this.gameBoard.getElementAt(centerCoords[i]);
-                currentChecker.flipChecker(currentPlayer);
-            }
-        }
-
-        //In Rolit, we only end if the board is filled
-    @Override
-    boolean gameOverBeforeSkip() {
-        return isBoardFilled();
-    }
-
-    @Override
-    Path foundEmptyChecker(Path currentPath, Checker currentChecker) {
-        if(playerHasNoMoreCheckers()) {
-            if(currentPath.isEmpty()){
-                currentPath.resetPath();
-            }else{
-                currentPath.setCoords(currentChecker.coordinates);
-                currentPath.resetCheckersInPath();
-                currentPath = foundPossiblePath(currentPath);
-            }
-
-        }
-        else{
-            // !Empty && CSeen <=> C !C... Ø
-            if (!currentPath.isEmpty() && currentPath.getStatusOfCurrentColourSeen()) {
-                currentPath.setCoords(currentChecker.coordinates);
-                currentPath = foundPossiblePath(currentPath);
-            }
-            // Empty V !CSeen <=> !C... Ø... C or Ø...C
-            else {
-                resetPath(currentPath);
-            }
-        }
-
-        // We set the starting coords of the path here regardless
-        currentPath.setCoords(currentChecker.coordinates);
-        return currentPath;
-    }
-
-    @Override
-    Path foundCheckerNotOurColour(Path currentPath, Checker chosenChecker) {
-        if(playerHasNoMoreCheckers()){
-
-            //Has coords & is empty -> This is the first !C we find, and we've found a Ø before
-                if(currentPath.hasCoords() && currentPath.isEmpty()) {
-                //We remove the checker of the opponent's colour, as we can only flip empties
-                currentPath.resetCheckersInPath();
-                currentPath = foundPossiblePath(currentPath);
-                }
-                else{
-                    currentPath.resetPath();                }
-
-        }
-        currentPath.addCheckerToPath(chosenChecker);
-
-        return currentPath;
-    }
-
-
 }

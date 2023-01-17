@@ -1,11 +1,16 @@
+/*
+Skrevet af: Mads Christian Wrang Nielsen 
+Studienummer: s224784 
+*/
+
 import java.util.ArrayList;
 
+import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -15,26 +20,22 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
-public class GameView {
+public class GameView extends Application {
 
 	private static final Color TILE_COLOR = Color.BEIGE;
-	private static final Color POSSIBLE_MOVE_COLOR = new Color(0.25, 0.25, 1, 0.25);
-	private static final Color POSSIBLE_MOVE_HIGHLIGHET_COLOR = new Color(0.25, 0.25, 1, 0.5);
-
 	private static final double STROKE_WIDTH = 2;
 	private static final double PIECE_RATIO = 0.85; // How big a percentage the piece takes up on the tile
 	private static final Color STROKE_COLOR = Color.BLACK;
 
-	public static final int ANIMATION_DURATION_MS = 250;
-
 	// MCV
-	ViewManager manager;
 	private ReversiModel model;
 	private GameController controller;
 
 	// UI Elements
-	public Scene scene;
+	private Stage stage;
+	private Scene scene;
 	private AnchorPane grid;
 	private Label turnText;
 	private HBox horizontalLabels;
@@ -43,10 +44,14 @@ public class GameView {
 	private Rectangle[][] tiles;
 	private Circle[][] pieces;
 
-	private Path lastHighlightedMove; // A reference to the last highlighted move, used to reset the colors once the move is no longer highlighted
+	public static void main(String[] args) {
+		launch(args);
+	}
 
-	public GameView(ViewManager manager) {
-		this.manager = manager;
+	@Override
+	public void start(Stage stage) {
+
+		this.stage = stage;
 
 		try {
 			// Load UI from FXML and create an instance of the corresponding controller class "Controller"
@@ -59,44 +64,28 @@ public class GameView {
 		}
 
 		controller.setView(this);
-
-		scene.setOnKeyPressed(e -> {
-			if (e.getCode() == KeyCode.R) {
-				Animation.playRap();
-			}
-		});
-
+		
 		// Retrieve objects from Controller FXML
 		grid = controller.getGrid();
 		turnText = controller.getTurnText();
 		horizontalLabels = controller.getHorizontalLabels();
 		verticalLabels = controller.getVerticalLabels();
 		passButton = controller.getPassButton();
-	}
 
-	public void onEnter() {
 		// Setup Model and UI
-		model = Settings.createModel(this);
+		model = new ReversiModel(this);
 		controller.setModel(model);
 		initializeBoard();
 		updateBoard(this.model.gameBoard);
 		updateTurnText(this.model.currentPlayer);
 		controller.getGameEndScreen().setVisible(false);
 
-		if (model.currentPlayer.isAI()) {
-			controller.AIPress();
-		}
+		stage.setScene(scene);
+		stage.setResizable(false);
+		stage.show();
 	}
 
-	public void toMenu() {
-		manager.toMenu();
-	}
-
-	//Needed in order to load a previous game
-	public void LoadInitialization() {
-		model = Settings.createModel(this); //makes a new model
-		controller.setModel(model); //Updates the controllers reference
-		initializeBoard();
+	public void onEnter() {
 	}
 
 	public void initializeBoard() {
@@ -105,7 +94,6 @@ public class GameView {
 		verticalLabels.getChildren().clear();
 		horizontalLabels.getChildren().clear();
 
-		// TODO Check if prefWidth and prefHeight is the same
 		// Right now they are defined to in game.fxml, but if the layout is changed we need to make sure to calculate it correctly
 		double boardWidth = grid.getPrefWidth();
 		double tileSize = (boardWidth - STROKE_WIDTH * (model.getBoardSize() + 1)) / model.getBoardSize();
@@ -121,9 +109,6 @@ public class GameView {
 				tile.setStrokeWidth(STROKE_WIDTH);
 				tile.setStrokeType(StrokeType.OUTSIDE);
 				tile.setOnMousePressed(controller::tilePress);
-				if (Settings.showMoveHints) {
-					tile.setOnMouseEntered(event -> onHover(tile));
-				}
 				tile.setId(Util.toId(row, col));
 
 				AnchorPane.setTopAnchor(tile, row * (tileSize + STROKE_WIDTH));
@@ -183,39 +168,14 @@ public class GameView {
 			for (int col = 0; col < gameBoard.gridSize; col++) {
 				Circle c = pieces[row][col];
 				Checker t = gameBoard.getElementAt(new int[] { row, col });
-
 				c.setVisible(!t.isEmpty());
-
-				if (Settings.showAnimations && (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR)) {
-					if (c.getFill() == Color.TRANSPARENT || c.getFill() == POSSIBLE_MOVE_HIGHLIGHET_COLOR) {
-						Animation.playSound();
-						Animation.halfFlip(c, ANIMATION_DURATION_MS / 2, t.getColor());
-					} else {
-						Animation.flipPiece(c, ANIMATION_DURATION_MS, (Color) c.getFill(), t.getColor());
-					}
-				} else {
-					c.setFill(t.getColor());
-					c.setStroke(STROKE_COLOR);
-				}
+				c.setFill(t.getColor());
+				c.setStroke(STROKE_COLOR);
 			}
 		}
 
 		// Only show passButton when the current player has no possible moves and is a human
-		var possibleMoves = model.gamePathGrid.getNonNullPaths();
-		passButton.setVisible(model.state == Constants.TURN_SKIPPED && !model.currentPlayer.isAI());
-
-		// Only show move hints when the current player is human, and move hints are enabled
-		if (!Settings.showMoveHints || model.currentPlayer.isAI()) {
-			return;
-		}
-
-		for (Path move : possibleMoves) {
-			var coords = move.coordinates;
-			Circle c = pieces[coords[0]][coords[1]];
-			c.setFill(POSSIBLE_MOVE_COLOR);
-			c.setStroke(Color.TRANSPARENT);
-			c.setVisible(true);
-		}
+		passButton.setVisible(model.state == Constants.TURN_SKIPPED);
 	}
 
 	public void updateTurnText(Player currentPlayer) {
@@ -233,55 +193,17 @@ public class GameView {
 		}
 
 		ArrayList<Player> players = model.gamePlayerManager.players;
-		String scoreText = players.get(0).getPlayerName() + ": " + players.get(0).getScore();
-
-		for (int i = 1; i < players.size(); i++) {
-			if (i != 2) {
-				scoreText += " - ";
-			}
-			else {
-				scoreText += "\n";
-			}
-			scoreText += players.get(i).getPlayerName() + ": " + players.get(i).getScore();
-		}
+		String scoreText = players.get(0).getPlayerName() + ": " + players.get(0).getScore() + " - " + players.get(1).getPlayerName() + ": " + players.get(1).getScore();
 
 		controller.getScoreText().setText(scoreText);
 		controller.getGameEndScreen().setVisible(true);
 	}
 
-	private void onHover(Rectangle rect) {
-		if (Animation.isAnimating() || controller.aiIsMoving) {
-			return;
-		}
-		int[] coords = Util.fromId(rect.getId());
-
-		if (lastHighlightedMove != null) {
-			for (Checker checkerToFlip : lastHighlightedMove.checkersInPath) {
-				pieces[checkerToFlip.coordinates[0]][checkerToFlip.coordinates[1]].setFill(checkerToFlip.getColor());
-			}
-			var moveStartingChecker = model.gameBoard.getElementAt(lastHighlightedMove.coordinates);
-
-			if (moveStartingChecker.isEmpty()) {
-				pieces[moveStartingChecker.coordinates[0]][moveStartingChecker.coordinates[1]]
-						.setFill(POSSIBLE_MOVE_COLOR);
-			}
-			lastHighlightedMove = null;
-		}
-
-		Path move = model.gamePathGrid.getElementAt(coords);
-
-		if (move != null) {
-			lastHighlightedMove = move;
-			for (Checker checkerFromPath : move.checkersInPath) {
-				Color c = checkerFromPath.getColor();
-				c = Color.rgb((int) c.getRed(), (int) c.getGreen(), (int) c.getBlue(), 0.5);
-				pieces[checkerFromPath.coordinates[0]][checkerFromPath.coordinates[1]].setFill(c);
-			}
-			pieces[move.coordinates[0]][move.coordinates[1]].setFill(POSSIBLE_MOVE_HIGHLIGHET_COLOR);
-		}
-	}
-
 	public void setModel(ReversiModel newModel) {
 		this.model = newModel;
 	}
+
+    public void quitGame() {
+		stage.close();
+    }
 }

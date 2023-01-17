@@ -1,15 +1,16 @@
+/*
+Skrevet af: Benjamin Mirad Gurini
+Studienummer: S214590
+*/
+
 import javafx.scene.paint.Color;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
-class Turn implements Serializable {
+class Turn {
 
-	private static final long serialVersionUID = 514006825282299253L;
 	int[] coordinates;
-	int timeTaken; // TODO Unit?
 	int gameStateAtTurnTaken = Constants.UNDEFINED;
 	int playerIndex;
 
@@ -26,16 +27,10 @@ class Player {
 	private ArrayList<Turn> turnHistory = new ArrayList<Turn>();
 	private Color playerColor;
 	private int nrCheckers;
-	private Ai AIObject;
 
-	Player(String name, Color playerColor, AIModes aiMode) {
+	Player(String name, Color playerColor) {
 		this.playerName = name;
 		this.playerColor = playerColor;
-		this.decideAIMode(aiMode);
-
-		if (isAI()) {
-			this.playerName += " (AI)";
-		}
 	}
 
 	// Public Getters
@@ -59,30 +54,6 @@ class Player {
 		return this.playerName;
 	}
 
-	int[] getAICalculatedCoords(ArrayList<Path> nonNullPaths) {
-		return this.AIObject.AIGetSteppingCoords(nonNullPaths);
-	}
-
-	void decideAIMode(AIModes aiMode) {
-		switch (aiMode) {
-		case HumanPlayer -> {
-			break;
-		}
-		case AIGreedy -> {
-			this.AIObject = new GreedyAI();
-			break;
-		}
-		case AIRandom -> {
-			this.AIObject = new RandomAI();
-			break;
-		}
-		case AIWeighted -> {
-			this.AIObject = new WeightedAI();
-			break;
-		}
-		}
-	}
-
 	void recordTurn(Turn newTurn) {
 		turnHistory.add(newTurn);
 	}
@@ -100,10 +71,6 @@ class Player {
 		this.score = this.getNrCheckers();
 		return this.score;
 	}
-
-	boolean isAI() {
-		return Objects.nonNull(this.AIObject);
-	}
 }
 
 class PlayerManager {
@@ -116,14 +83,12 @@ class PlayerManager {
 	int nrTurnsTaken;
 	int firstPlayerIndex;
 
-	PlayerManager(int nrPlayers, ArrayList<javafx.scene.paint.Color> playerColors, ArrayList<String> playerNames,
-			AIModes[] playerAIModes) {
+	PlayerManager(int nrPlayers, ArrayList<Color> playerColors, ArrayList<String> playerNames) {
 		this.nrPlayers = nrPlayers;
 		for (int i = 0; i < nrPlayers; i++) {
 			Color currentColor = playerColors.get(i);
 			String currentName = playerNames.get(i);
-			AIModes currentAIMode = playerAIModes[i];
-			Player newPlayer = new Player(currentName, currentColor, currentAIMode);
+			Player newPlayer = new Player(currentName, currentColor);
 			this.addPlayer(newPlayer);
 		}
 
