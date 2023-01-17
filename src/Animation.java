@@ -14,16 +14,29 @@ public class Animation {
     private static String soundfile = "resources/PiecePlace.mp3";
     private static AudioClip sound = new AudioClip(ClassLoader.getSystemResource(soundfile).toString());
 
+    private static String rapFile = "resources/Rapgame.wav";
+    private static AudioClip rap = new AudioClip(ClassLoader.getSystemResource(rapFile).toString());
+    
     private static ArrayList<Integer> activeAnimations = new ArrayList<Integer>();
     private static int nextId = 0;
 
     private static int getNextId() {
-        nextId = (nextId + 1) & 43;  // 43 = (16 - 2) * 3 + 1, corresponding to the maximum number of flips a single move can make, in 16x16, which is the largest board
+        nextId = (nextId + 1) & 31;  // 32 = (12 - 2) * 3 + 1, corresponding to the maximum number of flips a single move can make, in 12x12, which is the largest boardSize
         return nextId;
     }
 
     public static void playSound() {
+        sound.setCycleCount(2);
         sound.play();
+    }
+
+    public static void playRap() {
+        rap.stop();
+        rap.play();
+    }
+
+    public static void stopRap() {
+        rap.stop();
     }
 
     public static boolean isAnimating() {
