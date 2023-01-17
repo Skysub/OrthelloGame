@@ -35,10 +35,10 @@ public class ReversiModel{
             gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
         }
         else{
-            System.out.println("Selecting the next player");
             Settings.previousStartingIndex = (Settings.previousStartingIndex + 1)%nrPlayers;
             this.currentPlayerIndex = Settings.previousStartingIndex;
             this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
+            GameView.updateTurnText(currentPlayer);
         }
     }
     
