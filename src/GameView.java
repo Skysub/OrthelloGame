@@ -233,7 +233,13 @@ public class GameView {
 		String scoreText = players.get(0).getPlayerName() + ": " + players.get(0).getScore();
 
 		for (int i = 1; i < players.size(); i++) {
-			scoreText += " - " + players.get(i).getPlayerName() + ": " + players.get(i).getScore();
+			if (i != 2) {
+				scoreText += " - ";
+			}
+			else {
+				scoreText += "\n";
+			}
+			scoreText += players.get(i).getPlayerName() + ": " + players.get(i).getScore();
 		}
 
 		controller.getScoreText().setText(scoreText);
