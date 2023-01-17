@@ -1,7 +1,7 @@
 /*
 
-Skrevet af: Benjamin Mirad Gurini
-Studienummer: S214590
+Skrevet af: Frederik Cayré Hede-Andersen
+Studienummer: s224807
 
 
  */

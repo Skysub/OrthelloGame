@@ -1,5 +1,12 @@
-import java.util.ArrayList;
+/*
 
+Skrevet af: Frederik Cayré Hede-Andersen
+Studienummer: s224807
+
+
+ */
+
+import java.util.ArrayList;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
