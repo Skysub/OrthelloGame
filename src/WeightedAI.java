@@ -1,5 +1,5 @@
 public class WeightedAI extends GreedyAI {
-    private int startingScore = -255;
+
     int[][] weights = new int[][]  {
         {99, -8, 8, 6, 6, 8, -8,99},
         {-8,-24,-4,-3,-3,-4,-24,-8},
@@ -10,8 +10,6 @@ public class WeightedAI extends GreedyAI {
         {-8,-24,-4,-3,-3,-4,-24,-8},
         {99, -8, 8, 6, 6, 8, -8,99}
     };
-
-    int startingScore1 = super.startingScore;
 
     @Override
     int getScoreOfPath(Path chosenPath) {

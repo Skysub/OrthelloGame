@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class GreedyAI implements Ai{
 
-    public int startingScore = 0;
+    public int startingScore = Integer.MIN_VALUE;
 
     int getScoreOfPath(Path chosenPath){
         return chosenPath.getSizeOfPath();
