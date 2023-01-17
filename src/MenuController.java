@@ -15,4 +15,8 @@ public class MenuController {
     public void openSettings (ActionEvent event) {
         view.toSettings();
     }
+
+    public void quitGame (ActionEvent event) {
+        view.quitGame();
+    }
 }

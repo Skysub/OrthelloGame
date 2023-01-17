@@ -106,17 +106,35 @@ public class SettingsController {
 	// Game Mode
 	public void setReversi(ActionEvent event) {
 		Settings.gameMode = Constants.GAMEMODE_REVERSI;
-		Settings.nrPlayers = 2;
+		playerNumberChange(2);
 	}
 
 	public void setOthello(ActionEvent event) {
-		Settings.nrPlayers = 2;
+		playerNumberChange(2);
 		Settings.gameMode = Constants.GAMEMODE_OTHELLO;
 	}
 
 	public void setRolit(ActionEvent event) {
-		Settings.nrPlayers = 4;
+		playerNumberChange(4);
+		int tempCurrentPlayer = currentPlayer;
 		Settings.gameMode = Constants.GAMEMODE_ROLIT;
+
+		for(int i = 0; i < 2; i++){
+			for(int j = 2; j < 4; j++){
+				if(Settings.playerColors.get(i) == Settings.playerColors.get(j)){
+					currentPlayer = j;
+					currentColor = indexOf(Settings.playerColors.get(j));
+					nextColor();
+				}
+			}
+		}
+		
+		currentPlayer = tempCurrentPlayer;
+		loadPlayer();
+	}
+
+	private void playerNumberChange(int n){
+		Settings.nrPlayers = n;
 	}
 
 	// Player UI
@@ -151,8 +169,17 @@ public class SettingsController {
 
 	public void nextColor() {
 		currentColor++;
-		if (currentColor > possibleColors.length - 1)
+		if (currentColor > possibleColors.length - 1){
 			currentColor = 0;
+		}
+
+		for (int i = 0; i < Settings.nrPlayers; i++){
+			if(i == currentPlayer) continue;
+			if(possibleColors[currentColor] == Settings.playerColors.get(i)){
+				nextColor();
+			}
+		}
+
 		playerColor.setFill(possibleColors[currentColor]);
 		Settings.playerColors.set(currentPlayer, possibleColors[currentColor]);
 	}
@@ -161,6 +188,13 @@ public class SettingsController {
 		currentColor--;
 		if (currentColor < 0)
 			currentColor = possibleColors.length - 1;
+		
+		for (int i = 0; i <Settings.nrPlayers; i++){
+			if(i == currentPlayer) continue;
+			if(possibleColors[currentColor] == Settings.playerColors.get(i)){
+				nextColor();
+			}
+		}
 		playerColor.setFill(possibleColors[currentColor]);
 		Settings.playerColors.set(currentPlayer, possibleColors[currentColor]);
 	}
@@ -191,8 +225,8 @@ class Settings {
 	static int nrPlayers = 2;
 	static int gameMode = Constants.GAMEMODE_REVERSI;
 	static ArrayList<Color> playerColors = new ArrayList<Color>(
-			Arrays.asList(Color.WHITE, Color.BLACK, Color.RED, Color.GREEN));
-	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE", "BLACK", "RED", "GREEN"));
+			Arrays.asList(Color.BLACK, Color.WHITE, Color.RED, Color.GREEN));
+	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("BLACK", "WHITE", "RED", "GREEN"));
 	static boolean showMoveHints = true;
 	static boolean showAnimations = true; // TODO Should this be added to saveSettings?
 	static int aiWaitMs = 1000;
