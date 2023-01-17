@@ -128,7 +128,7 @@ public class SettingsController {
 				}
 			}
 		}
-		
+
 		currentPlayer = tempCurrentPlayer;
 		loadPlayer();
 	}
@@ -192,7 +192,7 @@ public class SettingsController {
 		for (int i = 0; i <Settings.nrPlayers; i++){
 			if(i == currentPlayer) continue;
 			if(possibleColors[currentColor] == Settings.playerColors.get(i)){
-				nextColor();
+				prevColor();
 			}
 		}
 		playerColor.setFill(possibleColors[currentColor]);
