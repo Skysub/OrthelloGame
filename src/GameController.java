@@ -107,6 +107,7 @@ public class GameController {
 		}
 		view.toMenu();
 		resetGame();
+		Settings.previousStartingIndex = Constants.UNDEFINED;
 		Animation.stopRap();
 	}
 

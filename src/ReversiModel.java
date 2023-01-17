@@ -30,7 +30,6 @@ public class ReversiModel{
         if(Settings.previousStartingIndex == Constants.UNDEFINED){
             Random randomObject = new Random();
             this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
-
             Settings.previousStartingIndex = this.currentPlayerIndex;
             this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
             gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
