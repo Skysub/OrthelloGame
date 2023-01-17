@@ -35,8 +35,6 @@ public class SettingsController {
 
 	public void setModelAndView(ReversiModel model, SettingsView view) {
 		this.view = view;
-		// TODO Should this be done here?
-		playerColor.setRadius(25);
 		loadPlayer();
 	}
 
