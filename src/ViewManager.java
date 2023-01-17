@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class ViewManager extends Application {
@@ -16,6 +17,9 @@ public class ViewManager extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
+
+        // Load icon
+        stage.getIcons().add(new Image(ViewManager.class.getResourceAsStream("resources/icon.png")));
 
         // Setup views
         gameView = new GameView(this);
