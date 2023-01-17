@@ -88,7 +88,7 @@
                         <Font size="42.0" />
                      </font>
                   </Label>
-                  <Label fx:id="scoreText" text="W: XX - B: YY">
+                  <Label fx:id="scoreText" text="SCORES" textAlignment="CENTER" wrapText="true">
                      <font>
                         <Font size="24.0" />
                      </font>
