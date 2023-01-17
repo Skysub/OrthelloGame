@@ -107,6 +107,7 @@ public class GameController {
 		}
 		view.toMenu();
 		resetGame();
+		Animation.stopRap();
 	}
 
 	public void resetGame() {

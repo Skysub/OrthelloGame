@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -58,6 +59,12 @@ public class GameView {
 		}
 
 		controller.setView(this);
+
+		scene.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.R) {
+				Animation.playRap();
+			}
+		});
 
 		// Retrieve objects from Controller FXML
 		grid = controller.getGrid();

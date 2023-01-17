@@ -13,8 +13,10 @@ public class Animation {
     
     private static String soundfile = "resources/PiecePlace.mp3";
     private static AudioClip sound = new AudioClip(ClassLoader.getSystemResource(soundfile).toString());
-    
 
+    private static String rapFile = "resources/Rapgame.wav";
+    private static AudioClip rap = new AudioClip(ClassLoader.getSystemResource(rapFile).toString());
+    
     private static ArrayList<Integer> activeAnimations = new ArrayList<Integer>();
     private static int nextId = 0;
 
@@ -26,7 +28,15 @@ public class Animation {
     public static void playSound() {
         sound.setCycleCount(2);
         sound.play();
-        System.out.println("sound played");
+    }
+
+    public static void playRap() {
+        rap.stop();
+        rap.play();
+    }
+
+    public static void stopRap() {
+        rap.stop();
     }
 
     public static boolean isAnimating() {
