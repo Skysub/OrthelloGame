@@ -32,13 +32,20 @@ public class SettingsController {
 	@FXML RadioButton weightedRadio;
 	
 	@FXML CheckBox showMoveHints;
+	@FXML CheckBox showAnimations;
 
 	public void setModelAndView(ReversiModel model, SettingsView view) {
 		this.view = view;
 		loadPlayer();
 	}
 
-	public void onMoveHintsChanged(ActionEvent event) {Settings.showMoveHints = showMoveHints.isSelected();}
+	public void onMoveHintsChanged(ActionEvent event) {
+		Settings.showMoveHints = showMoveHints.isSelected();
+	}
+
+	public void onShowAnimationsChanged(ActionEvent event) {
+		Settings.showAnimations = showAnimations.isSelected();
+	}
 
 	public void back(ActionEvent event) {
 		view.toMenu();
@@ -160,10 +167,10 @@ class Settings {
 	static int boardSize = 8;
 	static int nrPlayers = 2;
 	static int gameMode = Constants.GAMEMODE_REVERSI;
-	static ArrayList<Color> playerColors = new ArrayList<Color>(
-			Arrays.asList(Color.WHITE, Color.BLACK, Color.RED, Color.GREEN));
+	static ArrayList<Color> playerColors = new ArrayList<Color>(Arrays.asList(Color.WHITE, Color.BLACK, Color.RED, Color.GREEN));
 	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE", "BLACK", "RED", "GREEN"));
 	static boolean showMoveHints = true;
+	static boolean showAnimations = true; //TODO Should this be added to saveSettings?
 
 	static AIModes[] playerAIModes = new AIModes[] { AIModes.AIGreedy, AIModes.HumanPlayer, AIModes.HumanPlayer,
 			AIModes.HumanPlayer };
@@ -172,6 +179,7 @@ class Settings {
 		boardSize = s.boardSize;
 		nrPlayers = s.nrPlayers;
 		gameMode = s.gameMode;
+		//TODO Why is this commented out?
 		//playerColors = s.playerColors;
 		playerNames = s.playerNames;
 		playerAIModes = s.playerAIModes;

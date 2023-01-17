@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -69,7 +68,7 @@ public class GameController {
 
 	public void AIPress() {
 		// Play AI move after 1 second
-		tl = new Timeline(new KeyFrame(Duration.seconds((GameView.ANIMATION_DURATION_MS / 1000) + 0.5), e -> {
+		tl = new Timeline(new KeyFrame(Duration.seconds((double)(GameView.AI_WAIT_MS + (Settings.showAnimations ? GameView.ANIMATION_DURATION_MS : 0)) / 1000), e -> {
 			if (model != null && model.state == Constants.START) {
 				model.step(model.AIStartingMove());
 				model.step(model.AIStartingMove());

@@ -25,10 +25,8 @@ public class GameView {
 	private static final double PIECE_RATIO = 0.85; // How big a percentage the piece takes up on the tile
 	private static final Color STROKE_COLOR = Color.BLACK;
 
-	private static final boolean SHOW_MOVE_HINTS = true; // Whether possible moves are shown to the player
-	private static final boolean SHOW_ANIMATIONS = true;
-
-	public static final int ANIMATION_DURATION_MS = 500;
+	public static final int ANIMATION_DURATION_MS = 250;
+	public static final int AI_WAIT_MS = 50;
 
 	// MCV
 	ViewManager manager;
@@ -117,7 +115,7 @@ public class GameView {
 				tile.setStrokeWidth(STROKE_WIDTH);
 				tile.setStrokeType(StrokeType.OUTSIDE);
 				tile.setOnMousePressed(controller::tilePress);
-				if (SHOW_MOVE_HINTS) {
+				if (Settings.showMoveHints) {
 					tile.setOnMouseEntered(event -> onHover(tile));
 				}
 				tile.setId(Util.toId(row, col));
@@ -182,7 +180,7 @@ public class GameView {
 
 				c.setVisible(!t.isEmpty());
 
-				if (SHOW_ANIMATIONS && (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR)) {
+				if (Settings.showAnimations && (c.getFill() != t.getColor() && c.getFill() != POSSIBLE_MOVE_COLOR)) {
 					if (c.getFill() == Color.TRANSPARENT || c.getFill() == POSSIBLE_MOVE_HIGHLIGHET_COLOR) {
 						Animation.playSound();
 						Animation.halfFlip(c, ANIMATION_DURATION_MS / 2, t.getColor());
