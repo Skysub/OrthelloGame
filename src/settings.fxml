@@ -39,7 +39,6 @@
                   </RadioButton>
                   <RadioButton mnemonicParsing="false" onAction="#setSize8" selected="true" text=" 8 x 8" toggleGroup="$boardSize" />
                   <RadioButton mnemonicParsing="false" onAction="#setSize12" text=" 12 x 12" toggleGroup="$boardSize" />
-                  <RadioButton layoutX="241.0" layoutY="52.0" mnemonicParsing="false" onAction="#setSize16" text="16 x 16" toggleGroup="$boardSize" />
                </children>
             </HBox>
             

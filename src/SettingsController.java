@@ -17,8 +17,7 @@ public class SettingsController {
 	private int currentPlayer = 0;
 	private int currentColor = 0;
 	private int maxNameLength = 32;
-	private Color[] possibleColors = new Color[] { Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE,
-			Color.YELLOW };
+	private Color[] possibleColors = new Color[] { Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW };
 
 	@FXML Circle playerColor;
 	@FXML TextField playerNameText;
@@ -59,10 +58,6 @@ public class SettingsController {
 	
 	public void setSize12(ActionEvent event) {
 		Settings.boardSize = 12;
-	}
-
-	public void setSize16(ActionEvent event) {
-		Settings.boardSize = 16;
 	}
 
 	// GameType Buttons
