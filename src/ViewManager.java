@@ -31,6 +31,7 @@ public class ViewManager extends Application {
 
         // Default view
         toMenu();
+        stage.setResizable(false);
         stage.setTitle("Reversi");
         stage.show();
     }
@@ -46,5 +47,9 @@ public class ViewManager extends Application {
 
     public void toSettings() {
         stage.setScene(settingsView.scene);
+    }
+
+    public void quitGame() {
+        stage.close();
     }
 }

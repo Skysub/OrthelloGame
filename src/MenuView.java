@@ -29,4 +29,8 @@ public class MenuView {
 		manager.toSettings();
 	}
 
+	public void quitGame() {
+		manager.quitGame();
+	}
+
 }
