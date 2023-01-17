@@ -21,7 +21,7 @@ import java.util.Scanner; // Import the Scanner class to read text files
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class LoadSave {
+public class FileHandler {
 	public static String path = System.getenv("APPDATA") + "\\OthelloGame\\data";
 
 	public static boolean SaveGame(SaveGame save) {

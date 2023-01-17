@@ -137,11 +137,11 @@ public class GameController {
 	}
 
 	public void LoadGamePressed(ActionEvent event) {
-		LoadGame(LoadSave.LoadGame()); //Loads the game and passes the result of the method that loads the save file
+		LoadGame(FileHandler.LoadGame()); //Loads the game and passes the result of the method that loads the save file
 	}
 
 	public void ImportGamePressed(ActionEvent event) {
-		Object o = LoadSave.ImportFile(view.manager.stage); //The method for opening the dialog and loading the file
+		Object o = FileHandler.ImportFile(view.manager.stage); //The method for opening the dialog and loading the file
 		if (o instanceof SaveGame)
 			LoadGame((SaveGame) o); //We load the game if the object is of the correct type
 		else {
@@ -198,9 +198,9 @@ public class GameController {
 
 		
 		if (!export)
-			LoadSave.SaveGame(save); // Calls the method that saves the file
+			FileHandler.SaveGame(save); // Calls the method that saves the file
 		else {
-			if (!LoadSave.ExportFile(save, view.manager.stage)) { // Calls the method that actually saves the file, returns true if all goes well
+			if (!FileHandler.ExportFile(save, view.manager.stage)) { // Calls the method that actually saves the file, returns true if all goes well
 				saveLoadText.setText("Game not saved");
 				FadeTransition fader = createFader(saveLoadText); //Fading error message
 				saveLoadText.setVisible(true);

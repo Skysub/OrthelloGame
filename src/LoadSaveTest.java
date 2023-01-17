@@ -28,10 +28,10 @@ class LoadSaveTest {
 	@Test
 	@Order(1)
 	void MakeFolderStructureTest() {
-		assertTrue(LoadSave.CreateFolderStructure()); //Makes the folder structure if it isn't present already
-		assertTrue(new File(LoadSave.getPath()).exists()); //Checks if the folder structure actually exists/got made
+		assertTrue(FileHandler.CreateFolderStructure()); //Makes the folder structure if it isn't present already
+		assertTrue(new File(FileHandler.getPath()).exists()); //Checks if the folder structure actually exists/got made
 
-		assertTrue(LoadSave.CreateFolderStructure()); // Checks for errors when attempting to create the folder structure for a second time
+		assertTrue(FileHandler.CreateFolderStructure()); // Checks for errors when attempting to create the folder structure for a second time
 	}
 
 	@Test
@@ -44,8 +44,8 @@ class LoadSaveTest {
 		SaveGame saveGame = new SaveGame(t, new saveSettings());
 
 		// Check if the saving of the file works. Only returns true if everything worked out
-		assertTrue(LoadSave.SaveGame(saveGame));
-		assertTrue(LoadSave.SaveGame(saveGame));
+		assertTrue(FileHandler.SaveGame(saveGame));
+		assertTrue(FileHandler.SaveGame(saveGame));
 	}
 
 	@Test
@@ -60,11 +60,11 @@ class LoadSaveTest {
 		SaveGame saveGame = new SaveGame(t, st);
 
 		// Saves the game
-		LoadSave.SaveGame(saveGame);
+		FileHandler.SaveGame(saveGame);
 
 		// Loads the game and checks if null
 		// It would only be null if there had been an error
-		SaveGame loadGame = LoadSave.LoadGame();
+		SaveGame loadGame = FileHandler.LoadGame();
 		assertNotEquals(null, loadGame);
 	}
 
