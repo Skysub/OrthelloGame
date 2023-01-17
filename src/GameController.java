@@ -216,6 +216,13 @@ public class GameController {
 
 	//Loads the game from a SaveGame object
 	void LoadGame(SaveGame save) {
+		if(Animation.isAnimating()) {
+			saveLoadText.setText("Can't load the game while animation is playing");
+			FadeTransition fader = createFader(saveLoadText);
+			saveLoadText.setVisible(true);
+			fader.play();
+			return;
+		}
 		if (save == null) { //error message and returns if theres no save
 			saveLoadText.setText("Error while loading the game");
 			FadeTransition fader = createFader(saveLoadText);
@@ -264,7 +271,6 @@ public class GameController {
 			AIPress();
 		}
 	}
-
 	//Makes the animation of the error text
 	private FadeTransition createFader(Label label) {
 		FadeTransition fade = new FadeTransition(Duration.seconds(5), label);
