@@ -1,3 +1,11 @@
+/*
+
+Skrevet af: Frederik Cayré Hede-Andersen
+Studienummer: s224807
+
+
+ */
+
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
