@@ -143,9 +143,28 @@
                   </CheckBox>
                </children>
             </VBox>
+            <Label prefWidth="600.0" text="AI Wait Delay">
+               <font>
+                  <Font size="20.0" />
+               </font>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </Label>
+            <HBox alignment="BOTTOM_LEFT" prefWidth="200.0" spacing="45.0">
+               <children>
+                  <RadioButton mnemonicParsing="false" onAction="#aiWaitInstant" selected="true" text=" Instant">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="aiWaitDelay" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" onAction="#aiWaitHalfSecond" text="Fast (500 ms)" toggleGroup="$aiWaitDelay" />
+                  <RadioButton mnemonicParsing="false" onAction="#aiWaitSecond" selected="true" text="Normal (1000 ms)" toggleGroup="$aiWaitDelay" />
+               </children>
+            </HBox>
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" prefWidth="100.0" text="Back" textAlignment="CENTER">
                <VBox.margin>
-                  <Insets top="50.0" />
+                  <Insets top="25.0" />
                </VBox.margin>
                <font>
                   <Font size="22.0" />

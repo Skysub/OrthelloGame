@@ -26,7 +26,6 @@ public class GameView {
 	private static final Color STROKE_COLOR = Color.BLACK;
 
 	public static final int ANIMATION_DURATION_MS = 250;
-	public static final int AI_WAIT_MS = 50;
 
 	// MCV
 	ViewManager manager;
@@ -191,7 +190,6 @@ public class GameView {
 					c.setFill(t.getColor());
 					c.setStroke(STROKE_COLOR);
 				}
-
 			}
 		}
 

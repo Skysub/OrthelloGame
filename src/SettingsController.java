@@ -35,7 +35,13 @@ public class SettingsController {
 		this.view = view;
 		loadPlayer();
 	}
+	
+	public void back(ActionEvent event) {
+		playerNameChanged();
+		view.toMenu();
+	}
 
+	// Checkboxes
 	public void onMoveHintsChanged(ActionEvent event) {
 		Settings.showMoveHints = showMoveHints.isSelected();
 	}
@@ -44,11 +50,20 @@ public class SettingsController {
 		Settings.showAnimations = showAnimations.isSelected();
 	}
 
-	public void back(ActionEvent event) {
-		playerNameChanged();
-		view.toMenu();
+	// Ai Wait Time
+	public void aiWaitInstant(ActionEvent event) {
+		Settings.aiWaitMs = 1;
 	}
 
+	public void aiWaitHalfSecond(ActionEvent event) {
+		Settings.aiWaitMs = 500;
+	}
+
+	public void aiWaitSecond(ActionEvent event) {
+		Settings.aiWaitMs = 1000;
+	}
+
+	// BoardSize
 	public void setSize4(ActionEvent event) {
 		Settings.boardSize = 4;
 	}
@@ -61,7 +76,7 @@ public class SettingsController {
 		Settings.boardSize = 12;
 	}
 
-	// GameType Buttons
+	// AI Type 
 	public void radioHuman(ActionEvent event) {
 		Settings.playerAIModes[currentPlayer] = AIModes.HumanPlayer;
 	}
@@ -78,6 +93,7 @@ public class SettingsController {
 		Settings.playerAIModes[currentPlayer] = AIModes.AIWeighted;
 	}
 
+	// Game Mode
 	public void setReversi(ActionEvent event) {
 		Settings.gameMode = Constants.GAMEMODE_REVERSI;
 		Settings.nrPlayers = 2;
@@ -93,6 +109,7 @@ public class SettingsController {
 		Settings.gameMode = Constants.GAMEMODE_ROLIT;
 	}
 
+	// Player UI
 	private void loadPlayer() {
 		playerNameText.setText(Settings.playerNames.get(currentPlayer));
 		playerColor.setFill(Settings.playerColors.get(currentPlayer));
@@ -167,6 +184,7 @@ class Settings {
 	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("WHITE", "BLACK", "RED", "GREEN"));
 	static boolean showMoveHints = true;
 	static boolean showAnimations = true; //TODO Should this be added to saveSettings?
+	static int aiWaitMs = 1000;
 
 	static AIModes[] playerAIModes = new AIModes[] { AIModes.AIGreedy, AIModes.HumanPlayer, AIModes.HumanPlayer,
 			AIModes.HumanPlayer };

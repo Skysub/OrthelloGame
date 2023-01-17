@@ -68,7 +68,7 @@ public class GameController {
 
 	public void AIPress() {
 		// Play AI move after 1 second
-		tl = new Timeline(new KeyFrame(Duration.seconds((double)(GameView.AI_WAIT_MS + (Settings.showAnimations ? GameView.ANIMATION_DURATION_MS : 0)) / 1000), e -> {
+		tl = new Timeline(new KeyFrame(Duration.seconds((double)(Settings.aiWaitMs + (Settings.showAnimations ? GameView.ANIMATION_DURATION_MS : 0)) / 1000), e -> {
 			if (model != null && model.state == Constants.START) {
 				model.step(model.AIStartingMove());
 				model.step(model.AIStartingMove());
