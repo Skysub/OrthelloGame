@@ -211,7 +211,6 @@ class Settings {
 			}
 
 			case Constants.GAMEMODE_ROLIT -> {
-				System.out.println("Haven't implemented ROLIT yet");
 				return new RolitModel(view);
 			}
 
