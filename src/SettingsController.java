@@ -20,8 +20,6 @@ public class SettingsController {
 	private Color[] possibleColors = new Color[] { Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE,
 			Color.YELLOW };
 
-	@FXML TextField customSizeText;
-	@FXML RadioButton customSizeRadioButton;
 	@FXML Circle playerColor;
 	@FXML TextField playerNameText;
 	@FXML Label playerNumber;

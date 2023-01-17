@@ -131,23 +131,20 @@
                   <Insets top="20.0" />
                </padding>
             </Label>
-            <HBox prefWidth="200.0" spacing="45.0" VBox.vgrow="ALWAYS">
+            <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
                   <CheckBox fx:id="showMoveHints" alignment="CENTER_RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#onMoveHintsChanged" selected="true" text="Show Move Hints">
-                     <HBox.margin>
-                        <Insets left="5.0" />
-                     </HBox.margin>
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="showMoveHints1" alignment="CENTER_RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#onMoveHintsChanged" selected="true" text="Show Animations">
+                  <CheckBox fx:id="showAnimations" alignment="CENTER_RIGHT" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#onShowAnimationsChanged" selected="true" text="Show Animations">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
                </children>
-            </HBox>
+            </VBox>
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" prefWidth="100.0" text="Back" textAlignment="CENTER">
                <VBox.margin>
                   <Insets top="50.0" />
