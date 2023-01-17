@@ -186,6 +186,8 @@ class Settings {
 	static boolean showAnimations = true; //TODO Should this be added to saveSettings?
 	static int aiWaitMs = 1000;
 
+	static int previousStartingIndex = Constants.UNDEFINED;
+
 	static AIModes[] playerAIModes = new AIModes[] { AIModes.AIGreedy, AIModes.HumanPlayer, AIModes.HumanPlayer,
 			AIModes.HumanPlayer };
 

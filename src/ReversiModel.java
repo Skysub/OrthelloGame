@@ -24,11 +24,23 @@ public class ReversiModel{
 
     boolean isGameOver = false;
 
+    int lastStartingIndex = Settings.previousStartingIndex;
+
     void selectStartingPlayer() {
-        Random randomObject = new Random();
-        this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
-        this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
-        gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
+        if(Settings.previousStartingIndex == Constants.UNDEFINED){
+            Random randomObject = new Random();
+            this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
+
+            Settings.previousStartingIndex = this.currentPlayerIndex;
+            this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
+            gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
+        }
+        else{
+            System.out.println("Selecting the next player");
+            Settings.previousStartingIndex = (Settings.previousStartingIndex + 1)%nrPlayers;
+            this.currentPlayerIndex = Settings.previousStartingIndex;
+            this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
+        }
     }
     
     void selectStartingPlayer(int index) {
