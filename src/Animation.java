@@ -13,6 +13,7 @@ public class Animation {
     
     private static String soundfile = "resources/PiecePlace.mp3";
     private static AudioClip sound = new AudioClip(ClassLoader.getSystemResource(soundfile).toString());
+    
 
     private static ArrayList<Integer> activeAnimations = new ArrayList<Integer>();
     private static int nextId = 0;
@@ -23,7 +24,9 @@ public class Animation {
     }
 
     public static void playSound() {
+        sound.setCycleCount(2);
         sound.play();
+        System.out.println("sound played");
     }
 
     public static boolean isAnimating() {
