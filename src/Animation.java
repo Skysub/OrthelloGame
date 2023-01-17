@@ -1,4 +1,3 @@
-import java.io.File;
 import java.util.ArrayList;
 
 import javafx.animation.FillTransition;
@@ -19,8 +18,8 @@ public class Animation {
     private static int nextId = 0;
 
     private static int getNextId() {
-        //TODO Reset at some fixed value: "(boardSize - 2) * 3 + 1" which is the maximum number of flips at one time
-        return nextId++;
+        nextId = (nextId + 1) & 43;  // 43 = (16 - 2) * 3 + 1, corresponding to the maximum number of flips a single move can make, in 16x16, which is the largest board
+        return nextId;
     }
 
     public static void playSound() {

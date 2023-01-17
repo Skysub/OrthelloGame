@@ -44,39 +44,20 @@ public class SettingsController {
 		view.toMenu();
 	}
 
-	public void radio8(ActionEvent event) {
+	public void setSize4(ActionEvent event) {
+		Settings.boardSize = 4;
+	}
+
+	public void setSize8(ActionEvent event) {
 		Settings.boardSize = 8;
 	}
+	
+	public void setSize12(ActionEvent event) {
+		Settings.boardSize = 12;
+	}
 
-	public void radio16(ActionEvent event) {
+	public void setSize16(ActionEvent event) {
 		Settings.boardSize = 16;
-	}
-
-	public void radioCustom(ActionEvent event) {
-		parseCustomSize();
-	}
-
-	public void boardSizeTextChanged(ActionEvent event) {
-		if (parseCustomSize()) {
-			customSizeRadioButton.setSelected(true);
-		}
-	}
-
-	public boolean parseCustomSize() {
-		int newBoardSize;
-
-		try {
-			newBoardSize = Integer.parseInt(customSizeText.getText());
-		} catch (NumberFormatException e) {
-			customSizeText.clear();
-			customSizeText.setPromptText("Not an integer");
-			customSizeText.getParent().requestFocus();
-			return false;
-		}
-
-		// TODO Validate whether the value makes sense. Set a range eg. 4-26
-		Settings.boardSize = newBoardSize;
-		return true;
 	}
 
 	// GameType Buttons
@@ -169,7 +150,6 @@ public class SettingsController {
 		}
 		return -1;
 	}
-
 }
 
 class Settings {

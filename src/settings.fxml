@@ -32,17 +32,14 @@
             </Label>
             <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="50.0">
                <children>
-                  <RadioButton mnemonicParsing="false" onAction="#radio8" selected="true" text="8 x 8">
+                  <RadioButton mnemonicParsing="false" onAction="#setSize4" text=" 4 x 4">
                      <toggleGroup>
                         <ToggleGroup fx:id="boardSize" />
-                     </toggleGroup></RadioButton>
-                  <RadioButton layoutX="241.0" layoutY="52.0" mnemonicParsing="false" onAction="#radio16" text="16 x 16" toggleGroup="$boardSize" />
-                  <HBox alignment="CENTER" spacing="10.0">
-                     <children>
-                        <RadioButton fx:id="customSizeRadioButton" mnemonicParsing="false" onAction="#radioCustom" text="Custom Size" toggleGroup="$boardSize" />
-                        <TextField fx:id="customSizeText" onAction="#boardSizeTextChanged" promptText="Enter integer:" />
-                     </children>
-                  </HBox>
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" onAction="#setSize8" selected="true" text=" 8 x 8" toggleGroup="$boardSize" />
+                  <RadioButton mnemonicParsing="false" onAction="#setSize12" text=" 12 x 12" toggleGroup="$boardSize" />
+                  <RadioButton layoutX="241.0" layoutY="52.0" mnemonicParsing="false" onAction="#setSize16" text="16 x 16" toggleGroup="$boardSize" />
                </children>
             </HBox>
             
