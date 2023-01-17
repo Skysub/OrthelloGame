@@ -26,7 +26,6 @@ public class Animation {
     public static void playSound() {
         sound.setCycleCount(2);
         sound.play();
-        System.out.println("sound played");
     }
 
     public static boolean isAnimating() {
