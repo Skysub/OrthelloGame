@@ -88,7 +88,9 @@ public class GameController {
 	public void passButton(ActionEvent event) {
 		if (model.state == Constants.TURN_SKIPPED) {
 			model.step(new int[] { Constants.UNDEFINED, Constants.UNDEFINED });
-			AIPress();
+			if(model.currentPlayer.isAI()){
+				AIPress();
+			}
 		}
 	}
 
