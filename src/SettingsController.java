@@ -252,11 +252,12 @@ class saveSettings implements Serializable {
 
 	void SaveColor() {
 		ArrayList<Color> colors = Settings.playerColors;
+		playerColorData = new ArrayList<Double[]>();
 		for (int i = 0; i < colors.size(); i++) {
 			Double[] t = new Double[4];
-			t[0] = colors.get(i).getHue();
-			t[1] = colors.get(i).getSaturation();
-			t[2] = colors.get(i).getBrightness();
+			t[0] = colors.get(i).getRed();
+			t[1] = colors.get(i).getGreen();
+			t[2] = colors.get(i).getBlue();
 			t[3] = colors.get(i).getOpacity();
 			playerColorData.add(t);
 		}
