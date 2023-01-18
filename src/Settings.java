@@ -3,7 +3,6 @@ Skrevet af: Frederik Cayré Hede-Andersen
 Studienummer: s224807
 */
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
