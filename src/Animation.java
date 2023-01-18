@@ -16,21 +16,26 @@ import javafx.util.Duration;
 
 public class Animation {
     
+    // Audio resource locations
     private static String soundfile = "resources/PiecePlace.mp3";
-    private static AudioClip sound = new AudioClip(ClassLoader.getSystemResource(soundfile).toString());
-
     private static String rapFile = "resources/Rapgame.wav";
+
+    // Audioclips
+    private static AudioClip sound = new AudioClip(ClassLoader.getSystemResource(soundfile).toString());
     private static AudioClip rap = new AudioClip(ClassLoader.getSystemResource(rapFile).toString());
-    
+   
+    // Animation ID's
     private static ArrayList<Integer> activeAnimations = new ArrayList<Integer>();
     private static int nextId = 0;
 
     private static int getNextId() {
-        // 32 = (12 - 2) * 3 + 1, corresponding to the maximum number of flips a single move can make, in 12x12, which is the largest boardSize
+        // 32 = (12 - 2) * 3 + 1,
+        // corresponding to the maximum number of flips a single move can make, in 12x12, which is the largest boardSize
         nextId = (nextId + 1) & 31;
         return nextId;
     }
 
+    // Sounds
     public static void playSound() {
         sound.setCycleCount(2);
         sound.play();
@@ -45,8 +50,8 @@ public class Animation {
         rap.stop();
     }
 
+    // We are still animation if all animations haven't finished, and removed their ID from the list
     public static boolean isAnimating() {
-        // We are still animation if all animations haven't finished, and removed their ID from the list
         return activeAnimations.size() != 0;
     }
 

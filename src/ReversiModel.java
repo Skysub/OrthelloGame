@@ -64,7 +64,6 @@ public class ReversiModel{
         GameView.updateTurnText(this.currentPlayer);
     }
     void endGame() {
-        System.out.println("GAME ENDED");
         state = Constants.GAME_ENDED; // End the game
         isGameOver = true;
         setEndingScreenForView();
@@ -87,7 +86,6 @@ public class ReversiModel{
     void skipTurn(Turn turntaken) {
         // In order to get to this state, we need to skip a turn
         this.turnsSkipped += 1;
-        System.out.println("TURN SKIPPED");
 
         //If this function has been called, we know that we've taken a legal skipTurn move
         recordTurnTaken(true,turntaken);
