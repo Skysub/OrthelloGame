@@ -1,3 +1,8 @@
+/*
+Skrevet af: Mads Christian Wrang Nielsen
+Studienummer: s224784
+*/
+
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -26,10 +31,10 @@ public class ViewManager extends Application {
         menuView = new MenuView(this);
         settingsView = new SettingsView(this);
         
-        //Create folder structure to allow game saving
+        // Create folder structure to allow game saving, if it doesn't already exists
         FileHandler.CreateFolderStructure();
 
-        // Default view
+        // Default view is menu
         toMenu();
         stage.setResizable(false);
         stage.show();

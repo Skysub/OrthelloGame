@@ -1,3 +1,8 @@
+/*
+Skrevet af: Mads Christian Wrang Nielsen
+Studienummer: s224784
+*/
+
 import java.util.ArrayList;
 
 import javafx.fxml.FXMLLoader;
@@ -101,13 +106,11 @@ public class GameView {
 	}
 
 	public void initializeBoard() {
-		// Clear board
+		// Clear board elements
 		grid.getChildren().clear();
 		verticalLabels.getChildren().clear();
 		horizontalLabels.getChildren().clear();
 
-		// TODO Check if prefWidth and prefHeight is the same
-		// Right now they are defined to in game.fxml, but if the layout is changed we need to make sure to calculate it correctly
 		double boardWidth = grid.getPrefWidth();
 		double tileSize = (boardWidth - STROKE_WIDTH * (model.getBoardSize() + 1)) / model.getBoardSize();
 		double pieceSize = tileSize * PIECE_RATIO;

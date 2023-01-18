@@ -1,3 +1,8 @@
+/*
+Skrevet af: Frederik Hvarregaard Andersen 
+Studienummer: s224801
+*/
+
 public class WeightedAI extends GreedyAI {
     
     int[][] weights4 = new int[][] {
@@ -38,6 +43,7 @@ public class WeightedAI extends GreedyAI {
         int[] coords = chosenPath.coordinates;
         int score = chosenPath.getSizeOfPath();
 
+        // Retrieve weighting from the appropriate weightArray, based on boardSize
         if (Settings.boardSize == 4) {
             score += weights4[coords[0]][coords[1]];
         }
@@ -47,7 +53,6 @@ public class WeightedAI extends GreedyAI {
         else if (Settings.boardSize == 12) {
             score += weights12[coords[0]][coords[1]];
         }
-
         return score;
     }
 }

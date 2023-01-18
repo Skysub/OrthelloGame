@@ -1,3 +1,8 @@
+/*
+Skrevet af: Frederik Hvarregaard Andersen 
+Studienummer: s224801
+*/
+
 import java.util.ArrayList;
 
 public class RandomAI implements Ai{

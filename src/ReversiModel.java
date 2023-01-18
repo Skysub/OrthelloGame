@@ -1,17 +1,10 @@
 /*
-
 Skrevet af: Benjamin Mirad Gurini
-Studienummer: S214590
+Studienummer: s214590
+*/
 
-
- */
-
-import javafx.scene.paint.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Random;
-
 
 public class ReversiModel{
 	GameView GameView;
@@ -25,8 +18,8 @@ public class ReversiModel{
     int nrPlayers;
     Board gameBoard;
 
-    PathGrid gamePathGrid; // For mapping possible paths
-    int turnsTaken = 0; // We use this as a counter for the starting steps and the score
+    PathGrid gamePathGrid;  // For mapping possible paths
+    int turnsTaken = 0;     // We use this as a counter for the starting steps and the score
 
     int turnsSkipped = 0;
 
@@ -189,7 +182,7 @@ public class ReversiModel{
 
     // Checks if a player has the same colour as the checker he/she wishes to flip
     boolean isNotAlreadyFlipped(Checker chosenChecker) {
-        return (this.currentPlayer != chosenChecker.getState());
+        return (this.currentPlayer != chosenChecker.getOwner());
     }
 
     boolean gameOverBeforeSkip(){

@@ -1,10 +1,7 @@
 /*
-
 Skrevet af: Benjamin Mirad Gurini
-Studienummer: S214590
-
-
- */
+Studienummer: s214590
+*/
 
 import java.util.ArrayList;
 

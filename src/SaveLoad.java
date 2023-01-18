@@ -1,10 +1,7 @@
 /*
-
 Skrevet af: Frederik Cayré Hede-Andersen
 Studienummer: s224807
-
-
- */
+*/
 
 import java.util.ArrayList;
 import javafx.animation.FadeTransition;
@@ -32,18 +29,18 @@ public class SaveLoad {
 		// Constructs a single arraylist of all turns taken, in order, from the Players' turnHistory
 		ArrayList<Turn> turns = new ArrayList<Turn>();
 		int first = con.model.gamePlayerManager.getFirstPlayerIndex(); // takes into account the starting player
-		int playerTurnIndex = -1; //Used to keep track of what turnindex to use with the individual turnHistories
+		int playerTurnIndex = -1; // Used to keep track of what turnindex to use with the individual turnHistories
 		int extra = 0;
 		
 		if (con.model.turnsTaken < 4) {
 			saveLoadText.setText("Can't save game under 4 turns");
-			FadeTransition fader = createFader(saveLoadText); //Fading error message
+			FadeTransition fader = createFader(saveLoadText); // Fading error message
 			saveLoadText.setVisible(true);
 			fader.play();
 			return;
 		}
 		if(Settings.gameMode == Constants.GAMEMODE_REVERSI) {
-			//adds the first 4 startingmoves
+			// Adds the first 4 startingmoves
 			if (con.model.nrPlayers == 2) {
 				turns.add(con.model.gamePlayerManager.players.get(first % con.model.nrPlayers).getTurnHistory().get(0));
 				turns.add(con.model.gamePlayerManager.players.get(first % con.model.nrPlayers).getTurnHistory().get(1));
@@ -60,16 +57,16 @@ public class SaveLoad {
 			playerTurnIndex++;
 		}
 		
-		//Loops through once for each turn. Used i and the playerTurnIndex to get the correct turn of the correct player
+		// Loops through once for each turn. Used i and the playerTurnIndex to get the correct turn of the correct player
 		for (int i = first + extra; i < con.model.turnsTaken + first; i++) {
 			if ((i - first) % con.model.nrPlayers == 0) {
 				// increments playerTurnIndex when all players' turn of the current index has been recorded
 				playerTurnIndex++;
 			}
-			//adds the correct turn to the single list
+			// adds the correct turn to the single list
 			turns.add(con.model.gamePlayerManager.players.get(i % con.model.nrPlayers).getTurnHistory().get(playerTurnIndex));
 		}
-		SaveGame save = new SaveGame(turns, new saveSettings()); //Makes a SaveGame object from the collected data
+		SaveGame save = new SaveGame(turns, new saveSettings()); // Makes a SaveGame object from the collected data
 
 		
 		if (!export)
@@ -77,19 +74,19 @@ public class SaveLoad {
 		else {
 			if (!FileHandler.ExportFile(save, view.manager.stage)) { // Calls the method that actually saves the file, returns true if all goes well
 				saveLoadText.setText("Game not saved");
-				FadeTransition fader = createFader(saveLoadText); //Fading error message
+				FadeTransition fader = createFader(saveLoadText); // Fading error message
 				saveLoadText.setVisible(true);
 				fader.play();
 				return; 
 			}
 		}
 		saveLoadText.setText("Game Successfully saved");
-		FadeTransition fader = createFader(saveLoadText); //Message conveying the success of the saving
+		FadeTransition fader = createFader(saveLoadText); // Message conveying the success of the saving
 		saveLoadText.setVisible(true);
 		fader.play();
 	}
 
-	//Loads the game from a SaveGame object
+	// Loads the game from a SaveGame object
 	public void LoadGame(SaveGame save) {
 		if(Animation.isAnimating() || con.model.currentPlayer.isAI()) {
 			saveLoadText.setText("Can't load the game while animation is playing or AI's turn");
@@ -98,7 +95,7 @@ public class SaveLoad {
 			fader.play();
 			return;
 		}
-		if (save == null) { //error message and returns if theres no save
+		if (save == null) { // Error message and returns if theres no save
 			saveLoadText.setText("Error while loading the game");
 			FadeTransition fader = createFader(saveLoadText);
 			saveLoadText.setVisible(true);
@@ -109,7 +106,7 @@ public class SaveLoad {
 		ArrayList<Turn> turns = save.getTurns();
 
 		view.LoadInitialization(); // Makes a new model to recreate the game from a fresh board with the correct new settings
-		con.model.selectStartingPlayer(turns.get(0).playerIndex); //Tells the model of the correct startingplayer
+		con.model.selectStartingPlayer(turns.get(0).playerIndex); // Tells the model of the correct startingplayer
 
 		if(Settings.gameMode == Constants.GAMEMODE_OTHELLO) {
 			var m = (OthelloModel) con.model;
@@ -125,7 +122,7 @@ public class SaveLoad {
 				e.printStackTrace();
 
 				saveLoadText.setText("Error while loading, save file might be corrupted");
-				FadeTransition fader = createFader(saveLoadText); //fading error message
+				FadeTransition fader = createFader(saveLoadText); // Fading error message
 				saveLoadText.setVisible(true);
 				fader.play();
 
@@ -135,18 +132,18 @@ public class SaveLoad {
 				break;
 			}
 		}
-		//Makes a visual bug dissappear
+		// Makes a visual bug dissappear
 		view.initializeBoard();
 		view.updateBoard(con.model.gameBoard);
 		view.updateTurnText(con.model.currentPlayer);
 		con.getGameEndScreen().setVisible(false);
 
-		//If it's the AI's turn this makes it move
+		// If it's the AI's turn this makes it move
 		if (con.model.currentPlayer.isAI()) {
 			con.AIPress();
 		}
 	}
-	//Makes the animation of the error text
+	// Makes the animation of the error text
 	FadeTransition createFader(Label label) {
 		FadeTransition fade = new FadeTransition(Duration.seconds(5), label);
 		fade.setFromValue(1);

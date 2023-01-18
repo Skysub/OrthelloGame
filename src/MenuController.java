@@ -1,3 +1,8 @@
+/*
+Skrevet af: Mads Christian Wrang Nielsen
+Studienummer: s224784
+*/
+
 import javafx.event.ActionEvent;
 
 public class MenuController {

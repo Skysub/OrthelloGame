@@ -1,3 +1,8 @@
+/*
+Skrevet af: Benjamin Mirad Gurini
+Studienummer: s214590
+*/
+
 import javafx.scene.paint.Color;
 
 import java.io.Serializable;
@@ -9,7 +14,6 @@ class Turn implements Serializable {
 
 	private static final long serialVersionUID = 514006825282299253L;
 	int[] coordinates;
-	int timeTaken; // TODO Unit?
 	int gameStateAtTurnTaken = Constants.UNDEFINED;
 	int playerIndex;
 

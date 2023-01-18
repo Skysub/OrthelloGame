@@ -1,3 +1,8 @@
+/*
+Skrevet af: XXX
+Studienummer: XXX
+*/
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -218,8 +223,6 @@ public class SettingsController {
 
 class Settings {
 
-	private static final long serialVersionUID = 8390467629592650422L;
-
 	// All settings are initialized to the default 8x8 Reversi
 	static int boardSize = 8;
 	static int nrPlayers = 2;
@@ -228,7 +231,7 @@ class Settings {
 			Arrays.asList(Color.BLACK, Color.WHITE, Color.RED, Color.GREEN));
 	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("BLACK", "WHITE", "RED", "GREEN"));
 	static boolean showMoveHints = true;
-	static boolean showAnimations = true; // TODO Should this be added to saveSettings?
+	static boolean showAnimations = true;
 	static int aiWaitMs = 1000;
 
 	static int previousStartingIndex = Constants.UNDEFINED;

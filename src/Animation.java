@@ -1,3 +1,8 @@
+/*
+Skrevet af: Frederik Hvarregaard Andersen 
+Studienummer: s224801
+*/
+
 import java.util.ArrayList;
 
 import javafx.animation.FillTransition;
@@ -21,7 +26,8 @@ public class Animation {
     private static int nextId = 0;
 
     private static int getNextId() {
-        nextId = (nextId + 1) & 31;  // 32 = (12 - 2) * 3 + 1, corresponding to the maximum number of flips a single move can make, in 12x12, which is the largest boardSize
+        // 32 = (12 - 2) * 3 + 1, corresponding to the maximum number of flips a single move can make, in 12x12, which is the largest boardSize
+        nextId = (nextId + 1) & 31;
         return nextId;
     }
 
@@ -40,11 +46,12 @@ public class Animation {
     }
 
     public static boolean isAnimating() {
+        // We are still animation if all animations haven't finished, and removed their ID from the list
         return activeAnimations.size() != 0;
     }
 
     public static void flipPiece(Circle circle, int duration, Color from, Color to){
-
+        // Retrieve animation ID and add to list of active animations
         int animationId = getNextId();
         activeAnimations.add(animationId);
 
@@ -54,20 +61,22 @@ public class Animation {
         rotate.setByAngle(180);
         rotate.setAxis(Rotate.Y_AXIS);
         rotate.setDuration(time);
+        // Remove the animations ID from the list of active animations on completion
         rotate.setOnFinished(e -> activeAnimations.remove(Integer.valueOf(animationId))); 
-        rotate.play();
-
+        
         FillTransition fill = new FillTransition(new Duration(1), circle, from, to);
         fill.setDelay(time.divide(2));
-        fill.play();
-
+        
         StrokeTransition stroke = new StrokeTransition(new Duration(1), circle, Color.TRANSPARENT, Color.BLACK);
         stroke.setDelay(time.divide(2));
+        // Play transitions
+        rotate.play();
+        fill.play();
         stroke.play();
     }
 
     public static void halfFlip(Circle circle, int duration, Color to) {
-
+        // Retrieve animation ID and add to list of active animations
         int animationId = getNextId();
         activeAnimations.add(animationId);
 
@@ -75,11 +84,13 @@ public class Animation {
         circle.setRotate(90);
         circle.setFill(to);
         circle.setStroke(Color.BLACK);
-        Duration time = new Duration(duration);
-        RotateTransition rotate = new RotateTransition(time, circle);
+
+        RotateTransition rotate = new RotateTransition(new Duration(duration), circle);
         rotate.setByAngle(90);
         rotate.setAxis(Rotate.Y_AXIS);
+        // Remove the animations ID from the list of active animations on completion
         rotate.setOnFinished(e -> activeAnimations.remove(Integer.valueOf(animationId)));
+
         rotate.play();
     }  
 }

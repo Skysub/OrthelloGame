@@ -1,3 +1,8 @@
+/*
+Skrevet af: Mads Christian Wrang Nielsen
+Studienummer: s224784
+*/
+
 public class Util {
 
     private static final String delimiter = ",";

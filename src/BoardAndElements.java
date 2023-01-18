@@ -1,10 +1,7 @@
 /*
-
 Skrevet af: Benjamin Mirad Gurini
-Studienummer: S214590
-
-
- */
+Studienummer: s214590
+*/
 
 import javafx.scene.paint.Color;
 
@@ -23,7 +20,7 @@ abstract class BoardElement {
 }
 class Checker extends BoardElement {
 
-    Player state;
+    Player owner;
 
     Checker(int x, int y) {
         this.coordinates[0] = x;
@@ -31,30 +28,31 @@ class Checker extends BoardElement {
     }
 
     boolean isEmpty() {
-        return Objects.isNull(this.state);
+        return Objects.isNull(this.owner);
     }
 
-    Player getState() {
-        return state;
+    Player getOwner() {
+        return owner;
     }
 
     void flipChecker(Player newPlayer){
         if(!isEmpty()){
-            Player oldPlayer = this.state;
+            Player oldPlayer = this.owner;
             oldPlayer.decreaseNumberOfCheckers();
         }
         newPlayer.increaseNumberOfCheckers();
-        this.state = newPlayer;
+        this.owner = newPlayer;
     }
 
     Color getColor(){
         if(isEmpty()){
             return Color.TRANSPARENT;
         }
-        return this.state.getPlayerColor();
+        return this.owner.getPlayerColor();
     }
 }
 
+// Generic 2D grid used by both Board and PathGrid
 class TwoDimensionalGrid<E> {
     int gridSize;
 
@@ -74,7 +72,6 @@ class TwoDimensionalGrid<E> {
         return coords[0] + coords[1] * this.gridSize;
     }
 
-    // Assuming they're 0-indexed
     int getPositionFromCoords(int x, int y) {
         return x + y * this.gridSize;
     }
@@ -106,14 +103,12 @@ class Board extends TwoDimensionalGrid<Checker> {
 
     Board(int size) {
         super(size);
-
         // We fill the board in with empty checkers
         this.fillInitialBoard();
     }
 
     // Method for filling in the boardSize x boardSize 2D array with empty checkers
     private void fillInitialBoard() {
-
         for (int x_0 = 0; x_0 < this.gridSize; x_0++) {
             for (int y_0 = 0; y_0 < this.gridSize; y_0++) {
                 int position = getPositionFromCoords(x_0, y_0);
@@ -137,12 +132,10 @@ class Board extends TwoDimensionalGrid<Checker> {
         return (x >= lower && x < upper && y >= lower && y < upper);
     }
 
-
     void flipCheckerAtCoords(int[] coords, Player newPlayer){
         Checker chosenChecker = getElementAt(coords);
         chosenChecker.flipChecker(newPlayer);
     }
-
 }
 
 class PathGrid extends TwoDimensionalGrid<Path> {
@@ -164,9 +157,7 @@ class PathGrid extends TwoDimensionalGrid<Path> {
 
     /*
      * Adds the path to the gridArray
-     *
-     * If two paths have the same starting coords, we will just concat the checkers
-     * in their paths
+     * If two paths have the same starting coords, we will just concatenate the checkers in their paths
      */
     void addPathToGrid(Path newPath) {
         int positionOfNewPath = this.getPositionFromCoords(newPath.coordinates);
@@ -198,23 +189,16 @@ class PathGrid extends TwoDimensionalGrid<Path> {
     int getNrNonNullPaths() {
         return nrNonNullPaths;
     }
-
-
-
 }
 
 class Path extends BoardElement {
     ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
     boolean currentPlayerColourSeen;
-    //TODO Is this used anywhere?
-    int sizeOfPath = 0; // For the AI later on
 
     // Appends the checkersInPath of another path to this' - used for when multiple
     // paths for the same placement of a checker
     void concatCheckersInPaths(Path otherPath) {
         this.checkersInPath.addAll(otherPath.checkersInPath); // None of the checkers will overlap and count twice, so
-        // we can append all
-        this.updateSizeOfPath();
     }
 
     // Checks if a checker is in this path
@@ -224,7 +208,6 @@ class Path extends BoardElement {
 
     void addCheckerToPath(Checker chosenChecker) {
         this.checkersInPath.add(chosenChecker);
-        this.updateSizeOfPath();
     }
 
     boolean getStatusOfCurrentColourSeen() {
@@ -250,13 +233,8 @@ class Path extends BoardElement {
         return getSizeOfPath() == 0;
     }
 
-    void updateSizeOfPath() {
-        this.sizeOfPath = this.checkersInPath.size();
-    }
-
     void resetCheckersInPath() {
         this.checkersInPath = new ArrayList<Checker>();
-        updateSizeOfPath();
     }
 
     void resetCoords() {

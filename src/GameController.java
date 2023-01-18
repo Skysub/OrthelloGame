@@ -1,12 +1,8 @@
 /*
+Skrevet af: Mads Christian Wrang Nielsen
+Studienummer: s224784
+*/
 
-Skrevet af: Mads
-Studienummer: TODO: Find på mads' studienummer og identitet
-
-
- */
-
-import java.util.ArrayList;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
