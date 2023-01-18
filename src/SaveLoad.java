@@ -115,7 +115,7 @@ public class SaveLoad {
 		
 		for (int i = 0; i < turns.size(); i++) {
 			try {
-				con.model.step(turns.get(i).coordinates); // Plays the board up to the latest move from the turn list
+				con.model.FSMDStep(turns.get(i).coordinates); // Plays the board up to the latest move from the turn list
 			} catch (Exception e) {
 				System.out.println("Exception: " + e);
 				System.out.println("Error while replaying the game");

@@ -27,8 +27,12 @@ class Turn implements Serializable {
 class Player {
 	private String playerName;
 	private int score;
+
+	//Unused - would've been used to calculate the score
 	private ArrayList<Turn> turnHistory = new ArrayList<Turn>();
 	private Color playerColor;
+
+	//Whenever we flip a checker belonging to this player we decrement, otherwise if we flip a checker to this player's favour we increment this variable
 	private int nrCheckers;
 	private Ai AIObject;
 
@@ -70,19 +74,15 @@ class Player {
 	void decideAIMode(AIModes aiMode) {
 		switch (aiMode) {
 		case HumanPlayer -> {
-			break;
 		}
 		case AIGreedy -> {
 			this.AIObject = new GreedyAI();
-			break;
 		}
 		case AIRandom -> {
 			this.AIObject = new RandomAI();
-			break;
 		}
 		case AIWeighted -> {
 			this.AIObject = new WeightedAI();
-			break;
 		}
 		}
 	}
@@ -99,7 +99,7 @@ class Player {
 		this.nrCheckers += 1;
 	}
 
-	// Calculates and updates the score
+	// Method for calculating and updating score, in case we use a different measurement for score in the future
 	int calculateScore() {
 		this.score = this.getNrCheckers();
 		return this.score;
@@ -186,6 +186,7 @@ class PlayerManager {
 		return firstPlayerIndex;
 	}
 
+	//Used to check if the gameBoard is filled up
 	int getSumOfCheckersPlaced(){
 		int sum = 0;
 		for(int i = 0; i<players.size();i++){

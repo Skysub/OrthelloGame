@@ -71,7 +71,7 @@ public class GameController {
 		Rectangle tile = (Rectangle) event.getTarget();
 		int[] coords = Util.fromId(tile.getId());
 		// Try to make a move on the pressed tile
-		model.step(coords);
+		model.FSMDStep(coords);
 
 		// If the next players is an AI, let the AI make their move
 		if (model.currentPlayer.isAI()) {
@@ -85,10 +85,10 @@ public class GameController {
 		int aiDelay = Settings.aiWaitMs + (Settings.showAnimations ? GameView.ANIMATION_DURATION_MS : 0);
 		aiTimeline = new Timeline(new KeyFrame(Duration.millis(aiDelay), e -> {
 			if (model != null && model.FSMDState == Constants.START) {
-				model.step(model.AIStartingMove());
-				model.step(model.AIStartingMove());
+				model.FSMDStep(model.AIStartingMove());
+				model.FSMDStep(model.AIStartingMove());
 			} else {
-				model.step(model.currentPlayer.getAICalculatedCoords(model.getListOfNonNullPaths()));
+				model.FSMDStep(model.currentPlayer.getAICalculatedCoords(model.getListOfNonNullPaths()));
 			}
 			// After the AI has made it's move, reset the boolean and set the Timeline to null;
 			aiIsMoving = false;
@@ -105,7 +105,7 @@ public class GameController {
 
 	public void passButton(ActionEvent event) {
 		if (model.FSMDState == Constants.TURN_SKIPPED) {
-			model.step(new int[] { Constants.UNDEFINED, Constants.UNDEFINED });
+			model.FSMDStep(new int[] { Constants.UNDEFINED, Constants.UNDEFINED });
 			// After performing the SKIP/PASS, check if the next player is an AI, and let it make it's move
 			if(model.currentPlayer.isAI()){
 				AIPress();

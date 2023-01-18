@@ -119,7 +119,8 @@ public class ReversiModel{
         }
     }
 
-    void step(int[] coords) {
+    //The main method of the gameModel; Taking a step/action in the FSMD model
+    void FSMDStep(int[] coords) {
 
         Turn currentTurn = new Turn(coords, FSMDState, currentPlayerIndex);
 
@@ -225,10 +226,16 @@ public class ReversiModel{
         GameView.updateTurnText(this.currentPlayer);
     }
 
-    // RandomlyAddsPaths to the PathGrid
+    /*
+    Iterates over the board in all the directions the player could possibly flip checkers and calculates all the possible paths the player can choose.
+
+    As our algorithm is sequence based, i.e it doesn't matter in which direction we see the pattern: Our colour-, not our colour-, empty checker
+    we call the same method to calculate the paths regardless of direction.
+     */
     void calculatePossiblePaths() {
         for (int i = 0; i < this.boardSize; i++) {
 
+            //Initialize all the paths for all the possible directions
             Path horizontalPath = new Path();
             Path verticalPath = new Path();
             Path diagonalTopToBottomPath = new Path();
@@ -261,41 +268,6 @@ public class ReversiModel{
         }
     }
 
-    //The algorithm that is based on the pattern C !C Ø
-    void possiblePathsAlgorithm1(){
-        for (int i = 0; i < this.boardSize; i++) {
-
-            Path horizontalPath = new Path();
-            Path verticalPath = new Path();
-            Path diagonalTopToBottomPath = new Path();
-            Path diagonalBottomToRightPath = new Path();
-            Path diagonalTopToLeftPath = new Path();
-            Path diagonalTopToRightPath = new Path();
-
-            for (int j = 0; j < this.boardSize; j++) {
-
-                int[] horizontalCoords = getHorizontalCoords(i, j);
-                int[] verticalCoords = getVerticalCoords(i, j);
-
-                int[] diagonalTopToBottomCoords = getDiagonalTopToBottomCoords(i, j);
-                int[] diagonalBotttomToRightCoords = getDiagonalBottomToRightCoords(i, j);
-                int[] diagonalTopToLeftCoords = getDiagonalTopToLeftCoords(i,j);
-                int[] diagonalTopToRightCoords = getDiagonalTopToRightCoords(i,j);
-
-                //Calculate the vertical and horizontal paths
-                horizontalPath = iteratePathAlgorithm(horizontalCoords, horizontalPath);
-                verticalPath = iteratePathAlgorithm(verticalCoords, verticalPath);
-
-                // The diagonal paths are dependent on this guard
-                if (j < boardSize - i) {
-                    diagonalTopToBottomPath = iteratePathAlgorithm(diagonalTopToBottomCoords, diagonalTopToBottomPath);
-                    diagonalBottomToRightPath = iteratePathAlgorithm(diagonalBotttomToRightCoords, diagonalBottomToRightPath);
-                    diagonalTopToLeftPath = iteratePathAlgorithm(diagonalTopToLeftCoords,diagonalTopToLeftPath);
-                    diagonalTopToRightPath = iteratePathAlgorithm(diagonalTopToRightCoords,diagonalTopToRightPath);
-                }
-            }
-        }
-    }
 
     int[] getHorizontalCoords(int i, int j) {
         return new int[] { i, j };
@@ -321,19 +293,24 @@ public class ReversiModel{
         return new int[] { j,  j+i };
     }
 
+    /*
+    The algorithm is based on detecting the sequence:
+    C !C... Ø or Ø !C... C
+    Where C = a checker owned by our player and Ø is an empty checker.
+     */
     Path iteratePathAlgorithm(int[] coords, Path currentPath) {
         Checker currentChecker = this.gameBoard.getElementAt(coords);
         // The checker is empty
         if (currentChecker.isEmpty()) {
             currentPath = foundEmptyChecker(currentPath, currentChecker);
         }
-        // The checker is of the opponent's colour
+        // The checker is owned by the opponent
         else if (isNotAlreadyFlipped(currentChecker)) {
-            currentPath = foundCheckerNotOurColour(currentPath, currentChecker);
+            currentPath = foundCheckerNotOurPlayer(currentPath, currentChecker);
         }
-        // If checker isn't of opponent's colour or empty it is of our
+        // If checker isn't owned by the opponnent or empty, it must be owned by us
         else {
-            currentPath = foundCheckerOfSameColour(currentPath, currentChecker);
+            currentPath = foundCheckerOfSamePlayer(currentPath, currentChecker);
         }
         return currentPath;
     }
@@ -344,13 +321,17 @@ public class ReversiModel{
         //We add the checker at the path's starting coordinate to the Path
         Checker startingCoordinatesChecker = this.gameBoard.getElementAt(chosenPath.coordinates);
         chosenPath.addCheckerToPath(startingCoordinatesChecker);
-        this.gamePathGrid.addPathToGrid(chosenPath);
-        chosenPath = new Path();
 
+        //The pathGrid ensures, that if another nonNull paths exists with the same coordinates, we concat the two paths
+        this.gamePathGrid.addPathToGrid(chosenPath);
+
+        // We no longer need to manipulate the data of the added Path, so we
+        // replace the reference to the added path for the variable that called this method
+        chosenPath = new Path();
         return chosenPath;
     }
 
-    Path foundCheckerNotOurColour(Path currentPath, Checker chosenChecker) {
+    Path foundCheckerNotOurPlayer(Path currentPath, Checker chosenChecker) {
         currentPath.addCheckerToPath(chosenChecker);
         return currentPath;
     }
@@ -363,30 +344,28 @@ public class ReversiModel{
         }
         // Empty V !CSeen <=> !C... Ø... C or Ø...C
         else {
-            resetPath(currentPath);
+            currentPath.resetPath();
         }
         // We set the starting coords of the path here regardless
         currentPath.setCoords(currentChecker.coordinates);
         return currentPath;
     }
 
-    Path foundCheckerOfSameColour(Path currentPath, Checker currentChecker) {
+    Path foundCheckerOfSamePlayer(Path currentPath, Checker currentChecker) {
         // HasCoords && !empty <=> Ø !C... C
         if (!currentPath.isEmpty() && currentPath.hasCoords()) {
             currentPath = foundPossiblePath(currentPath);
             // Not above implies either: C !C ... C V !C ... Ø... C C
             // We reset the path and set SeenC true
         } else {
-            resetPath(currentPath);
+            currentPath.resetPath();
         }
         currentPath.setStatusOfCurrentColourSeen(true);
         return currentPath;
     }
 
-    void resetPath(Path chosenPath) {
-        chosenPath.resetPath();
-    }
 
+    //We have this method so other classes don't have to access the gamePathGrid directly
     ArrayList<Path> getListOfNonNullPaths() {
         return this.gamePathGrid.getNonNullPaths();
     }
@@ -405,6 +384,13 @@ public class ReversiModel{
     }
 }
 
+/*
+The only difference between the Othello- and Reversi model is the starting state.
+
+In Othello, there is no starting state as this is set based on the two rules:
+White starts - as we have custom colours, we've decided to let player 0 start
+Each player starts with two checkers in the center-square ordered in a diagonal pattern.
+ */
 class OthelloModel extends ReversiModel{
 
     OthelloModel(GameView view){
@@ -450,7 +436,11 @@ class OthelloModel extends ReversiModel{
     }
 }
 
-
+/*
+Rolit doesn't have a starting state either.
+However, if the player has no checkers on the board, all empty checkers bordering opponent checkers become valid paths.
+We've therefore had to ammend the original algorithm for calculating possible paths.
+ */
 class RolitModel extends OthelloModel{
 
     RolitModel(GameView view){
@@ -476,8 +466,10 @@ class RolitModel extends OthelloModel{
     @Override
     Path foundEmptyChecker(Path currentPath, Checker currentChecker) {
         if(playerHasNoMoreCheckers()) {
+            //If isEmpty & currentChecker.isEmpty <=> Ø Ø
             if(currentPath.isEmpty()){
                 currentPath.resetPath();
+                // Else implies <=> !C Ø
             }else{
                 currentPath.setCoords(currentChecker.coordinates);
                 currentPath.resetCheckersInPath();
@@ -493,7 +485,7 @@ class RolitModel extends OthelloModel{
             }
             // Empty V !CSeen <=> !C... Ø... C or Ø...C
             else {
-                resetPath(currentPath);
+                currentPath.resetPath();
             }
         }
 
@@ -503,7 +495,7 @@ class RolitModel extends OthelloModel{
     }
 
     @Override
-    Path foundCheckerNotOurColour(Path currentPath, Checker chosenChecker) {
+    Path foundCheckerNotOurPlayer(Path currentPath, Checker chosenChecker) {
         if(playerHasNoMoreCheckers()){
 
             //Has coords & is empty -> This is the first !C we find, and we've found a Ø before
@@ -512,6 +504,7 @@ class RolitModel extends OthelloModel{
                 currentPath.resetCheckersInPath();
                 currentPath = foundPossiblePath(currentPath);
                 }
+                //If currentChecker.ownedByOpponent & !isEmpty <=> !C !C
                 else{
                     currentPath.resetPath();                }
 
