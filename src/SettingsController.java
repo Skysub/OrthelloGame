@@ -1,6 +1,6 @@
 /*
-Skrevet af: XXX
-Studienummer: XXX
+Skrevet af: Frederik Hvarregaard Andersen 
+Studienummer: s224801
 */
 
 import javafx.event.ActionEvent;
@@ -12,39 +12,28 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class SettingsController {
 
 	private SettingsView view;
 	private int currentPlayer = 0;
 	private int currentColor = 0;
 	private int maxNameLength = 32;
-	private Color[] possibleColors = new Color[] { Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE,
-			Color.YELLOW };
+	private Color[] possibleColors = new Color[] {
+		Color.BLACK, Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW
+	};
 
-	@FXML
-	Circle playerColor;
-	@FXML
-	TextField playerNameText;
-	@FXML
-	Label playerNumber;
+	// Player customization UI
+	@FXML Circle playerColor;
+	@FXML TextField playerNameText;
+	@FXML Label playerNumber;
+	@FXML RadioButton humanRadio;
+	@FXML RadioButton randomRadio;
+	@FXML RadioButton greedyRadio;
+	@FXML RadioButton weightedRadio;
 
-	@FXML
-	RadioButton humanRadio;
-	@FXML
-	RadioButton randomRadio;
-	@FXML
-	RadioButton greedyRadio;
-	@FXML
-	RadioButton weightedRadio;
-
-	@FXML
-	CheckBox showMoveHints;
-	@FXML
-	CheckBox showAnimations;
+	// Visual options UI
+	@FXML CheckBox showMoveHints;
+	@FXML CheckBox showAnimations;
 
 	public void setModelAndView(ReversiModel model, SettingsView view) {
 		this.view = view;
@@ -218,95 +207,5 @@ public class SettingsController {
 				return i;
 		}
 		return -1;
-	}
-}
-
-class Settings {
-
-	// All settings are initialized to the default 8x8 Reversi
-	static int boardSize = 8;
-	static int nrPlayers = 2;
-	static int gameMode = Constants.GAMEMODE_REVERSI;
-	static ArrayList<Color> playerColors = new ArrayList<Color>(
-			Arrays.asList(Color.BLACK, Color.WHITE, Color.RED, Color.GREEN));
-	static ArrayList<String> playerNames = new ArrayList<String>(Arrays.asList("BLACK", "WHITE", "RED", "GREEN"));
-	static boolean showMoveHints = true;
-	static boolean showAnimations = true;
-	static int aiWaitMs = 1000;
-
-	static int previousStartingIndex = Constants.UNDEFINED;
-
-	static AIModes[] playerAIModes = new AIModes[] { AIModes.AIGreedy, AIModes.HumanPlayer, AIModes.HumanPlayer,
-			AIModes.HumanPlayer };
-
-	static void setSettings(saveSettings s) {
-		boardSize = s.boardSize;
-		nrPlayers = s.nrPlayers;
-		gameMode = s.gameMode;
-		playerColors = s.GenerateColorList();
-		playerNames = s.playerNames;
-		playerAIModes = s.playerAIModes;
-		showMoveHints = s.showMoveHints;
-	}
-
-	static ReversiModel createModel(GameView view) {
-		switch (Settings.gameMode) {
-		case Constants.GAMEMODE_REVERSI -> {
-			return new ReversiModel(view);
-		}
-
-		case Constants.GAMEMODE_OTHELLO -> {
-			return new OthelloModel(view);
-		}
-
-		case Constants.GAMEMODE_ROLIT -> {
-			return new RolitModel(view);
-		}
-
-		}
-		return new ReversiModel(view);
-	}
-}
-
-//There were problems when we saved a static settings objects
-class saveSettings implements Serializable {
-	private static final long serialVersionUID = 8390467629592650422L;
-	int boardSize;
-	int nrPlayers;
-	int gameMode;
-	ArrayList<Double[]> playerColorData;
-	ArrayList<String> playerNames;
-	boolean showMoveHints;
-	AIModes[] playerAIModes;
-
-	public saveSettings() {
-		boardSize = Settings.boardSize;
-		nrPlayers = Settings.nrPlayers;
-		gameMode = Settings.gameMode;
-		SaveColor();
-		playerNames = Settings.playerNames;
-		playerAIModes = Settings.playerAIModes;
-		showMoveHints = Settings.showMoveHints;
-	}
-
-	void SaveColor() {
-		ArrayList<Color> colors = Settings.playerColors;
-		playerColorData = new ArrayList<Double[]>();
-		for (int i = 0; i < colors.size(); i++) {
-			Double[] t = new Double[4];
-			t[0] = colors.get(i).getRed();
-			t[1] = colors.get(i).getGreen();
-			t[2] = colors.get(i).getBlue();
-			t[3] = colors.get(i).getOpacity();
-			playerColorData.add(t);
-		}
-	}
-
-	ArrayList<Color> GenerateColorList() {
-		ArrayList<Color> colors = new ArrayList<Color>();
-		for (int i = 0; i < playerColorData.size(); i++) {
-			colors.add(new Color(playerColorData.get(i)[0], playerColorData.get(i)[1], playerColorData.get(i)[2], playerColorData.get(i)[3]));
-		}
-		return colors;
 	}
 }

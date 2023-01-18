@@ -80,7 +80,7 @@
                         </Label>
                         <HBox alignment="CENTER" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <TextField fx:id="playerNameText" promptText="Player name" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="playerNameText" prefWidth="180.0" promptText="Player name" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER" spacing="20.0">
