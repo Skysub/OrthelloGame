@@ -5,14 +5,14 @@ Studienummer: s224801
 
 public class WeightedAI extends GreedyAI {
     
-    int[][] weights4 = new int[][] {
+    int[][] weights4 = new int[][] { //Places weights for 4 by 4
         {99, -8, -8, 99},
         {-8,  0,  0, -8},
         {-8,  0,  0, -8},
         {99, -8, -8, 99}
     };
 
-    int[][] weights8 = new int[][]  {
+    int[][] weights8 = new int[][]  { //places weights for 8 by 8
         {99, -8, 8, 6, 6, 8, -8,99},
         {-8,-24,-4,-3,-3,-4,-24,-8},
         { 8, -4, 7, 4, 4, 7, -4, 8},
@@ -23,7 +23,7 @@ public class WeightedAI extends GreedyAI {
         {99, -8, 8, 6, 6, 8, -8,99}
     };
 
-    int[][] weights12 = new int[][] {
+    int[][] weights12 = new int[][] { //places weights for 12 by 12
         { 99, -12,  12,  8,  6,  4,  4,  6,  8, 12,-12, 99},
         {-12, -30,  -8, -6, -4, -2, -2, -4, -6, -8,-30, -12},
         { 12,  -8,  14, 10,  6,  2,  2,  6, 10, 14, -8,  12},

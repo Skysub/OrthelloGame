@@ -12,7 +12,7 @@ public class RandomAI implements Ai{
             int[] val = {Constants.UNDEFINED, Constants.UNDEFINED};
             return val;
         }
-        int moveIndex = (int) (Math.random() * nonNullPaths.size());
+        int moveIndex = (int) (Math.random() * nonNullPaths.size()); //Picks a random move
         return nonNullPaths.get(moveIndex).coordinates;
     }
 }

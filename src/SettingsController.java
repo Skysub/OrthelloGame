@@ -110,11 +110,12 @@ public class SettingsController {
 
 	public void setRolit(ActionEvent event) {
 		playerNumberChange(4);
-		int tempCurrentPlayer = currentPlayer;
+		int tempCurrentPlayer = currentPlayer; //Makes changing colors easier without switching players
 		Settings.gameMode = Constants.GAMEMODE_ROLIT;
 
+		//Makes sure that no color is duplicated when adding more players
 		for(int i = 0; i < 2; i++){
-			for(int j = 2; j < 4; j++){
+			for(int j = 2; j < 4; j++){ //There can only be duplicates with between the first two players with the last two players
 				if(Settings.playerColors.get(i) == Settings.playerColors.get(j)){
 					currentPlayer = j;
 					currentColor = indexOf(Settings.playerColors.get(j));
@@ -122,7 +123,6 @@ public class SettingsController {
 				}
 			}
 		}
-
 		currentPlayer = tempCurrentPlayer;
 		loadPlayer();
 	}
@@ -132,12 +132,14 @@ public class SettingsController {
 	}
 
 	// Player UI
-	private void loadPlayer() {
-		playerNameText.setText(Settings.playerNames.get(currentPlayer));
-		playerColor.setFill(Settings.playerColors.get(currentPlayer));
-		currentColor = indexOf(Settings.playerColors.get(currentPlayer));
-		playerNumber.setText("Player: " + (currentPlayer + 1));
+	private void loadPlayer() { //Updates the visual to show player
 
+		playerNameText.setText(Settings.playerNames.get(currentPlayer)); //Shows name
+		playerColor.setFill(Settings.playerColors.get(currentPlayer)); //Shows color
+		currentColor = indexOf(Settings.playerColors.get(currentPlayer)); //Updates which color is shown in
+		playerNumber.setText("Player: " + (currentPlayer + 1)); //Shows which player is shown
+
+		//Updates which type of player is selected
 		AIModes loadMode = Settings.playerAIModes[currentPlayer];
 		humanRadio.setSelected(AIModes.HumanPlayer == loadMode);
 		randomRadio.setSelected(AIModes.AIRandom == loadMode);
@@ -149,7 +151,7 @@ public class SettingsController {
 		playerNameChanged();
 		currentPlayer++;
 		if (currentPlayer > Settings.nrPlayers - 1)
-			currentPlayer = 0;
+			currentPlayer = 0; //Makes sure that we dont go out of bounds
 		loadPlayer();
 	}
 
@@ -157,20 +159,21 @@ public class SettingsController {
 		playerNameChanged();
 		currentPlayer--;
 		if (currentPlayer < 0)
-			currentPlayer = Settings.nrPlayers - 1;
+			currentPlayer = Settings.nrPlayers - 1; //Makes sure that we dont go out of bounds
 		loadPlayer();
 	}
 
 	public void nextColor() {
 		currentColor++;
 		if (currentColor > possibleColors.length - 1){
-			currentColor = 0;
+			currentColor = 0; //Makes sure that we dont go out of bounds
 		}
 
+		//Checks for duplicate colors
 		for (int i = 0; i < Settings.nrPlayers; i++){
 			if(i == currentPlayer) continue;
 			if(possibleColors[currentColor] == Settings.playerColors.get(i)){
-				nextColor();
+				nextColor(); //skips current color if its duplicate
 			}
 		}
 
@@ -181,19 +184,21 @@ public class SettingsController {
 	public void prevColor() {
 		currentColor--;
 		if (currentColor < 0)
-			currentColor = possibleColors.length - 1;
+			currentColor = possibleColors.length - 1; //Makes sure that we dont go out of bounds
 		
+			//Checks for duplicate colors
 		for (int i = 0; i <Settings.nrPlayers; i++){
 			if(i == currentPlayer) continue;
 			if(possibleColors[currentColor] == Settings.playerColors.get(i)){
-				prevColor();
+				prevColor(); //goes further behind if color is duplicate
 			}
 		}
+
 		playerColor.setFill(possibleColors[currentColor]);
 		Settings.playerColors.set(currentPlayer, possibleColors[currentColor]);
 	}
 
-	public void playerNameChanged() {
+	public void playerNameChanged() { //Updates the player name in settings
 		if (playerNameText.getText().length() > maxNameLength) {
 			Settings.playerNames.set(currentPlayer, playerNameText.getText().substring(0, maxNameLength - 1));
 			playerNameText.setText("max Characters: " + maxNameLength);
@@ -201,6 +206,7 @@ public class SettingsController {
 		Settings.playerNames.set(currentPlayer, playerNameText.getText());
 	}
 
+	//Finds which numbert the color is in the possibleColors array
 	private int indexOf(Color color) {
 		for (int i = 0; i < possibleColors.length; i++) {
 			if (color == possibleColors[i])
