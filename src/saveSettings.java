@@ -11,6 +11,7 @@ class saveSettings implements Serializable {
 	int boardSize;
 	int nrPlayers;
 	int gameMode;
+	int previousStartingIndex;
 	ArrayList<Double[]> playerColorData;
 	ArrayList<String> playerNames;
 	boolean showMoveHints;
@@ -20,6 +21,7 @@ class saveSettings implements Serializable {
 		boardSize = Settings.boardSize;
 		nrPlayers = Settings.nrPlayers;
 		gameMode = Settings.gameMode;
+		previousStartingIndex = Settings.previousStartingIndex;
 		SaveColor();
 		playerNames = Settings.playerNames;
 		playerAIModes = Settings.playerAIModes;

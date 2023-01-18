@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-abstract class BoardElement {
+/*
+Abstract class used to implement Path and Checker, as both of these classes are only instantiated in grids.
+ */
+abstract class GridElement {
 
     int emptyValue = Constants.EMPTY;
 
@@ -18,7 +21,7 @@ abstract class BoardElement {
 
     abstract boolean isEmpty();
 }
-class Checker extends BoardElement {
+class Checker extends GridElement {
 
     Player owner;
 
@@ -72,6 +75,9 @@ class TwoDimensionalGrid<E> {
         return coords[0] + coords[1] * this.gridSize;
     }
 
+    /*
+    We use a 1D array to represent a 2D array, so have to calculate the 2D coords in the 1D array.
+     */
     int getPositionFromCoords(int x, int y) {
         return x + y * this.gridSize;
     }
@@ -99,6 +105,9 @@ class TwoDimensionalGrid<E> {
     }
 }
 
+/*
+Class representing the gameboard with checkers.
+ */
 class Board extends TwoDimensionalGrid<Checker> {
 
     Board(int size) {
@@ -117,13 +126,11 @@ class Board extends TwoDimensionalGrid<Checker> {
         }
     }
 
-    public boolean isWithinBoard(int[] coords) {
-        return isWithinSquare(coords, 0, this.gridSize);
-    }
 
     /*
-     * Checks if the coords are within a designated square - primarily used for the
-     * starting scenario. Lower:inclusive, Upper: Exclusive f(x,y) = true <=>
+     * Checks if the coords are within a designated square - primarily used for the starting state of Reversi.
+     * Lower:inclusive, Upper: Exclusive
+     * f(x,y) = true <=>
      * lower<=x<upper && lower<=y<upper
      */
     public boolean isWithinSquare(int[] coords, int lower, int upper) {
@@ -132,12 +139,14 @@ class Board extends TwoDimensionalGrid<Checker> {
         return (x >= lower && x < upper && y >= lower && y < upper);
     }
 
-    void flipCheckerAtCoords(int[] coords, Player newPlayer){
-        Checker chosenChecker = getElementAt(coords);
-        chosenChecker.flipChecker(newPlayer);
-    }
 }
 
+/*
+Main object for organizing Paths.
+
+Used in the calculatePossiblePaths algorithm and has methods primarily concerned with making sure no two paths have the same coordinates.
+And methods for getting paths with a certain predicate, f.ex all paths that are not empty.
+ */
 class PathGrid extends TwoDimensionalGrid<Path> {
 
     int nrNonNullPaths = 0;
@@ -191,14 +200,22 @@ class PathGrid extends TwoDimensionalGrid<Path> {
     }
 }
 
-class Path extends BoardElement {
+/*
+Paths represent possible paths of checkers that the current player can flip.
+
+The Path class is used in the calculatePossiblePath algorithm, and contains three class variables used in the algorithm:
+checkersInPath, which is used to keep track of which checkers this path will flip.
+Coordinates, that tells us where on the board, this path starts, i.e which tile the player can press in order to flip the checkers in this path.
+currentPlayerColourSeen, a flag which is used in the calculatePossiblePaths algorithm.
+ */
+class Path extends GridElement {
     ArrayList<Checker> checkersInPath = new ArrayList<Checker>();
     boolean currentPlayerColourSeen;
 
     // Appends the checkersInPath of another path to this' - used for when multiple
-    // paths for the same placement of a checker
+    // paths have the same coordinates
     void concatCheckersInPaths(Path otherPath) {
-        this.checkersInPath.addAll(otherPath.checkersInPath); // None of the checkers will overlap and count twice, so
+        this.checkersInPath.addAll(otherPath.checkersInPath); // None of the checkers will overlap and count twice, so we know each entry is unique
     }
 
     // Checks if a checker is in this path

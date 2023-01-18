@@ -231,7 +231,7 @@ public class GameView {
 		}
 
 		// Only show passButton when the current player has no possible moves and is a human
-		passButton.setVisible(model.state == Constants.TURN_SKIPPED && !model.currentPlayer.isAI());
+		passButton.setVisible(model.FSMDState == Constants.TURN_SKIPPED && !model.currentPlayer.isAI());
 		
 		// Only show move hints when the current player is human, and move hints are enabled
 		if (!Settings.showMoveHints || model.currentPlayer.isAI()) {

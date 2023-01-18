@@ -37,6 +37,7 @@ public class Settings {
 		playerNames = s.playerNames;
 		playerAIModes = s.playerAIModes;
 		showMoveHints = s.showMoveHints;
+		previousStartingIndex = s.previousStartingIndex;
 	}
 
 	static ReversiModel createModel(GameView view) {

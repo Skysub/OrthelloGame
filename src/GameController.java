@@ -63,7 +63,7 @@ public class GameController {
 
 	// Called upon pressing a tile
 	public void tilePress(MouseEvent event) {
-		if (Animation.isAnimating() || aiIsMoving || model.state == Constants.TURN_SKIPPED || model.state == Constants.GAME_ENDED) {
+		if (Animation.isAnimating() || aiIsMoving || model.FSMDState == Constants.TURN_SKIPPED || model.FSMDState == Constants.GAME_ENDED) {
 			return;
 		}
 
@@ -84,7 +84,7 @@ public class GameController {
 		// The animation duration is added, if animations are enabled, so the AI takes it's move after animations are finished
 		int aiDelay = Settings.aiWaitMs + (Settings.showAnimations ? GameView.ANIMATION_DURATION_MS : 0);
 		aiTimeline = new Timeline(new KeyFrame(Duration.millis(aiDelay), e -> {
-			if (model != null && model.state == Constants.START) {
+			if (model != null && model.FSMDState == Constants.START) {
 				model.step(model.AIStartingMove());
 				model.step(model.AIStartingMove());
 			} else {
@@ -94,7 +94,7 @@ public class GameController {
 			aiIsMoving = false;
 			aiTimeline = null;
 			// If the next player is also an AI, call the function recursively. Enables AI vs AI
-			if (model.currentPlayer.isAI() && model.state != Constants.GAME_ENDED) {
+			if (model.currentPlayer.isAI() && model.FSMDState != Constants.GAME_ENDED) {
 				AIPress();
 			}
 		}));
@@ -104,7 +104,7 @@ public class GameController {
 	}
 
 	public void passButton(ActionEvent event) {
-		if (model.state == Constants.TURN_SKIPPED) {
+		if (model.FSMDState == Constants.TURN_SKIPPED) {
 			model.step(new int[] { Constants.UNDEFINED, Constants.UNDEFINED });
 			// After performing the SKIP/PASS, check if the next player is an AI, and let it make it's move
 			if(model.currentPlayer.isAI()){
@@ -131,9 +131,9 @@ public class GameController {
 			aiTimeline = null;
 		}
 		view.toMenu();
-		resetGame();
 		// Reset the index of the previous starting player, which is only used when playing multiple games in a row of Reversi
 		Settings.previousStartingIndex = Constants.UNDEFINED;
+		resetGame();
 		Animation.stopRap();
 	}
 

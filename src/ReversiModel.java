@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class ReversiModel{
 	GameView GameView;
-    int state = Constants.START;
+    int FSMDState = Constants.START;
 
     int boardSize;
 
@@ -27,7 +27,13 @@ public class ReversiModel{
 
     int lastStartingIndex = Settings.previousStartingIndex;
 
-    void selectStartingPlayer() {
+    /*
+    Calculates and sets the currentPlayerIndex and currentPlayer based depending on who started last game.
+
+    Whenever we reset the model (quit the game,) and re-enter the game, the player is randomly chosen.
+    Otherwise, the player who went first in the previous round goes second in this.
+     */
+    void calculateStartingPlayer() {
         if(Settings.previousStartingIndex == Constants.UNDEFINED){
             Random randomObject = new Random();
             this.currentPlayerIndex = randomObject.nextInt(nrPlayers);
@@ -36,13 +42,17 @@ public class ReversiModel{
             gamePlayerManager.setFirstPlayerIndex(currentPlayerIndex);
         }
         else{
+            System.out.println(Settings.previousStartingIndex);
             Settings.previousStartingIndex = (Settings.previousStartingIndex + 1)%nrPlayers;
             this.currentPlayerIndex = Settings.previousStartingIndex;
             this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
             GameView.updateTurnText(currentPlayer);
         }
     }
-    
+
+    /*
+    Used by the saveload system to select the same starting player as the original game.
+     */
     void selectStartingPlayer(int index) {
         this.currentPlayerIndex = index;
         this.currentPlayer = gamePlayerManager.getPlayerAtIndex(currentPlayerIndex);
@@ -57,14 +67,14 @@ public class ReversiModel{
         this.gamePathGrid = new PathGrid(boardSize);
         this.gamePlayerManager = new PlayerManager(Settings.nrPlayers,Settings.playerColors,Settings.playerNames,Settings.playerAIModes);
 
-        selectStartingPlayer();
+        calculateStartingPlayer();
     }
     void updateView(){
         GameView.updateBoard(this.gameBoard);
         GameView.updateTurnText(this.currentPlayer);
     }
     void endGame() {
-        state = Constants.GAME_ENDED; // End the game
+        FSMDState = Constants.GAME_ENDED; // End the game
         isGameOver = true;
         setEndingScreenForView();
         GameView.updateBoard(gameBoard);
@@ -101,19 +111,19 @@ public class ReversiModel{
             // The next player also has no possible moves
         } else if (nrPossiblePaths == 0) {
             this.gamePathGrid.resetGrid();
-            state = Constants.TURN_SKIPPED;
+            FSMDState = Constants.TURN_SKIPPED;
             // The next player has possible moves
         } else {
-            state = Constants.PLACEMENT; // We can now place a tile
+            FSMDState = Constants.PLACEMENT; // We can now place a tile
             this.turnsSkipped = 0; // we reset the counter
         }
     }
 
     void step(int[] coords) {
 
-        Turn currentTurn = new Turn(coords, state, currentPlayerIndex);
+        Turn currentTurn = new Turn(coords, FSMDState, currentPlayerIndex);
 
-        switch (this.state) {
+        switch (this.FSMDState) {
             // Start
             case Constants.START -> {
                 boolean moveResult = startingMove(coords);
@@ -127,7 +137,7 @@ public class ReversiModel{
 
                 //After each player has taken 2 turns, we start the main part of the game
                 if (turnsTaken == nrPlayers * 2) {
-                    this.state = Constants.PLACEMENT; // Now we place a brick
+                    this.FSMDState = Constants.PLACEMENT; // Now we place a brick
                     this.calculatePossiblePaths();
                 }
             }
@@ -136,7 +146,7 @@ public class ReversiModel{
                 recordTurnTaken(placementMove(coords),currentTurn);
                 // If there are no moves
                 if (getNrNonNullPaths() == 0) {
-                    this.state = Constants.TURN_SKIPPED; // Skip
+                    this.FSMDState = Constants.TURN_SKIPPED; // Skip
                 }
                 break;
             }
@@ -148,7 +158,7 @@ public class ReversiModel{
             }
         }
         GameView.updateBoard(this.gameBoard);
-        if(gameOverBeforeSkip() && this.state != Constants.GAME_ENDED){
+        if(gameOverBeforeSkip() && this.FSMDState != Constants.GAME_ENDED){
             endGame();
         }
     }
@@ -188,7 +198,7 @@ public class ReversiModel{
     }
 
     boolean playerHasNoMoreCheckers(){
-        return this.currentPlayer.getNrCheckers() == 0 && this.state != Constants.START;
+        return this.currentPlayer.getNrCheckers() == 0 && this.FSMDState != Constants.START;
     }
     boolean isBoardFilled(){
         return gamePlayerManager.getSumOfCheckersPlaced() == this.boardSize * this.boardSize;
@@ -402,12 +412,12 @@ class OthelloModel extends ReversiModel{
         startingMoves();
 
         //We don't have a starting state in Othello, so we simply skip this
-        this.state = Constants.PLACEMENT;
+        this.FSMDState = Constants.PLACEMENT;
         this.calculatePossiblePaths();
     }
 
     @Override
-    void selectStartingPlayer() {
+    void calculateStartingPlayer() {
         this.currentPlayerIndex = 0;
         this.currentPlayer = this.gamePlayerManager.getPlayerAtIndex(0);
     }
