@@ -108,9 +108,9 @@
                                     <ToggleGroup fx:id="AIType" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton fx:id="randomRadio" mnemonicParsing="false" onAction="#radioRandom" text="RandomAI" toggleGroup="$AIType" />
-                              <RadioButton fx:id="greedyRadio" mnemonicParsing="false" onAction="#radioGreedy" text="GreedyAI" toggleGroup="$AIType" />
-                              <RadioButton fx:id="weightedRadio" mnemonicParsing="false" onAction="#radioWeighted" text="WeightedAI" toggleGroup="$AIType" />
+                              <RadioButton fx:id="randomRadio" mnemonicParsing="false" onAction="#radioRandom" text="Easy" toggleGroup="$AIType" />
+                              <RadioButton fx:id="greedyRadio" mnemonicParsing="false" onAction="#radioGreedy" text="Medium" toggleGroup="$AIType" />
+                              <RadioButton fx:id="weightedRadio" mnemonicParsing="false" onAction="#radioWeighted" text="Hard" toggleGroup="$AIType" />
                            </children>
                         </HBox>
                      </children>
