@@ -37,7 +37,7 @@ public class Animation {
 
     // Sounds
     public static void playSound() {
-        sound.setCycleCount(2);
+        sound.setCycleCount(1);
         sound.play();
     }
 
